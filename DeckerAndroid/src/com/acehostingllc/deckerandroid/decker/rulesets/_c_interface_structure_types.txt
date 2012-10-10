@@ -1,0 +1,206 @@
+localization english
+// interface component types **************************************************************************************************************************
+
+	structure
+
+		BORDER
+			x
+			y
+			width
+			height
+			inverted = false
+			top_color
+			left_color
+			right_color
+			bottom_color
+			background_color
+			component
+			thickness = 2
+			initializer = FUNCTION
+				top_color = BORDER_COLOR1
+				bottom_color = BORDER_COLOR2
+
+
+
+		BORDER_BUTTON
+			expandable = true
+			x
+			y
+			component
+			state = IDLE
+			idle              // the image for the idle state of the button. if the image name ends with a 0 and no pressed, hover or disabled images are defined, the program will look for images of the same name but ending in a 1, 2 and 3 for them
+			// pressed
+			// disabled
+			// hover
+			// on_mouse_up    // put the function with the button effect here, for a standard button
+			// text_padding    // put a value here if you want the text to be shifted a different number of pixels than 4 from the top
+
+
+		BUTTON
+			expandable = true
+			x
+			y
+			state = IDLE
+			idle              // the image for the idle state of the button. if the image name ends with a 0 and no pressed or disabled images are defined, the program will look for images of the same name but ending in a 1 and 2 for them
+			component
+			// pressed
+			// disabled
+			// hover
+			// on_mouse_up    // put the function with the button effect here, for a standard button
+
+
+		CLIP // limits the area where things can be drawn to the given rectangle. all drawings which are in the component array of the CLIP get cut off at the edge of the rectangle and only display inside
+			x
+			y
+			width
+			height
+			component
+
+
+		COMPONENT             // all variables in each view definition are optional
+			expandable = true
+			x
+			y
+			// width
+			// height
+			// title             // only relevant if it is the top level component. then it sets the frame title
+			// background_image
+			// component         // must contain an array which contains the interface elements of this view, e.g. buttons and lists
+
+
+		IMAGE
+			expandable = true
+			image
+			// angle  // measured clockwise in degrees. without opengl/directx only multiples of 90 are supported
+
+
+		LINE
+			x
+			y
+			x2
+			y2
+			color
+
+
+		RECTANGLE
+			x
+			y
+			width
+			height
+			color
+			fill = false
+
+
+		SCREEN_BACKGROUND
+			x
+			y
+			width = "100%"
+			height = "100%"
+			component
+			initializer = FUNCTION
+				component = ARRAY
+					createBorder(0,0)
+					UNDEFINED
+			on_resize = FUNCTION (new_width, new_height)
+				component[0].width = new_width
+				component[0].height = new_height
+				if BACKGROUND_COLOR2 == UNDEFINED
+					component[0].background_color = BACKGROUND_COLOR
+					if component[1] != UNDEFINED
+						component[1] = UNDEFINED
+				else
+					if component[1] == UNDEFINED
+						component[1] = createBorder(5, 5, 0, 0)
+					component[1].width = new_width-10
+					component[1].height = new_height-10
+					component[1].background_color = BACKGROUND_COLOR
+					component[0].background_color = BACKGROUND_COLOR2
+
+
+		SCROLLBAR  // a vertical scrollbar
+			expandable = true
+			x
+			y
+			width
+			height
+			component
+			slider_position = 0  // logical position
+			slider_max           // you HAVE to set this to a positive number or the slider won't work
+			slider_stepping = 20 // this is the amount by which slider_position will change each time you press one of the arrow buttons
+			effect               // put a function here. it gets called whenever the slider_position changes
+			vertical = true      // true -> the scrollbar is vertical. all other values -> it's horizontal
+			slider
+			minus_button
+			plus_button          // slider, minus_button, plus_button contain the structures or image names from which the scrollbar slider and the optional buttons on the scrollbar's ends are created
+
+
+		SCROLLPANE
+			x
+			y
+			width
+			height
+			component                            // component[2] optional vertical scrollbar, component[3] optional horizontal scrollbar, component[1] optional view element that gets displayed in the corner that is cut off if both scrollbars are displayed, component[0] a CLIP with component[0].component being a wrapper around the view element that is displayed in this scrollpane
+			displayed_element                    // the component that this SCROLLPANE displays
+			optional_scrollbars = true           // the scrollbars are optional by default and only get displayed when needed
+			vertical_scrollbar                   // either a scrollbar or an array containing the slider and buttons, or their names
+			horizontal_scrollbar                 // like vertical_scrollbar
+			corner_filler                        // component to be displayed in the cornerthat gets get cut off when both scrollbars are displayed
+			scrollbar_padding = 1                // number of pixels to be put left empty between the DRAWING_PANE and the scrollbar
+
+
+		TABLE
+			expandable = true
+			width = 0
+			height = 0
+			rows = 0                 // number of rows in this table
+			columns                  // number of columns in this table
+			cell                     // two dimensional array containing the cells
+			selected_row             // 0 - (rows-1) = row selected, all other values = no row selected
+			selected_row_background  // if this is non-UNDEFINED, rows can be selected
+			can_drag_rows            // set this to true to enable rearranging the table by dragging rows. will be set to the y value of the current drag point while a row is getting dragged
+			cell_height              // all rows have the same height
+			cell_width               // array containing the width for each column
+			//cell_h_align           // default horizontal alignment of cell content. if it's defined in an ARRAY it's entries are used as the default horizontal alignment of cell content for each column. this value will only be used if the cell content doesn't have a valid value for v_align. watch out, the alignment setting gets set for the cell content. if the same thing is displayed in different cells (even from different tables), the cell that gets displayed first determines its alignment, if cell_alignment_x is set
+			//cell_v_align           // default vertical alignment of cell content, works like cell_h_align
+			//cell_x // x value of cell content. works like cell_h_align
+			//cell_y // y value of cell content. works like cell_h_align
+			// on_row_dragged        // put an event handler function here if you want to react to rows getting dragged to new positions
+			// on_selection_change   // FUNCTION (table, old_row_index, new_row_index) : put an event handler function here if you want to react to rows getting selected or deselected by the player
+			initializer = FUNCTION
+				cell = ARRAY
+
+
+		TEXT
+			x
+			y
+			v_align
+			h_align
+			width
+			height
+			text
+			font           // a string, may contain several ; separated font settings (in arbitrary order, but later settings override earlier ones) : font face (Arial), font size (10pt) and font style (plain, bold, italic), e.g. "Arial;10pt;plain" or "bold;italic;Courier New;12pt". if style is omitted, plain is used. if font face or font size is omitted, the current settings are used, not the settings from the parent view element
+			color          // a color, using the html color format #rrggbb
+
+
+		TEXTBLOCK
+			x
+			y
+			v_align
+			h_align
+			width
+			height
+			component      // put the text to be displayed here. to make it start a new line, add a NEWLINE component. you can also put images and stuff here, they will then be inserted into the text
+
+
+		TEXTFIELD
+			x
+			y
+			v_align
+			h_align
+			width            // if you set the width of the TEXTFIELD, the text input will be constrained so the text + cursor will always fit into the field
+			height
+			text = ""
+			font
+			color
+			cursor = "_"
+			char_limit       // the maximum number of characters for the text input

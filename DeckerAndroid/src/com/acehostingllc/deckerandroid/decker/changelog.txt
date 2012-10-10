@@ -1,0 +1,367 @@
+85%
+2009-09-05
+	ice action functions complete, except for GOING_HOME
+2009-03-16
+	double clicking a passive program in the system view no longer causes an error
+2008-08-17
+	minesweeper : added foxhound's graphics, updated the initial screen and first step of the tutorial
+	hardcoded script function added : getTime()
+	hardcoded script function renamed : getStructureStack() is now called getStack()
+2008-08-07
+	processing a user input event is now stopped when the displayed screen changes
+	UIImage overhauled
+	Battleships is playable (no restart or highscore table yet)
+	added third party gif parser, to fix the gif animation problem in the next step
+2008-08-06
+	scripted function calls now put the structure the function is stored in on the stack for the function execution
+	you can play a complete game of battleships
+2008-08-04
+	FunctionCall : if the supplied structure list contains the same structure twice in a row, it gets added to the structure stack only once
+	delete(array,index) now calls the eventValueChanged() function
+2008-08-01
+	UIImage now reacts to angle changes and UIImage.<init> doesn't whine anymore if IMAGE.image is UNDEFINED
+	step four of the battleships tutorial complete
+	battleships place ships screen complete, final step without tutorial, because it would be too complicated
+2008-07-31
+	step three of the battleships tutorial complete
+	button related mouse event handler functions now get told which button has changed its state
+	fixed a bug in UIGenericComponent.eventValueChanged() that made it call DisplayedComponent.eventValueChanged() even if the changed varaible has nothing to do with displaying the generic component
+	cleaned up some code
+	removed all the standard messages during engine launch. set decker.model.Global.debug_level to something above 0 to make them reappear
+2008-07-30
+	added the ability to turn images in 90 degree steps
+	continued work on battleships tutorial
+2008-07-29
+	started on the battleships tutorial
+	changed the way localizations are marked, added the default_localization command
+2008-07-26
+	32 bit .bmps with no alpha channel (uppermost 8 bit always zero) are now interpreted as rrggbb images instead of completely transparent aarrggbb images
+	instead of setting the initial_screen directly, Decker now calls the script function displayScreen() for it.
+		this means the function initial_screen.setup() gets executed if it is defined
+		and this change also ensures that the initial switching to initial_screen will always behave like all other screen switches, even if displayScreen() is changed in the future
+2008-05-26
+	the ice generator now works with the rearranged ice data
+2008-05-17
+	iceSoundAlarm finished
+2008-05-16
+	added iceSetResponseTargetNode
+2008-04-23
+	changed iceChooseAction a bit to solve the problems with ice staying hostile if it follows the player by chance
+2008-03-19
+	finished up iceChooseAction
+2008-03-14
+	rewrote the whole ice state change logic from scratch
+2008-03-08
+	fixed a number of bugs, added FOLLOWING ai behaviour
+2008-03-05
+   changed createSizedArray to initialize the array it creates with the value from the last parameter, if that value is not omitted (then it creates an empty array) and is not an integer or is below zero
+2008-03-02
+	ice should be able to move towards its target_node (the home node or the alarm node)
+2008-03-01
+	querying should qork completely
+	a probe initiated a query for the first time :)
+	ice should react correctly to alarms
+	ice is now grouped into active, waiting and ungrouped passive ice, per area
+2008-02-29
+	removed the defunct & operator
+	removed the "global value" language construct
+2008-02-28
+  recreated half the central ICE action function in script
+2007-12-28
+  the code for the default attack programs is mostly done
+  the damage bar for the selected target works
+  attacking works
+2007-12-26
+  double click event added
+2007-12-23
+  probe ice walks around
+  you can mark ice
+
+84%
+2007-12-21
+  the minimap works
+2007-12-20
+  !x now returns true for non-boolean values
+  ice now has pretty much the same probability of being of a certain type as it had in Decker 1.12
+  the two surplus COPs are back in and the area generator doesn't replace DATASTOREs with COPs anymore if there are only dummy IOs left and vice versa
+  changed the default debug() depth to 3
+  all ice is generated (the only things left to do are adding / marking mission goals and displaying ice)
+  player and ice are displayed
+2007-12-19
+  changed the attack crash 9 ICE image from snake2 to snake3
+  added all the ice images and data
+2007-12-18
+  added blocked regions to node types
+  datastore nodes now have files
+  the ? operators in a ? b : c ? d : e now execute left to right
+  started to collect data on ICE
+2007-12-17
+  working on the system screen (where the action happens)
+  program list displays programs (sorting and rowd ragging are not there yet)
+  time display work
+  can now generate whole systems (minus datastore files and ice)
+  it's possible to walk around
+2007-12-16
+  system area generator completely translated from Java
+  (it still needs to place ICE and portals, and to create whole systems)
+2007-12-15
+  started to convert the system area generator from Java
+  added the % operator, and the hardcoded functions copyArraySection() and createSizedArray()
+  fixed the problem where the function call f(x,) would lead to a parser error because of the omitted last parameter
+
+83%
+2007-12-15
+  finished up the standard missions
+2007-12-14
+  mission descriptions are displayed, sorting the mission table works, details are automatically added to the mission descriptions
+  generic missions work
+2007-12-13
+  UITextBlock displays everything but text
+2007-12-12
+  contract screen displays missions in the list
+2007-12-10
+  UIScrollpane glitch with maxed scrollbar position at the moment of content size reduction fixed
+  improved array definition parsing errors a bit and changed the tab size to 3 spaces
+  the list of missions which can become available is generated
+2007-12-09
+  UITable rows are now selectable and draggable
+2007-12-08
+  UIButton now uses UIInnerArea. This fixes the display glitch on the rest screen
+
+82%
+2007-12-08
+  UIBorder now has two components, to give it an inner and an outer size
+  all screens work again (except for a button face positioning glitch in the rest screen, and it's not possible to select table rows yet)
+2007-12-06
+  scrollpane works
+2007-12-04
+  scrollbar works
+2007-12-03
+  scrollbar works except for slider dragging
+2007-11-29
+  finished overhauling and debugging the update mechanism
+  added padding to button faces
+  new character screen and character screen work again
+2007-11-28
+  fixed a bug in Value.constant()
+  working on UIButton.update()
+2007-11-27
+  refining the way DisplayedComponent.update() works and interacts with functions of derived classes
+2007-11-26
+  added optional depth parameter to debug()
+  switching between screens works again
+  character screen : skill buttons work. lifestyle button used to work. looks like something
+
+81%
+2007-11-26
+  fixed a bug in the home screen
+2007-11-22
+  UITextField works
+2007-11-20
+  IMAGE structure type added and UIImage overhauled
+  UITextField is taking shape
+2007-11-19
+  UIText hardcoded
+2007-11-18
+  fixed a few bugs in new_character_screen.txt where functions were still assuming all parent displayed structures were visible
+  fixed the bug where updateChildren() would not tell the discarded DisplayedComponents to stop listening to the script objects they display
+  on_mouse_entered and on_mouse_exited events work
+  UIButtons work
+  updated the way event listeners are registered, to allow for functions which are hardcoded in the interface classes
+2007-11-16
+  listening to arrays works (except for when delete() and insert() are used)
+  the new character screen displays correctly again
+2007-11-15
+  remapping globals when changing ruleset works
+2007-11-14
+  UIButton coordinates are now relative to its parent component
+2007-11-07
+  fixed a bug in AbstractView.getColor(). the function returned last_color after generating a new color
+2007-11-06
+  SCREEN_BACKGROUND.width = 100% correctly sets its width relative to the parent width
+  value changes are detected by the interface, unless they occur in an array entry or a global value
+  working on on_resize and related stuff
+2007-11-05
+  on_resize now gets clled right after the DisplayedComponent of a component was created
+  events work again
+2007-11-03
+  UIButton complete
+2007-11-02
+  continued work on the display system. image and border are hard coded. working on button. idle button face displays and is centered horizontically if it has no x coordinate
+2007-10-30
+  started to replace the display / eventhandler system with something fast
+
+80%
+2007-10-28
+  you can purchase everything at the shop
+  added the shop screen buttons
+  changed the chip image slightly
+  fixed a glitch in BORDER_BUTTON.on_draw
+  optimized the way hardware in the shop is sorted by rating
+  added "for i = 5 downto 0", changed "for i = 0 to 5" and applied the change to the scripts
+2007-10-27
+  the sorting buttons for the shop now work by category
+  the shop screen now shows the current ratings, and offers all item types
+  the shop inventory now contains programs, and changes every 7 days
+  table columns can now be right aligned, with the resulting content column being centered horizontally in the column area
+  fixed the name of the image for Weaken programs
+  finished simplifying all scripts
+  monthly costs are now deduced
+  continued work on the shop screen
+2007-10-24
+  simplified the engine scripts
+  fixed a bug in Function.print() related to hard coded functions, and added the missing "getStructureStack" to the list of hard coded function names in Global.java
+  added the missing linefeed in debug(<empty array>)
+  variables can now be created everywhere without an initial value
+  fixed the remaining problems with variables which contain global values
+2007-10-23
+  the a = @b operator now puts the global Variable b in the place where a was, no more looking things up required
+  added the break command
+2007-10-13
+  print() now omits the structure_type entry in Structures, puts " quotes around string constants, prints ARRAY values, prints function calls, and prints default values for function parameters
+2007-10-12
+  all types of for loops work
+2007-10-11
+  added the i++, ++i, i-- and --i commands. they work with all integer and real variables, but only as stand alone commands, outside mathematical expressions
+  removed the white padding around the program table on the deck screen to make selected rows look better
+  added SELECTED_ROW_BACKGROUND
+  added the "with" command
+  SCREEN_BACKGROUND can display two borders again
+
+79%
+2007-10-10
+  added the rest screen
+  finished up the layout of the deck screen
+  fixed lots of bugs
+  the event system now supports event consumption
+  screen overlays can process events
+  it's possible to delete programs and the deck screen has a confirmation popup for that
+2007-10-05
+  some general code testing and debugging / optimizing
+  in the process of adding screen overlays (for tooltips and popups) (event forwarding not done yet, createPopup unfinished)
+2007-10-03
+  added a trashcan image
+  deckscreen now has a trashcan button while a program is selected
+2007-10-02
+  the status_off bitmap now uses an alpha channel. 32 bit .bmp files are now loadable, the pixel data is interpreted as aarrggbb
+  table rows can be dragged
+  the table sorting buttons on the deck screen work again
+  events get handed on to table cells
+  fixed a few small bugs in connection with event consumption
+  removed all repaint() calls, now input events don't slow down the game anymore
+  rows are now selectable in TABLE
+2007-10-01
+  added the new "global" command that lets you add global values to a ruleset
+  changed @ to fetch "global" values from the ruleset (they sit in the GLOBAL_VALUES structure in the ruleset)
+  removed the whole trigger system
+  added the optional hardware display
+  removed some disused clutter from the scripts
+2007-09-30
+  removed the disused wrapImage function
+2007-09-24
+  fixed a lot of minor bugs and one fatal bug
+2007-09-21
+  all screens except for the deck screen work again
+  BORDER drawing is now hard coded and accepts 1-4 colors instead of 2
+  decided to get rid of the .object entry of components, and to let the interface code accept a single STRUCTURE as a component (should help with table cells)
+  simplified and speeded up calls of hard coded functions
+  ARRAY is no longer a structure type, it's now a data type, like STRUCTURE, INTEGER, STRING, etc
+
+78%
+2007-09-16
+  deck screen displays current load info
+  finished up the program table sorting buttons
+  fixed a bug where structure type names in expressions were replaced with the structure type instead of a new instance of the structure type
+  changing the load / default state of programs works
+2007-09-15
+  added half the program information to the deck screen
+  added cell layout to createTableRow()
+  created the program images from the C++ Decker program image file
+  added the images to the program types and have the deck screen display them
+  the program table can now be sorted by the first column
+  added on/off bulbs for the program status
+  the code for changing the program status is half done
+2007-09-14
+  added the column buttons to the deck screen
+  fixed a bug where c.size would be interpreted as a single string instead of an expression with a member operator, in ScriptReader.java
+  added getRomanNumber(), createProgram() and createDeck()
+  added the hardware types
+  overhauled THING, THING_TYPE, the program type definitions. added ruleset functions for thing size and value
+  it's now possible to omit function call arguments. just leave the argument empty, and the default value will be used
+  function arguments can now have default values
+  f = FUNCTION (a=3,b=4,c=5)
+  	debug(a*b*c)
+  f(1,,1)  // this function call will print "4" to the debug console, because the default value is used for the omitted parameter b
+2007-09-13
+  worked a bit on the deck screen
+  added all the program types to the JDecker scripts. there's no functionality defined for them yet
+2007-09-12
+  SCROLLPANE works
+  fixed a bug in AssignmentCommand regarding LOCAL variables
+  started to assemble the deck_screen
+2007-09-11
+  added optional structure type variables which do not get copied into each instantiated structure :
+    pixelwidth, pixelheight   <- if these contain functions and the width / height isn't explicitly defined, they get called
+    expandable   <- got copied into each structure instance in the past
+  fixed the window area turning white whenever the window size changed
+  continued work on SCROLLPANE
+2007-09-10
+  separated the interface code from the decker scripts and made it global
+  scrollbars can now be horizontal
+  removed the remaining occurences of variablesSeeEachOther and variables_see_each_other
+2007-09-09
+  SCROLLBAR works
+  getStackTrace() hardcoded function added
+  function calls in all mouse events can now see all enclosing displayed structures
+2007-09-04
+  minor script fixes
+  working on the SCROLLBAR
+  fixed : a FUNCTION definition can now stand at the end of a script, even if it has no function body and no argument list
+2007-09-03
+  added the & operator
+  changed the @ behaviour to execute implicitly again, unless the & operator is used
+  removed some clutter that had accumulated in the game scripts while I was trying out different implementations of the @ operator
+2007-09-02
+  fixed the @ operator. it now works at least for colors
+  if A contains an @ operator, then B = A will put the @ operator in B too. the operator won't be evaluated
+  colors work again. looks like a few other things are botched now
+2007-08-03
+  FunctionCall.java now produces a helpful error message if it gets called for a value that is not a function
+  fixed a number of places where script function calls didn't use the new function names
+  moved the static functions from FunctionCall.java to their own class StaticScriptFunctions.java
+2007-05-09
+  DRAWING_BOUNDARY and a clipping mechanism added
+2007-05-08
+  v_align and h_align added for easier placement of screen elements
+  TABLE type added. so far it displays a table. dragging rows doesn't work yet
+2007-05-07
+  fps setting and mechanism added
+2007-05-04
+  you can set REAL_EQUAL_RANGE to some value between 0.0 and 1.0 to set the maximum difference between two real numbers which are treated as equal. If no value is set or it is not a real number, 0.000000001 is used instead
+  the parser now recognizes real numbers. it rejects numbers like .5 and 5. there has to be at least one digit before and after the . like in 5.5
+  expressions work with real numbers
+2007-05-01
+  variables can now store real numbers
+
+77%
+2007-04-27
+  AbstractView.reloadArtwork no longer looks for artwork in sub-folders generated by the subversion system (.svn folders)
+2007-04-26
+  image names are no longer case sensitive
+  all images are loaded at program start
+  fixed insert() and added delete() hardcoded functions
+  added displayed screen history system
+  home button added
+  BORDER_BUTTON structure type added
+  all standard buttons turned into BORDER_BUTTONs and the button images changed accordingly
+  character screen finished
+2007-04-25
+  character screen almost complete
+  a = FUNCTION b operator replaced with @b operator
+  integers in font descriptions are now interpreted as font sizes (in points), so "Arial;13" now describes the same font as "Arial;13pt"
+  date_day_of_month() and date_days_in_month() hardcoded functions added
+2007-04-24
+  bug fixed : a = LINE would save the structure type LINE in a instead of a new LINE, if the type name wasn't followed by a definition body
+  SCREEN_BACKGROUND structure type added
+  finished replacing colors and fonts with functions that fetch the current values for them, for easy modding
+  background images of the new character screen and the home screen replaced with drawn backgrounds

@@ -1,0 +1,263 @@
+localization english
+	// creates a border with the given values
+	ENGINE.createBorder = FUNCTION (bx, by, bwidth, bheight, bbackground_color, binverted, bcolor1 = BORDER_COLOR1, bcolor2 = BORDER_COLOR2)
+		return_value = BORDER
+			x        = bx
+			y        = by
+			width    = bwidth
+			height   = bheight
+			background_color = bbackground_color
+			inverted = binverted == true
+			if bcolor1 != UNDEFINED
+				top_color = bcolor1
+			if bcolor2 != UNDEFINED
+				bottom_color = bcolor2
+
+
+	ENGINE.createBorderButton = FUNCTION (_face, _x, _y)
+		return_value = BORDER_BUTTON
+			x = _x
+			y = _y
+		if value_type(_face) != "STRING"
+			idle = _face
+		else
+			idle = IMAGE
+				image = _face
+
+
+	ENGINE.createButton = FUNCTION (_face, _x, _y)
+		return_value = BUTTON
+			x = _x
+			y = _y
+		if value_type(_face) != "STRING"
+			idle = _face
+		else
+			idle = IMAGE
+				image = _face
+
+
+	ENGINE.createColor = FUNCTION (red, green, blue, alpha)
+		return_value = "#" + ( alpha!=UNDEFINED ? integerToText(alpha,16,2) : "" ) + integerToText(red,16,2) + integerToText(green,16,2) + integerToText(blue,16,2)
+
+
+	ENGINE.createImage = FUNCTION (_image, _x, _y, _h_align, _v_align)
+		return_value = IMAGE
+			image = _image
+			if _x != UNDEFINED
+				x = _x
+			if _y != UNDEFINED
+				y = _y
+			if _h_align != UNDEFINED
+				h_align = _h_align
+			if _v_align != UNDEFINED
+				v_align = _v_align
+
+
+	// the first argument must be a component or the text (as a string) that is to be displayed in the popup (or leave it out, if your popup doesn't have a content section)
+	// an optional second argument is the number of pixels used as padding everywhere
+	// an optional third component is the padding between content and the row of buttons. that padding is 50% bigger than the border padding by default
+	// all the remaining arguments are treated as buttons and lined up at the bottom of the popup
+	// component[0] will be the BORDER object that serves as the popup background, component[1] will be the _content, the buttons will sit in the slots from component[2] up
+	ENGINE.createPopup = FUNCTION (_content)
+		// turn the first argument into a TEXT i it is just a string
+		if _content != UNDEFINED && value_type(_content) != "STRUCTURE"
+			_content = createText(_content)
+		return_value = COMPONENT
+			x = CENTER
+			y = CENTER
+			LOCAL.padding = 10
+			LOCAL.i = 1
+			component = ARRAY
+				UNDEFINED    // this is where the background BORDER will sit
+				_content
+			if argument.size >= 1 && value_type(argument[1]) == "INTEGER"
+				i = 2
+				padding = argument[1]
+			LOCAL.content_to_buttons_padding = padding * 3 / 2
+			if argument.size >= 2 && value_type(argument[2]) == "INTEGER"
+				i = 3
+				content_to_buttons_padding = argument[1]
+			// add the buttons
+			LOCAL.w = padding     // this will be the padding on the right side of the last button
+			LOCAL.max_button_height = 0
+			for ( ; i < argument.size; i++)
+				argument[i].x = w + DEFAULT_BORDER_THICKNESS
+				w = w + padding + pixelwidth(argument[i])
+				max_button_height = max(max_button_height, pixelheight(argument[i]))
+				component[] = argument[i]
+			width = max(w, _content == UNDEFINED ? padding : pixelwidth(_content) + 2*padding) + 2 * DEFAULT_BORDER_THICKNESS    // the default border width
+			height = max_button_height + padding + ( max_button_height > 0 ? padding : 0 ) + ( _content != UNDEFINED ? pixelheight(_content)+padding : 0 ) + 2 * DEFAULT_BORDER_THICKNESS         // the brackets adds the padding needed when content and / or question buttons are present
+			// replace the padding between content and buttons with the special padding
+			if max_button_height > 0 && _content != UNDEFINED
+				height = height + content_to_buttons_padding - padding
+			// add the screen background
+			component[0] = BORDER
+				width = COMPONENT.width
+				height = COMPONENT.height
+				background_color = BACKGROUND_COLOR
+			// place the content
+			if argument[0] != UNDEFINED
+				argument[0].x = CENTER
+				argument[0].y = padding + DEFAULT_BORDER_THICKNESS
+				if argument[0].v_align != UNDEFINED
+					argument[0].v_align = UNDEFINED
+				if argument[0].h_align != UNDEFINED
+					argument[0].h_align = UNDEFINED
+			// place the buttons
+			LOCAL.button_y = height - DEFAULT_BORDER_THICKNESS - padding       // minus the height of the button
+			LOCAL.extra_pixels = width - w - 2 * DEFAULT_BORDER_THICKNESS
+			LOCAL.count = component.size - 2
+			for i = 2 to component.size-1    // component[0] is the SCREEN_BACKGROUND and component[1] is the content above the buttons
+				if component[i] != UNDEFINED
+					component[i].y = button_y - pixelheight(component[i])
+					if extra_pixels > 0
+						if count == 1
+							// there is only one button. center it
+							component[i].x = CENTER
+						else
+							component[i].x = component[i].x + ( (count-1)/2 + (i-2)*extra_pixels ) / (count-1)
+					if component[i].v_align != UNDEFINED
+						component[i].v_align = UNDEFINED
+					if component[i].h_align != UNDEFINED
+						component[i].h_align = UNDEFINED
+			// add the event blocker to keep input events from reaching the underlying screen
+			component[] = EVENT_BLOCKER
+
+
+	ENGINE.createRectangle = FUNCTION (_x, _y, _width, _height, _color)
+		return_value = RECTANGLE
+			x = _x
+			y = _y
+			width = _width
+			height = _height
+			color = _color
+
+
+	ENGINE.createScrollbar = FUNCTION (_x, _y, _width, _height, _vertical, _slider, _slider_max, _up_left_arrow, _down_right_arrow, _slider_stepping, _slider_position)
+		return_value = SCROLLBAR
+			x = _x
+			y = _y
+			width = _width
+			height = _height
+			vertical = _vertical != false
+			if _slider_stepping != UNDEFINED
+				slider_stepping = _slider_stepping
+			if _slider_max != UNDEFINED
+				slider_max = _slider_max
+			// add the slider and the optional arrow buttons
+			if value_type(_slider) == "STRING"      // it's the name of an image. we need to turn it into a button
+				_slider = BUTTON
+					idle = IMAGE
+						image = _slider
+			if vertical
+				_slider.x = CENTER
+				_slider.y = 0   // the y position is adjusted every time the SCROLLBAR is drawn. this way it can adjust to mods with different sized buttons
+			else
+				_slider.x = 0
+				_slider.y = CENTER  // the x position is adjusted every time the SCROLLBAR is drawn. this way it can adjust to mods with different sized buttons
+			slider = _slider
+			if _up_left_arrow != UNDEFINED
+				if value_type(_up_left_arrow) == "STRING"      // it's the name of an image. we need to turn it into a button
+					_up_left_arrow = BUTTON
+						idle = IMAGE
+							image = _up_left_arrow
+				if vertical
+					_up_left_arrow.x = CENTER
+					_up_left_arrow.y = 0
+				else
+					_up_left_arrow.x = 0
+					_up_left_arrow.y = CENTER
+				minus_button = _up_left_arrow
+			if _down_right_arrow != UNDEFINED
+				if value_type(_down_right_arrow) == "STRING"      // it's the name of an image. we need to turn it into a button
+					_down_right_arrow = BUTTON
+						idle = IMAGE
+							image = _down_right_arrow
+				if vertical
+					_down_right_arrow.x = CENTER
+					_down_right_arrow.y = BOTTOM
+				else
+					_down_right_arrow.x = RIGHT
+					_down_right_arrow.y = CENTER
+				plus_button = _down_right_arrow
+
+
+	ENGINE.createSelectedRowBackground = FUNCTION (_color, _padding_left=0, _padding_right=0, _padding_top=0, _padding_bottom=0)
+		return_value = SELECTED_ROW_BACKGROUND
+			color = _color
+			padding_left   = _padding_left
+			padding_right  = _padding_right
+			padding_top    = _padding_top
+			padding_bottom = _padding_bottom
+
+
+	// image_array must contain 1-3 entries : [0] the slider, [1] the up/left arrow, [2] the down/right arrow
+	ENGINE.createSimpleScrollbar = FUNCTION (vertical, color, boundingwidth = 100, boundingheight = 100)
+		if vertical
+			return_value = createScrollbar(RIGHT, 0, , boundingheight, true, "scroller_vertical_"+color+"0", 0, "scroller_up_"+color+"0", "scroller_down_"+color+"0")
+		else
+			return_value = createScrollbar(0, BOTTOM, boundingwidth, , false, "scroller_horizontal_"+color+"0", 0, "scroller_left_"+color+"0", "scroller_right_"+color+"0")
+
+
+	ENGINE.createTable = FUNCTION (pcolumns, pcell_height, pcell_width)
+		return_value = TABLE
+			columns = pcolumns
+			cell_height = pcell_height
+			if argument.size == 3
+				cell_width = pcell_width
+			else
+				cell_width = ARRAY
+				for i = 2 to argument.size-1
+					width = width + argument[i]  // the width of the table
+					cell_width[] = argument[i]
+				columns = cell_width.size
+
+
+	ENGINE.createTableText = FUNCTION (text, x, y, color, font, h_align, v_align, width, height)
+		return_value = createText(text, x, y, color, font, h_align, v_align, width, height)
+		if color == UNDEFINED
+			return_value.color = TABLE_TEXT_COLOR
+
+
+	// returns a new TEXT with the default settings as defined in the TEXT stored in TEXT_STYLE
+	ENGINE.createText = FUNCTION (text, x, y, color, font, h_align, v_align, width, height)
+		return_value = copy(TEXT_STYLE)
+		// for all settings which are not defined, the default settings will be used
+		if text != UNDEFINED
+			return_value.text = text
+		else
+			return_value.text = ""
+		if x != UNDEFINED
+			return_value.x = x
+		if y != UNDEFINED
+			return_value.y = y
+		if color != UNDEFINED
+			return_value.color = color
+		if font != UNDEFINED
+			return_value.font = font
+		if h_align != UNDEFINED
+			return_value.h_align = h_align
+		if v_align != UNDEFINED
+			return_value.v_align = v_align
+		if width != UNDEFINED
+			return_value.v_align = width
+		if height != UNDEFINED
+			return_value.v_align = height
+
+
+	// returns a new TEXT with the default settings as defined in the TEXT stored in TEXT_STYLE
+	ENGINE.createTextBold = FUNCTION (text, x, y, color, font)
+		return_value = copy(TEXT_STYLE_BOLD)
+		if text != UNDEFINED
+			return_value.text = text
+		else
+			return_value.text = ""
+		// for all settings which are not defined, the default settings will be used
+		if x != UNDEFINED
+			return_value.x = x
+		if y != UNDEFINED
+			return_value.y = y
+		if color != UNDEFINED
+			return_value.color = color
+		if font != UNDEFINED
+			return_value.font = font

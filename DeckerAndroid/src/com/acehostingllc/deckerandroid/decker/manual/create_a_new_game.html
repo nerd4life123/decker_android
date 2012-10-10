@@ -1,0 +1,473 @@
+<html>
+<head>
+<style type=text/css><!--
+     h1 { color:#bbbbff; margin-bottom:0pt; }
+     h2 { color:#bbbbff; margin-bottom:5pt; font-size:200%; }
+     h3 { color:#bbbbff; margin-bottom:5pt; font-size:150%; }
+     table table { text-align:center; }
+     table table table { border-width:1; border-style:solid; border-color:#777777; border-collapse:collapse; width:80%; background-color:#333333; color:#ddddbb; text-align:left; border-spacing:40px; border-collapse:collapse; }
+     table table table tr td { padding:10px; border-width:1; }
+     pre { margin-bottom:0px; }
+  //--></style>
+<title>How to create a new Game</title>
+</head>
+<body bgcolor=black text=#aaaaff link=#ffdd99 alink=#00ff00 vlink=#ffdd99>
+<table width=100% cellspacing=0 cellpadding=0 bgcolor=#000055>
+   <tr height=50><td align=middle bgcolor=#000055><h1>How to create a new game</h1>
+   </td></tr>
+   <tr><td>
+      <table width=100% cellspacing=0 cellpadding=8>
+         <tr><td bgcolor=black>
+            JDecker isn't just the game Decker, it's a game engine, and you can make your own games with it. This guide will take you through the steps, using Minesweeper as an example. At the end of each big section you'll find a link to a .zip file that contains the state the example game has reached, to help you when you are stuck. Just extract it to the jdecker folder
+            <p><font color=red>The sections below with olive background are script code. To make them display well in the browser, they use three spaces for block indentation. Usually a tab (as in tabulator key) is used instead, but both methods work. You can just copy/paste the code sections into a script, save it, and start the engine, to see what the code does</font>
+            <p><font color=yellow>Every game has its own folder in the rulesets folder.</font> Go there and create a folder called <font color=#00ff00>minesweeper</font>. In that folder, create a second folder called <font color=#00ff00>artwork</font>. All the scripts that make our game work will be in the minesweeper folder and all the artwork (images, sounds) will be in the artwork folder
+            <p>You can launch JDecker with some game immediately running with the command line options. In the jdecker folder, make a batch file with the following line
+            <p><font color=#00ff00>java -classpath . decker.Decker initial_ruleset=minesweeper</font>
+            <p>If you're using Windows, do this by making a text file called <font color=#00ff00>minesweeper.bat</font> and putting that line in the file.
+            <p>Most games need some images. Fetch the <a href="create_a_new_game_data/minesweeper_0_artwork.zip">minesweeper_0_artwork.zip</a> and unzip it to the rulesets/battleships/artwork folder. Now we're all set to create the scripts for the game
+            <p><a href="create_a_new_game_data/minesweeper_1_initial_setup.zip">minesweeper_1_initial_setup.zip</a>
+         </td></tr><tr><td height=50>
+            <h1>The Minesweeper rules</h1>
+         </td></tr><tr><td bgcolor=black>
+            You have a grid square tiles. At the beginning of the game each tile is covered. there may or may not be a bomb in it (never more than one). If there is no bomb but one or more adjacent tiles (diagonal counts) with bombs in them, the number of adjacent bombs is displayed on the tile when it is uncovered. The player uncovers tiles by left-clicking them. If the player uncovers a bomb the game is over. Whenever a tile with no bombs adjacent gets uncovered, all adjacent tiles get uncovered (they may also have no bombs adjacent, then the process is repeated for them). When all empty cells are uncovered, the game is won and the player's score is the time it took (lower is better)
+         </td></tr><tr><td height=50>
+            <h1>The basics of programming</h1>
+         </td></tr><tr><td bgcolor=black>
+            Each game written with the JDecker engine needs to define at least one screen. The "screen" is actually the area inside the game window (not including the title bar and border), but if we wanted to we could make it display fullscreen instead, so it gets the honor of getting called a "screen". Decker for example has a new character screen, a home menu screen, a character screen, a contracts screen, and so on
+            <p>Our game only needs one screen. Let's call it game_screen and define it in a script file called <font color=#00ff00>game_screen.txt</font>. Scripts are simple text files and use the .txt extension, without the .txt the engine won't find them. The whole game could be defined in a single script, but defining it in several script files with specific topics really helps find things again. When there are multiple scripts, they get executed in alphabetical order, with _ coming before A coming before 3 coming before a. This is important because <font color=yellow>you can only use things after they have been defined</font>. An example for this will come up soon : you can only set the initial screen for a ruleset (to the engine, our game is just a ruleset plus some artwork) after that screen has been defined
+            <p>So let's define our game_screen. To keep things simple, we'll use a background image that already has the map grid. It also has some frills. Good looking games attract more players and give them better entertainment. The background image has a size of <font color=red>???x???</font> pixels, same as the screen we're defining.
+            <p><font color=red>no background image yet</font>
+            <p><table><tr><td><pre>
+RULESET.game_screen = COMPONENT
+   title = "Minesweeper"
+   width = 300
+   height = 350
+   component = ARRAY
+      IMAGE
+         image = "background.gif"
+
+   on_mouse_up = FUNCTION (x, y, mouse_button)
+      debug("mouse button "+mouse_button+" has been pressed at coordinates ("+x+","+y+")")
+
+RULESET.initial_screen = game_screen</pre></td></tr></table>
+            <p>That's enough to create a screen with a background image, make it display immediately when the JDecker engine is started with our special command line (see above), and it even reacts to mouse clicks. You probably didn't understand most of what just happened there, so let's get some basics out of the way and then look at that script again afterwards
+			<p>Some lines start further right than others. This is important. Like most programming languages, the JDecker scripting language has blocks. A block is a group of lines which all start on the same column. Between them may be lines which start even further right, those do not end the block. Each block ends when a line that stands further left is encountered.
+			Blocks are lines of script code which belong together, and there is always a line that stands further left right before the block starts. The block is said to belong to the command on that line, be inside it, be enclosed in it, belong to it. The only exception to this rule is the whole script within a .txt file. It is a block too, but has no enclosing line. Here are a few examples. Each block has its own color, all lines which belong to the same block have the same color
+            <p><table><tr><td><pre><font color=red>RULESET.game_screen = COMPONENT
+   <font color=yellow>title = "Minesweeper"
+   width = 300
+   height = 350
+   component = ARRAY
+      <font color=#00ff00>IMAGE
+         <font color=cyan>image = "background.gif"</font>
+      IMAGE
+         <font color=orange>image = "whatever.gif"</font>
+      </font>
+   on_mouse_up = FUNCTION (x, y, mouse_button)
+      <font color=magenta>debug("mouse button "+mouse_button+" has been pressed at coordinates ("+x+","+y+")")</font>
+</font>
+RULESET.initial_screen = game_screen</font></pre></td></tr></table>
+			<p>The next concept you need to understand is the variable. Variables in programming languages are just like in maths. For example, x and y may be coordinates and have values. You can assign values to them, and use their values somewhere else. The JDecker scripting language lets you store ANYTHING in a variable. A text, a whole screen, even a whole game, a number, a structure, a function, and so on. In the code below, all variables are marked green. As you can see, _ is a normal letter. You can use numbers in variables too, but better not use them as the first letter. So t73, b_forward, c12 would all three be valid variable names. If a word doesn't work as a variable name, JDecker will tell you when you try to start a game
+            <p><table><tr><td><pre>RULESET.<font color=#00ff00>game_screen</font> = COMPONENT
+   <font color=#00ff00>title</font> = "Minesweeper"
+   <font color=#00ff00>width</font> = 300
+   <font color=#00ff00>height</font> = 350
+   <font color=#00ff00>component</font> = ARRAY
+      IMAGE
+         <font color=#00ff00>image</font> = "background.gif"
+      IMAGE
+         <font color=#00ff00>image</font> = "whatever.gif"
+
+   <font color=#00ff00>on_mouse_up</font> = FUNCTION (<font color=#00ff00>x</font>, <font color=#00ff00>y</font>, <font color=#00ff00>mouse_button</font>)
+      debug("mouse button "+<font color=#00ff00>mouse_button</font>+" has been pressed at coordinates ("+<font color=#00ff00>x</font>+","+<font color=#00ff00>y</font>+")")
+
+RULESET.<font color=#00ff00>initial_screen</font> = <font color=#00ff00>game_screen</font></pre></td></tr></table>
+			<p>Next up is the function concept. Functions work pretty much like in maths. They usually return a value and usually have parameters. You define a new function by writing <font color=white><nobr>sum = FUNCTION (var_a, var_b)</nobr></font> or something similar, followed by a block that defines the function. The FUNCTION command tells the scripting language that you are now going to define a function. You have to store your function in a variable so you can later use it. In maths you would write f(x) to call a function, and it looks exactly the same in the scripting language. If you want a function to return a value, you have to set the return_value variable within the function body. Here are a few examples
+            <p><table><tr><td><pre><font color=#00aa00>// this line is a comment. the JDecker engine ignores the double slashes // and everything behind them
+
+// let's define two functions, one adds its two parameters and returns the result ...</font>
+RULESET.add = FUNCTION (a, b)
+   return_value = a+b
+   <font color=#00aa00>// debug is one of the functions provided by the scripting language
+   // it prints its first parameter to the Java console</font>
+   debug(a+" + "+b+" = "+return_value)
+
+<font color=#00aa00>// ... the other does the same but multiplies them</font>
+RULESET.multiply = FUNCTION (a, b)
+   return_value = a * b
+   debug(a+" * "+b+" = "+return_value)
+
+<font color=#00aa00>// add and multiply are normal variables, but they now contain functions. Let's call those functions</font>
+add(5,10)
+multiply(2,3)
+<font color=#00aa00>// you can use pretty much anything as a function parameter, the return value of another function for example</font>
+multiply(2,add(1,1))
+debug( "2*(1+1) = " + multiply(2,add(1,1)) )
+<font color=#00aa00>// and of course we can store the return value of a function in a variable for later use, too</font>
+LOCAL.d = add(2, 3)
+LOCAL.g = multiply(3,3)
+debug("d = "+d+"  , g = "+g)
+d = add(d,g)
+debug("d = "+d+"  , g = "+g)</pre></td></tr></table>
+			<p>Structures are groups of variables. Some contain a fixed set of variables, others let you add new variables to them, depending on their type. Structure types are customarily written all uppercase, to tell tem apart from variables. You can define your own structure types. rulesets/_c_interface_structure_types.txt contains all the default structure types used in JDecker except for the types RULESET, GLOBAL and LOCAL. You create a new structure by assigning its type to a variable, followed by an optional block that assigns initial values to the variables of the new structure. In our screen definition we define two structures, a COMPONENT and an IMAGE structure. The yellow part is the IMAGE definition, the green and yellow sections together are the definition of the COMPONENT structure
+			<p>The . operator lets you access the member variables of a structure. There's three ways to do this. Usually you have some variable foo of  type WHATEVER that contains a variable bar, and you access bar by writing foo.bar. The second option is to use the name of a structure type instead of a variable that contains a structure, for example WHATEVER.bar. This only works if there is currently a structure of type WHATEVER on the stack. The stack is the thing that holds all data while you play a game. Use the command debug(getStack(),,1) to print the current stack to the Java console. There's always a structure of type ENGINE, RULESET, GLOBAL, and LOCAL on the stack, in that order. All of these structure types are expandable, meaning you can add new variables to structures of those types. So RULESET.game_screen = ... adds a variable called game_screen to the current RULESET structure on the stack, and gives it some value. Structures which are currently being created are also on the stack. The final way to access a variable from a structure is to just write its name. In that case the engine goes through the list of structures on the stack (starting from the end of the list, where the last added structures are) and fetches the first variable of that name it finds. If it doesn't find one it adds one to the bottom most structure on the stack that is currently being created and is expandable. If there's no such structure it adds it to the bottom most expandable structure. That's usually the structure of type LOCAL
+            <p><table><tr><td><pre>
+debug("the stack:")
+debug(getStack(),,1)    <font color=#00aa00>// let's see what's currently on the stack</font>
+debug()  <font color=#00aa00>// this prints just an empty line, really helps making the console output more readable</font>
+<font color=#00aa00>// adds the variable game_screen to the RULESET structure on the stack and gives it a value</font>
+RULESET.game_screen = <font color=#00ff00>COMPONENT
+   debug("the stack for the second time:")
+   debug(getStack(),,1)
+   debug()
+   <font color=#00aa00>// adds the variable title to the COMPONENT structure on the stack and gives it a value</font>
+   title = "Minesweeper"
+   width = 300
+   height = 350
+   component = ARRAY
+      <font color=yellow>IMAGE
+         image = "background.gif"
+         debug("the stack for the third time:")
+         debug(getStack(),,1)
+         debug()</font>
+   debug("the stack for the fourth time:")
+   debug(getStack(),,1)
+   debug()
+   <font color=#00aa00>// adds the variable on_mouse_up to the COMPONENT structure on the stack and gives it a value</font>
+   on_mouse_up = FUNCTION (x, y, mouse_button)
+      debug("mouse button "+mouse_button+" has been pressed at coordinates ("+x+","+y+")")
+</font>
+RULESET.initial_screen = game_screen
+debug("the stack for the fifth time:")
+debug(getStack(),,1)
+debug()</pre></td></tr></table>
+			<p>ARRAY is a special structure type. Instead of holding variables, it has a list of values and you can reach them through their index. The entries in an array always have the indices 0, 1, 2, 3, ... Actually, there's exactly one normal variable in each array, but you cannot assign a value to it. It's called size and does exactly what its name says. It holds the size of the array. Here's an example of an array definition and some code to show you how its entries and size can be used
+            <p><table><tr><td><pre>LOCAL.test_array = ARRAY
+   3    <font color=#00aa00>// array entry 0</font>
+   5    <font color=#00aa00>// array entry 1</font>
+   " and "    <font color=#00aa00>// array entry 2</font>
+   IMAGE    <font color=#00aa00>// array entry 3</font>
+      image = "background.gif"
+<font color=#00aa00>// this displays the whole array in the Java console</font>
+debug(test_array)
+debug("our array has " + test_array.size + " entries")
+<font color=#00aa00>// the [ ] brackets tell JDecker that we want a certain array entry, not the whole array, in this case entry 2</font>
+debug(test_array[2])
+<font color=#00aa00>// we can assign new values to array entries, and use there values for calculations or whatever we want</font>
+test_array[2] = test_array[0] + test_array[1] * 2
+debug(test_array[2])
+<font color=#00aa00>// we can even append new entries to the end of an existing array</font>
+test_array[] = "this is the first new entry"
+test_array[] = "this is the second new entry"
+debug(test_array)
+debug("our array has " + test_array.size + " entries")</pre></td></tr></table>
+            <p><font color=red>*******************************</font>
+            <p>Don't worry if you didn't understand most of the stuff above. It was the dry theory of programming and will make much more sense when you see more examples and try to use the knowledge yourself. The sections above left out a lot of details and in-debth explanations, but for now we have everything we need
+            <p>Let's look at the original code again, this time with comments
+            <p><table><tr><td><pre>
+<font color=#00aa00>// The RULESET defines the game and doesn't change while someone plays the game
+// the line below tells JDecker that we are adding a new variable called game_screen to
+// our RULESET or that we are assigning it a new value. In this case we are creating a new
+// structure with the type COMPONENT. All of this will be explained in detail below</font>
+RULESET.game_screen = COMPONENT
+   <font color=#00aa00>// every COMPONENT has the variables x, y, width and height. more variables can be added to it
+   // below we are giving new values to its width and height, and add a new variable called title
+   // the engine will interpret this as the title to be used for the window title bar</font>
+   title = "Minesweeper"
+   width = 300
+   height = 350
+   <font color=#00aa00>// many displayable structures have a variable called component
+   // it contains an array with all the things we display on our screen. An array is
+   // simply a list with entries which are automatically numbered 0, 1, 2, ...
+   // right now there is only the background image</font>
+   component = ARRAY
+      IMAGE
+         image = "background.gif"
+<font color=#00aa00>
+// this final line tells the JDecker engine that the first screen to be displayed when starting
+// Battleships should be the place_ships_screen. This only works AFTER the place_ships_screen
+// has been defined. Which we did above</font>
+RULESET.initial_screen = place_ships_screen</pre></td></tr></table>
+         <p><a href="create_a_new_game_data/minesweeper_2_first_screen.zip">minesweeper_2_first_screen.zip</a>
+      </td></tr><tr><td height=50>
+         <h1>Handle user input</h1>
+      </td></tr><tr><td bgcolor=black>
+         Let's make our game look cool. As soon as the player releases the left mouse button above a ship, it is picked up and moved along with the mouse. When the player releases the left mouse button the next time the ship is dropped back into the harbour, if it happened outside the player's grid. Each press of the any other mouse button turns the picked up ship by 90 degrees (and each key press, for all those poor people who can't afford a second mouse button)
+         While the picked up ship is completely above the map grid it will "snap" into the grid coordinates. Blocked map cells will be marked red. If the ship can be placed where it is displayed, the cells beneath it will be marked green. Whenever all ships are placed, a "Done" button will appear
+         <p>From now on omitted script sections will be replaced with a triple dot <font color=#ffff00>...</font>
+         <p>We could turn the seven ship images into buttons now, but we will get a lot of other mouse events, so to keep things simple we'll use a different approach. All mouse events on the whole screen will be handled in one place. Let's start with the release mouse button event. It is handled by the FUNCTION stored in on_mouse_up, if there is one. Any structure that is displayed may have these functions which receive user input. Key presses are sent to all displayed structures which have an on_key_pressed function. Likewise with the on_mouse_up function, but only structures where the mouse is inside receive the event
+
+            <p><table><tr><td><pre>
+RULESET.place_ships_screen = COMPONENT
+   title = "Battleships"
+   width = 500
+   height = 430
+   component = ARRAY
+      <font color=#ffff00>...</font>
+
+   <font color=#00aa00>// this function gets called whenever the player releases a mouse button anywhere inside our screen</font>
+   on_mouse_up = FUNCTION (x, y, mouse_button)</pre></td></tr></table>
+         <p>We have a function but it doesn't do anything yet. First we have to determine where the mouse was when the mouse button was released. We could type in the coordinates of the ship images again and compare the mouse coordinates with them. But then we would have entered each ship coordinate twice, and it will appear at least two more times on the screen where the game is actually played. So instead we will define a new structure type for our ships, called SHIP, and store all the relevant data for each ship in it
+            <p><table><tr><td><pre>
+structure SHIP
+   x
+   y
+   size
+
+RULESET.place_ships_screen = COMPONENT
+   <font color=#ffff00>...</font></pre></td></tr></table>
+            <p>Now we have a new structure type SHIP and can use that to make a list of the ships the player has
+            <p><table><tr><td><pre>
+structure SHIP
+   x
+   y
+   size
+
+
+RULESET.SHIP_LIST = ARRAY
+   SHIP
+      x = 53 + 24*0 - 3
+      y = 80
+      size = 5
+   SHIP
+      x = 53 + 24*1 - 1
+      y = 90
+      size = 4
+   SHIP
+      x = 53 + 24*2
+      y = 90
+      size = 4
+   SHIP
+      x = 53 + 24*3
+      y = 100
+      size = 3
+   SHIP
+      x = 53 + 24*4
+      y = 100
+      size = 3
+   SHIP
+      x = 53 + 24*5
+      y = 100
+      size = 3
+   SHIP
+      x = 53 + 24*6 - 3
+      y = 110
+      size = 2
+
+
+RULESET.place_ships_screen = COMPONENT
+   <font color=#ffff00>...</font></pre></td></tr></table>
+         <p>Now we can use a very neat feature most programming languages have : the for loop. It repeats the block inside a number of times, while letting a counter go up or down. Instead of adding code for each ship image to add it to the screen, we let the loop add seven images, one for each ship from our SHIP_LIST
+            <p><table><tr><td><pre>
+<font color=#ffff00>...</font>
+
+RULESET.place_ships_screen = COMPONENT
+   title = "Battleships"
+   width = 500
+   height = 430
+   component = ARRAY
+      IMAGE
+         image = "game_background.gif"
+
+      <font color=#00aa00>// these are the three lines of text on the screen, one TEXT structure for each</font>
+      TEXT
+         text = "Place your ships on the map"
+         color = "#ffffff"
+         font = "Arial;13pt;bold"
+         x = CENTER
+         y = 10
+      TEXT
+         text = "Pick them up and place them with the left mouse button"
+         color = "#ffff00"
+         font = "Arial;13pt"
+         x = CENTER
+         y = 30
+      TEXT
+         text = "Turn them with the right mouse button"
+         color = "#ffff00"
+         font = "Arial;13pt"
+         x = CENTER
+         y = 50
+
+   <font color=#00aa00>// these are the seven ship images
+   // this for loop uses the variable i to count the loop repetitions.
+   // The first time the code inside the loop gets executed,
+   // i has the value 0, on the last time it has the value 6</font>
+   for i = 0 to 6
+      <font color=#00aa00>// component[] adds a new entry at the end of the list stored in the variable "component"</font>
+      component[] = IMAGE
+         <font color=#00aa00>// the code right of the</font> image = <font color=#00aa00>will assemble the texts "ship5.gif", "ship4.gif", ...
+         // SHIP_LIST[i] takes the list stored in SHIP_LIST and fetches the entry i
+         // i is a variable and contains a number, as explained in a comment about the for loop
+         // SHIP_LIST[i].x fetches the variable x from the structure stored in SHIP_LIST[i]</font>
+         image = "ship" + SHIP_LIST[i].size + ".gif"
+         x = SHIP_LIST[i].x
+         y = SHIP_LIST[i].y
+
+
+   on_mouse_up = FUNCTION (x, y, mouse_button)</pre></td></tr></table>
+      <p>Let's go back to our on_mouse_up FUNCTION and check whether the mouse button has been released above one of the ship images. For that we use the for loop again, and we'll go through our list of images and check or each whether it was clicked. Each mouse button has an id, first button's id is 1, second mouse button's id is 2 and so on
+        <p><table><tr><td><pre>
+<font color=#ffff00>...</font>
+
+   on_mouse_up = FUNCTION (x, y, mouse_button)
+      <font color=#00aa00>// the if clause is another feature most programming languages have. If the expression
+      // after the "if" has the logical value "true", the block of commands inside the if clause gets executed.
+      // There may also be a second block that gets executed if the expression does not have the value "true"
+      // We only want to pick up and drop ships with the first mouse button, so this makes sure it's the right one</font>
+      if mouse_button == 1
+         <font color=#00aa00>// this creates a new variable called selected_ship. the "LOCAL." tells the engine
+         // that the variable will be discarded when our on_mouse_up function has been executed</font>
+         LOCAL.selected_ship
+         for i = 0 to 6
+            if x >= SHIP_LIST[i].x && x < SHIP_LIST[i].x + 20 && y >= SHIP_LIST[i].y && y < SHIP_LIST[i].y+SHIP_LIST[i].size*20
+               selected_ship = i
+         <font color=#00aa00>// we will remove this in the next step but for now it is neat to have some feedback
+         // that tells us whether our program works. debug() prints the value of the expression
+         // inside the brackets to the Java console</font>
+         debug("pick up ship : "+selected_ship)</pre></td></tr></table>
+            <p>Now we can test whether our program reacts correctly when we release the left mouse button. If everything went well, the function gets called whenever any mouse button is pressed, and if it was the first mouse button, a short text is printed in the Java console, telling us which ship has been selected
+			<p><a href="create_a_new_game_data/minesweeper_3_select_ship.zip">minesweeper_3_select_ship.zip</a>
+         </td></tr><tr><td height=50>
+               <h1>Pick up a ship</h1>
+		</td></tr><tr><td bgcolor=black>
+			The structures in the "component" array are displayed first to last. Since we want our picked up ship to always be on top, we'll add an extra IMAGE for it at the end of the array. Whenever we pick up a ship, we will make that extra IMAGE display the picked up ship, centered on the mouse tip, and make the old image of the ship invisible. When the ship is put down we revert this. To make this easier, we'll store the image of each ship along with its other data
+        <p><table><tr><td><pre>
+structure SHIP
+   x
+   y
+   size
+   image    <font color=#00aa00>// this is new. We'll store the IMAGE for each ship here, so we can use it more easily later</font>
+
+<font color=#ffff00>...</font>
+
+RULESET.place_ships_screen = COMPONENT
+
+   <font color=#ffff00>...</font>
+
+   <font color=#00aa00>// these are the seven ship images
+   // now also stored along with the other data for each ship</font>
+   for i = 0 to 6
+      SHIP_LIST[i].image = IMAGE
+         image = "ship" + SHIP_LIST[i].size + ".gif"
+         x = SHIP_LIST[i].x
+         y = SHIP_LIST[i].y
+      <font color=#00aa00>// we still have to add it to the commponent array to make it visible</font>
+      component[] = SHIP_LIST[i].image
+
+   <font color=#00aa00>// this is the image that will display the picked up ship</font>
+   mouse_ship = IMAGE
+   component[] = mouse_ship
+
+
+  <font color=#00aa00>// this function gets called whenever the player releases a mouse button anywhere inside our screen</font>
+   on_mouse_up = FUNCTION (x, y, mouse_button)
+      if mouse_button == 1
+         LOCAL.selected_ship
+         for i = 0 to 6
+            if x >= SHIP_LIST[i].x && x < SHIP_LIST[i].x + 20 && y >= SHIP_LIST[i].y && y < SHIP_LIST[i].y+20*SHIP_LIST[i].size
+               selected_ship = i
+         <font color=#00aa00>// if we have already picked up a ship, put it back</font>
+         if mouse_ship.id != UNDEFINED
+            LOCAL.s = SHIP_LIST[mouse_ship.id]
+            s.image.x = s.x
+            s.image.y = s.y
+            s.image.angle = 0   <font color=#00aa00>// all the ships in the harbour are displayed at the default angle</font>
+            s.image.image = mouse_ship.image
+            mouse_ship.image = UNDEFINED
+         <font color=#00aa00>// don't pick up a ship if we've just put one down</font>
+         if mouse_ship.id != UNDEFINED
+            selected_ship = UNDEFINED
+         <font color=#00aa00>// pick up the selected ship and center it on the mouse pointer</font>
+         if selected_ship != UNDEFINED
+            LOCAL.s = SHIP_LIST[selected_ship]
+            mouse_ship.x = x-10
+            mouse_ship.y = y - s.size*10
+            mouse_ship.angle = 0
+            mouse_ship.image = s.image.image
+            s.image.image = UNDEFINED
+         <font color=#00aa00>// remember which ship has been picked up, if any</font>
+         mouse_ship.id = selected_ship</pre></td></tr></table>
+            <p>Now let the image follow the mouse. Whenever the mouse moves inside the screen, the on_mouse_moved or the on_mouse_dragged function is called, so we'll use those
+            <p><table><tr><td><pre>
+<font color=#ffff00>...</font>
+
+RULESET.place_ships_screen = COMPONENT
+
+   <font color=#ffff00>...</font>
+
+   <font color=#00aa00>// this function will always get called when the mouse moves within the screen</font>
+   on_mouse_moved = FUNCTION (x, y)
+      if mouse_ship.id != UNDEFINED
+         <font color=#00aa00>// where the center of the ship sits relative to the mouse pointer
+         // depends on how it is currently turned</font>
+         if mouse_ship.angle == 0 || mouse_ship.angle == 180
+            mouse_ship.x = x - 10
+            mouse_ship.y = y - SHIP_LIST[mouse_ship.id].size*10
+         else
+            mouse_ship.x = x - SHIP_LIST[mouse_ship.id].size*10
+            mouse_ship.y = y - 10
+
+   <font color=#00aa00>// our program doesn't care whether a button was pressed, only whether the mouse has moved,
+   // so we can reuse the function we have defined for on_mouse_moved</font>
+   on_mouse_dragged = on_mouse_moved
+            </pre></td></tr></table>
+			<p>Only one thing left to do before we can start putting ships on the map : Ships cannot be turned yet. on_mouse_up must turn the picked up ship when any mouse button except the first has been released. The picked up ship should also be turned when some key is pressed
+            <p><table><tr><td><pre>
+<font color=#ffff00>...</font>
+
+RULESET.place_ships_screen = COMPONENT
+
+   <font color=#ffff00>...</font>
+
+   on_mouse_up = FUNCTION (x, y, mouse_button)
+      if mouse_button == 1
+         <font color=#00aa00>// copy/paste code from the old on_mouse_up function here, moved
+         // one tab right since its now inside the if clause</font>
+         <font color=#ffff00>...</font>
+      else
+         <font color=#00aa00>// some mouse button has been pressed, but it was not the first mouse button
+         // if a ship has been picked up before, turn it 90 degrees clockwise</font>
+         if mouse_ship.id != UNDEFINED
+            mouse_ship.angle = ( mouse_ship.angle + 90 ) % 360
+            if mouse_ship.angle == 0 || mouse_ship.angle == 180
+               mouse_ship.x = x - 10
+               mouse_ship.y = y - SHIP_LIST[mouse_ship.id].size*10
+            else
+               mouse_ship.x = x - SHIP_LIST[mouse_ship.id].size*10
+               mouse_ship.y = y - 10
+
+   <font color=#00aa00>// this function is new. it gets called whenever a key is pressed
+   // on this screen it turns the picked up ship 90 dgrees clockwise every time a key is pressed</font>
+   on_key_down = FUNCTION
+      if mouse_ship.id != UNDEFINED
+         LOCAL.s = SHIP_LIST[mouse_ship.id]
+         mouse_ship.angle = ( mouse_ship.angle + 90 ) % 360
+         if mouse_ship.angle == 0 || mouse_ship.angle == 180
+            mouse_ship.x = mouse_ship.x - 10 + s.size*10
+            mouse_ship.y = mouse_ship.y - s.size*10 + 10
+         else
+            mouse_ship.x = mouse_ship.x + 10 - s.size*10
+            mouse_ship.y = mouse_ship.y + s.size*10 - 10
+</pre></td></tr></table>
+			<p><a href="create_a_new_game_data/minesweeper_4_pick_up_ship.zip">minesweeper_4_pick_up_ship.zip</a>
+		</td></tr><tr><td height=50>
+			<h1>Place a ship on the map</h1>
+		</td></tr><tr><td bgcolor=black>
+			Well, it turns out that a good looking Battleships is a too complicated example for a tutorial. The next step adds another 150 lines of code and all it does is let the player put ships on the map and remove them. I have marked the beginning of each section in the code that is new or has changed with a // *** if anybody is interested. Often it's just a line or a few lines, but the addition to the on_mouse_up function is about 120 lines
+		</td></tr><tr><td height=50>
+			&nbsp;
+         </td></tr>
+      </table>
+   </td><td align=middle valign=top bgcolor=#000055 style="padding:10px;">
+<a href=http://sourceforge.net/projects/decker/>Decker Project Page</a>
+<br>
+<br><a href=http://www.caro.net/dsi/decker/>Official Decker Site</a>
+<br>
+<br><a href=http://www.the-underdogs.info/game.php?name=Decker>A Decker Review</a>
+<br>
+      </td>
+   </tr>
+</table>
+</body>
+</html>
