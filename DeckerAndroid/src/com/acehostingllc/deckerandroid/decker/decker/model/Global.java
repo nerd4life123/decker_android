@@ -1,4 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import android.view.View;
+import android.widget.RelativeLayout;
+
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.*;
 
@@ -28,20 +32,20 @@ public final class Global
 	public static int debug_level = 0;
 	public static Locale[] accepted_locales = { Locale.getDefault(), new Locale("en") };
 	public static Ruleset[] ruleset = new Ruleset[0];
-	private final static Ruleset engine = new Ruleset("");
-	private static Ruleset current_ruleset = new Ruleset("(dummy)");
+	private final static Ruleset engine = new Ruleset(null, "");
+	private static Ruleset current_ruleset = new Ruleset(null, "(dummy)");
 
 
 
 
-//	final static void addStructureType (final StructureDefinition sd)  { current_ruleset.addStructureType(sd); }
+	final static void addStructureType (final StructureDefinition sd)  { current_ruleset.addStructureType(sd); }
 public static Ruleset getCurrentRuleset ()  { return current_ruleset; }
 	public static Structure getEngineData ()  { return ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; }
 
 
 
 	/** sets things up for the game to launch and load the rulesets */
-	public final static void initializeDataModel ()  {
+	public final static void initializeDataModel (DeckerActivity activity)  {
 		// set up the data stack
 		engine.data.add("copyArraySection").set(new Function(F_COPY_ARRAY_SECTION, new String[]{ "from_array", "from_index", "to_array", "to_index", "entries" }));
 		engine.data.add("createSizedArray").set(new Function(F_CREATE_SIZED_ARRAY, new String[]{ "size" }));
@@ -71,10 +75,10 @@ public static Ruleset getCurrentRuleset ()  { return current_ruleset; }
 		engine.data.add("toLowerCase").set(new Function(F_TO_LOWER_CASE, new String[]{ "text" }));
 		engine.data.add("toUpperCase").set(new Function(F_TO_UPPER_CASE, new String[]{ "text" }));
 		engine.data.add("value_type").set(new Function(F_VALUE_TYPE, new String[]{ "value" }));
-		engine.data.add("displayed_screen").set(new Structure("VIEW", null)); // initialized with a dummy screen to avoid errors
+		engine.data.add("displayed_screen").set(new Structure(activity, "VIEW", null)); // initialized with a dummy screen to avoid errors
 		ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT] = engine.data;
 		ScriptNode.stack[ScriptNode.RULESET_STACK_SLOT] = current_ruleset.data;
-		ScriptNode.stack[ScriptNode.GLOBAL_STACK_SLOT] = new Structure("GLOBAL", null);
+		ScriptNode.stack[ScriptNode.GLOBAL_STACK_SLOT] = new Structure(activity, "GLOBAL", null);
 		ScriptNode.stack_size = ScriptNode.DEFAULT_GLOBAL_STACK_SIZE;
 		ScriptNode.global_stack_size = ScriptNode.DEFAULT_GLOBAL_STACK_SIZE;
 	}
@@ -101,7 +105,7 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 		}
 		setCurrentRuleset(r);
 // print all ENGINE level structure types
-// engine.data.get("STRUCTURE_TYPES").structure().print(System.err, "", true);
+ engine.data.get("STRUCTURE_TYPES").structure().print(System.err, "", true, 0);
 	}
 
 
@@ -131,7 +135,7 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 				if (dir_list[d].isDirectory() && !dir_list[d].getName().toLowerCase().endsWith(".svn")) {
 if (Global.debug_level > 0)
 System.out.println("loading Ruleset "+dir_list[d].getName());
-					final Ruleset r = new Ruleset(dir_list[d].getName());
+					final Ruleset r = new Ruleset(null, dir_list[d].getName());
 					final File[] script_list = dir_list[d].listFiles();
 					bubblesort(script_list);
 					// load the scripts from the ruleset
@@ -156,7 +160,7 @@ System.out.println("loading engine scripts");
 	}
 
 	public static void setCurrentRuleset (final Ruleset r)  {
-//final Ruleset old_ruleset = current_ruleset;
+		final Ruleset old_ruleset = current_ruleset;
 		current_ruleset = r;
 		ScriptNode.stack[ScriptNode.RULESET_STACK_SLOT] = r.data;
 // set the current screen or call ruleset.setup() or something
@@ -179,24 +183,19 @@ System.out.println("loading engine scripts");
 // view methods ***************************************************************************************************************************************
 
 
-	//private final static ViewWrapper view_wrapper = new ViewWrapper();
-	//private static Component displayed_component;
+	private static View displayed_component;
 
 
 
 	//final static void displayTickerMessage (final String message) { view_wrapper.getView().displayTickerMessage(message); }
 
 
-	//public static Component getDisplayedComponent ()  { return displayed_component; }
+	public static View getDisplayedComponent ()  { return displayed_component; }
 
 
 	public static Value getDisplayedScreen ()  { final Structure e = ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; return (e==null) ? null : e.get("displayed_screen"); }
 
-
-	//public final static ViewWrapper getViewWrapper ()  { return view_wrapper; }
-
-
-	//public static void setDisplayedComponent (final Component c)  { displayed_component = c; }
+	public static void setDisplayedComponent (final View c)  { displayed_component = c; }
 
 
 // private methods ************************************************************************************************************************************

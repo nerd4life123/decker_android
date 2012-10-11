@@ -2,6 +2,7 @@ package com.acehostingllc.deckerandroid.decker.decker.model;
 
 import java.io.*;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
 public final class Structure implements Comparable, ValueListener
@@ -10,7 +11,7 @@ public final class Structure implements Comparable, ValueListener
 	private ValueListener[] valueListener;
 	private int valueListenerCount;
 
-	public Structure (String type_name, ScriptNode caller)  {
+	public Structure (DeckerActivity activity, String type_name, ScriptNode caller)  {
 		if (type_name == null)
 			throw new RuntimeException("trying to use null as a structure type");
 		add("structure_type").set(type_name);
@@ -37,7 +38,7 @@ public final class Structure implements Comparable, ValueListener
 				}
 				// execute the STRUCTURE_TYPE's initializer function if there is one
 				if (initializer != null && initializer.type() == Value.FUNCTION)
-					FunctionCall.executeFunctionCall(initializer, null, new Structure[]{ this });
+					FunctionCall.executeFunctionCall(activity, initializer, null, new Structure[]{ this });
 			}
 		}
 	}
@@ -53,8 +54,8 @@ public final class Structure implements Comparable, ValueListener
 
 
 	/** creates a special LOCAL structure for a FunctionCall */
-	Structure (final Value[] arguments, final String[] argument_names)  {
-		this ("LOCAL", null);
+	Structure (DeckerActivity activity, final Value[] arguments, final String[] argument_names)  {
+		this (activity, "LOCAL", null);
 		add("argument").set(new ArrayWrapper(arguments));
 		add("return_value");
 //System.out.println("Structure : "+arguments.length+"   "+argument_names.length+"  "+((argument_names.length > 0)?argument_names[0]:""));

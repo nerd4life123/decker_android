@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 final class IncrementDecrementCommand extends ScriptNode
@@ -29,8 +31,8 @@ final class IncrementDecrementCommand extends ScriptNode
 	ScriptNode copy ()  { return new IncrementDecrementCommand(this); }
 
 
-	public Value execute ()  {
-		Value v = variable.execute();
+	public Value execute (DeckerActivity activity)  {
+		Value v = variable.execute(activity);
 		if (v.type() != Value.INTEGER && v.type() != Value.REAL)
 			throwException("integer or real required but "+v+" ("+v.typeName()+") found");
 		final Value ret = new Value();

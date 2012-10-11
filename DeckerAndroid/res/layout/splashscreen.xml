@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical" >
+    <ImageView
+	android:id="@+id/image"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:src="@drawable/splashscreen"
+    android:contentDescription="@string/decker_logo"/>
+    
+    <TextView android:id="@+id/version"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/version" />
+    
+    <Button android:id="@+id/newButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_game" />
+    
+    <Button android:id="@+id/loadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/load_game" />
+    
+    <Button android:id="@+id/exitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exit_game" />
+    
+    <TextView android:id="@+id/info"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/splash_info" />
+</LinearLayout>

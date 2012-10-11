@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 public class Expression extends ScriptNode
@@ -185,21 +187,21 @@ try {
 	Expression copy ()  { return new Expression(this); }
 
 
-	public Value execute ()  {
+	public Value execute (DeckerActivity activity)  {
 		final Value return_value = new Value();
 
 		// most operators use the value of their two operands. fetch them unless they won't be used
 		Value a = null, b = null;
 		if (operator != MEMBER) {
 			if(first_operand != null) {
-				a = first_operand.execute();
+				a = first_operand.execute(activity);
 				if (a == null && operator != CONDITIONAL_COLON)
 					a = new Value();
 			}
 			else if (operator != VARIABLE && operator != CONSTANT)
 				throwException("first operand missing");
 			if(second_operand != null && operator != AND && operator != OR && operator != CONDITIONAL_COLON && operator != CONDITIONAL) {
-				b = second_operand.execute();
+				b = second_operand.execute(activity);
 				if (b == null)
 					b = new Value();
 			}
@@ -209,11 +211,11 @@ try {
 
 		// now execute the operator
 		switch(operator) {
-			case VARIABLE :
+			/*case VARIABLE :
 					final Value r = getVar(operator_element.string());
 					final Value r2 = stack[RULESET_STACK_SLOT].get("STRUCTURE_TYPES").get(operator_element.string());
 					final Value r3 = stack[ENGINE_STACK_SLOT].get("STRUCTURE_TYPES").get(operator_element.string());
-				return ( r != r2 && r != r3 ) ? r : new Value().set(new Structure(operator_element.string(), this)); // return a new instance if the found value is a structure type
+				return ( r != r2 && r != r3 ) ? r : new Value().set(new Structure(operator_element.string(), this));*/ // return a new instance if the found value is a structure type
 			case CONSTANT :
 					return_value.set(operator_element);
 				break;
@@ -240,7 +242,7 @@ try {
 						}
 					}
 					if (a == null)
-						a = first_operand.execute();
+						a = first_operand.execute(activity);
 					if (a == null)
 						throwException(first_operand+" does not exist");
 					if(a.type() != Value.STRUCTURE) {
@@ -363,7 +365,7 @@ try {
 					if(at != Value.BOOLEAN || !a.bool())
 						return_value.set(false);
 					else {
-						b = second_operand.execute();
+						b = second_operand.execute(activity);
 						return_value.set(b.type() == Value.BOOLEAN && b.bool());
 					}
 				break;
@@ -371,14 +373,14 @@ try {
 					if(at == Value.BOOLEAN && a.bool())
 						return_value.set(true);
 					else {
-						b = second_operand.execute();
+						b = second_operand.execute(activity);
 						return_value.set(b.type() == Value.BOOLEAN && b.bool());
 					}
 				break;
 			case CONDITIONAL_COLON : // the : of the a?b:c operator. it's first operand is an expression with the ? operator that belongs to this :
-				return (a!=null) ? a : second_operand.execute();
+				return (a!=null) ? a : second_operand.execute(activity);
 			case CONDITIONAL : // the ? of the a?b:c operator. it's first operand is an expression with ? operator
-				return a.equals(true) ? second_operand.execute() : null; // returning null will lead to an error if the parent operator is not the : operator
+				return a.equals(true) ? second_operand.execute(activity) : null; // returning null will lead to an error if the parent operator is not the : operator
 		}
 
 		return return_value;

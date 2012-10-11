@@ -4,5 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="decker_logo">Decker Logo</string>
+    <string name="version">Android Version 0.01</string>
+    <string name="splash_info">HERE IS SOME RANDOM SPLASH INFO</string>
+    <string name="new_game">New Game</string>
+    <string name="load_game">Load Game</string>
+    <string name="exit_game">Exit</string>
 
 </resources>

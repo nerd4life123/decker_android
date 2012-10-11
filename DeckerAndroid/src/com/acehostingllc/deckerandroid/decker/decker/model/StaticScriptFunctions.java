@@ -1,4 +1,5 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.view.*;
 
 import java.io.*;
@@ -499,4 +500,10 @@ final class StaticScriptFunctions extends ScriptNode
 
 
 	boolean print (final PrintStream out, final String indentation, final boolean line_start, final int depth)  { throw new RuntimeException("should never get called"); }
+
+
+	@Override
+	public Value execute(DeckerActivity activity) {
+		throw new RuntimeException("should never get called");
+	}
 }

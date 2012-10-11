@@ -1,17 +1,19 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.util.Locale;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.StringTreeMap;
 
 
 final class Script
 {
 	private String filename;
+	private DeckerActivity activity;
 	private final StringTreeMap localizations = new StringTreeMap(true); // <- the (true) parameter means the language names are treated case-insensitive when fetching localizations
 
 
 
-	Script (final String _filename)  { filename = _filename; }
+	Script (DeckerActivity activity, final String _filename)  { filename = _filename; }
 
 
 	void execute (final Locale[] accepted_localizations, final String default_localization)  {
@@ -24,9 +26,9 @@ final class Script
 				// we need a LOCAL object on the stack for the script execution
 if (Global.debug_level > 0)
 System.out.println("   running script from file : "+filename);
-				final Structure local = new Structure("LOCAL", null);
+				final Structure local = new Structure(activity, "LOCAL", null);
 				ScriptNode.addStackItem(local);
-				((Block)ls).execute();
+				((Block)ls).execute(activity);
 				ScriptNode.removeStackItem(local, (Block)ls);
 				return;
 			}

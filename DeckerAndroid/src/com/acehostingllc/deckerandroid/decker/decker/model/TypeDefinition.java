@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 final class TypeDefinition extends ScriptNode
@@ -8,7 +10,7 @@ final class TypeDefinition extends ScriptNode
 	private String structure_type;
 	private String extends_structure_type;
 	private Object[] definition_body;
-
+	private DeckerActivity activity; 
 
 	/** _structure_type is either a String or, if this is a copy() command, an Expression */
 	TypeDefinition (final String _structure_type, final String _extends_structure_type, final String _script_name, final int _script_line, final int _script_column)  {
@@ -38,9 +40,9 @@ final class TypeDefinition extends ScriptNode
 	public TypeDefinition copy ()  { return new TypeDefinition(this); }
 
 
-	public Value execute () {
+	public Value execute (DeckerActivity activity) {
 		// create the new structure
-		final Structure k = (extends_structure_type!=null) ? new Structure(extends_structure_type, null) : new Structure("", null); // using "" will keep the Structure that holds the new structure type definition from instantiating the old type definition (if there is one for this type)
+		final Structure k = (extends_structure_type!=null) ? new Structure(activity, extends_structure_type, null) : new Structure(activity, "", null); // using "" will keep the Structure that holds the new structure type definition from instantiating the old type definition (if there is one for this type)
 		k.get("structure_type").set(structure_type);
 		// execute the definition body if there is one
 		if (definition_body != null) {
@@ -49,7 +51,7 @@ final class TypeDefinition extends ScriptNode
 				if (definition_body[i] instanceof String)
 					k.add((String)definition_body[i]);
 				else
-					((AssignmentCommand)definition_body[i]).execute();
+					((AssignmentCommand)definition_body[i]).execute(activity);
 			}
 			removeStackItem(k, this);
 		}

@@ -1,6 +1,7 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
 
@@ -29,7 +30,7 @@ final class AssignmentCommand extends ScriptNode
 	ScriptNode copy ()  { return new AssignmentCommand(this); }
 
 
-	static Object[] fetchOrCreateVariable (final Expression e, final boolean create_in_LOCAL, final ScriptNode caller, final boolean its_a_type_definition) {
+	static Object[] fetchOrCreateVariable (DeckerActivity activity, final Expression e, final boolean create_in_LOCAL, final ScriptNode caller, final boolean its_a_type_definition) {
 		final int voperator = e.getOperator();
 		// it's just a variable name
 		if (voperator == Expression.VARIABLE) {
@@ -79,7 +80,7 @@ final class AssignmentCommand extends ScriptNode
 			Value structure_value = null;
 			Structure structure = null;
 			if (first_operand.getOperator() != Expression.VARIABLE)
-				structure_value = e.getFirstOperand().execute();
+				structure_value = e.getFirstOperand().execute(activity);
 			else {
 				final String structurename = e.getFirstOperand().toString();
 				for (int i = stack_size; --i >= 0; ) {
@@ -105,12 +106,12 @@ final class AssignmentCommand extends ScriptNode
 		}
 		else if (voperator == Expression.ARRAY_INDEX) {
 			// fetch the array
-			final Value varray = e.getFirstOperand().execute();
+			final Value varray = e.getFirstOperand().execute(activity);
 			if (varray.type() != Value.ARRAY)
 				caller.throwException("failed to fetch assigned variable. "+e.getFirstOperand().toString()+" gives a "+varray.typeName()+" instead of an array");
 			final ArrayWrapper array = varray.arrayWrapper();
 			// make sure it's a valid array index
-			final Value vindex = e.getSecondOperand().execute();
+			final Value vindex = e.getSecondOperand().execute(activity);
 			final int vit = vindex.type();
 			int index = Integer.MIN_VALUE;
 			if (vit == Value.INTEGER)
@@ -155,17 +156,17 @@ final class AssignmentCommand extends ScriptNode
 	}
 
 
-	public Value execute ()  {
+	public Value execute (DeckerActivity activity)  {
 		Object[] data;
 //		Value old_value = variable.execute();
 		// determine the new value of the variable
 		Value assigned_value = null;
 		if (value_definition != null && value_definition instanceof Expression)
-			assigned_value = ((Expression)value_definition).execute();
+			assigned_value = ((Expression)value_definition).execute(activity);
 		// fetch the variable *****************************************************************************************************************************
 		Value new_value = null;
 // check whether we're replacing a variable with a global value
-		data = fetchOrCreateVariable(variable, false, this, its_a_type_definition);
+		data = fetchOrCreateVariable(activity, variable, false, this, its_a_type_definition);
 		new_value = (Value) data[2];
 		// then assign the value to the variable *************************************************************************************************************
 		if (value_definition instanceof Function) {

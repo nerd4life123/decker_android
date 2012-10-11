@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 /** with this command you define constants (one word strings which can be used without quotes in scripts) */
@@ -27,11 +29,11 @@ final class TypeDefinitionCommand extends ScriptNode
 	public ScriptNode copy()  { return new TypeDefinitionCommand(this); }
 
 
-	public Value execute ()  {
+	public Value execute (DeckerActivity activity)  {
 		final TypeDefinition[] t = type;
 		final int count = t.length;
 		for (int i = 0; i < count; i++)
-			t[i].execute();
+			t[i].execute(activity);
 		return null;
 	}
 

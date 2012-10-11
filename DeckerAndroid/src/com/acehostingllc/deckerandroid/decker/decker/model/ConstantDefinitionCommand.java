@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 /** with this command you define constants (one word strings which can be used without quotes in scripts) */
@@ -26,7 +28,7 @@ final class ConstantDefinitionCommand extends ScriptNode
 	public ScriptNode copy()  { return new ConstantDefinitionCommand(this); }
 
 
-	public Value execute ()  {
+	public Value execute (DeckerActivity activity)  {
 		final Structure s = stack[RULESET_STACK_SLOT].get("CONSTANTS").structure();
 		final String[] c = constant;
 		for (int i = c.length; --i >= 0; )

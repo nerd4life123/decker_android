@@ -6,12 +6,12 @@ import com.acehostingllc.deckerandroid.decker.decker.util.BMPReader;
 
 
 
-public class SplashScreen extends View
+public class SplashScreen
 {
-	private Image splashscreen;
-
+	//private Image splashscreen;
+	/*
 	public SplashScreen ()  {
-		super("loading Decker");
+		/*super("loading Decker");
 		splashscreen = loadImage("splashscreen", "rulesets"+File.separator, 0x00ff00ff);
 		if (splashscreen != null) {
 			setUndecorated(true);
@@ -23,7 +23,7 @@ public class SplashScreen extends View
 		setVisible(true);
 	}
 
-
+/*
 	private Image loadImage(final String name, final String path, final int transparent_color)
 	{
 		// if there is no suffix, try finding a .png, .gif, .bmp, .jpg or .jpeg
@@ -63,4 +63,5 @@ public class SplashScreen extends View
 		if (splashscreen != null)
 			g.drawImage(splashscreen, 0, 0, this);
 	}
+	*/
 }

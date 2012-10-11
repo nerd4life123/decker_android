@@ -2,12 +2,15 @@ package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.*;
 import java.util.Locale;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 final class ScriptParser extends ScriptReader
 {
 	private String script_name;
 	private Ruleset ruleset;
+	private DeckerActivity activity;
 
 	private int last_expression_line = -1; // the last line of the expression that has last been parsed
 	private int block_column; // the column in which the lines of the last parsed block started. -1 if the block was empty
@@ -15,7 +18,7 @@ final class ScriptParser extends ScriptReader
 
 
 	static Script parse (final String file_name, final Reader in, final Ruleset ruleset)  {
-		return new ScriptParser(file_name, in, ruleset).parseScript();
+		return new ScriptParser(null, file_name, in, ruleset).parseScript(null);
 	}
 
 
@@ -31,13 +34,14 @@ final class ScriptParser extends ScriptReader
 
 	static Expression parseExpression (final String expression)  {
 		// the } is needed to let the parser realize the expression has ended without throwing an end of stream exception
-		final ScriptParser msr = new ScriptParser(expression, new StringReader(expression+"}"), null);
+		final ScriptParser msr = new ScriptParser(null, expression, new StringReader(expression+"}"), null);
 		return msr.parseExpression(msr.getLine(),msr.getColumn(), true);
 	}
 
 
-	private ScriptParser (final String _script_name, final Reader in, final Ruleset _ruleset)  {
+	private ScriptParser (DeckerActivity activity, final String _script_name, final Reader in, final Ruleset _ruleset)  {
 		super(_script_name, in);
+		this.activity = activity;
 		script_name = _script_name;
 		ruleset = _ruleset;
 	}
@@ -776,8 +780,8 @@ final class ScriptParser extends ScriptReader
 	}
 
 
-	private Script parseScript ()  {
-		final Script ret = new Script(script_name);
+	private Script parseScript (DeckerActivity activity)  {
+		final Script ret = new Script(activity, script_name);
 		// parse the script name
 if (Global.debug_level > 0)
 System.out.println("  "+script_name);
@@ -825,7 +829,7 @@ System.out.println("  "+script_name);
 		String s;
 		// check whether it's the copy(strucure) command
 		if (!structure_type.equals("copy"))
-			sd = new StructureDefinition(structure_type, script_name, line, column, expression_stack, expression_stack_top);
+			sd = new StructureDefinition(activity, structure_type, script_name, line, column, expression_stack, expression_stack_top);
 		else {
 			s = readElement();
 			if (s == null || !s.equals("(") || getLine() != line)
@@ -837,7 +841,7 @@ System.out.println("  "+script_name);
 				throwException("closing bracket missing of the copy() command at line "+line+", column "+column);
 			if (getColumn() <= command_column)
 				throwException("closing bracket of the copy() command at line "+line+", column "+column+" must sit right of column "+command_column);
-			sd = new StructureDefinition(original_structure, script_name, line, column, expression_stack, expression_stack_top);
+			sd = new StructureDefinition(null, original_structure, script_name, line, column, expression_stack, expression_stack_top);
 		}
 		// check whether the structure definition has a body
 		s = previewElement();

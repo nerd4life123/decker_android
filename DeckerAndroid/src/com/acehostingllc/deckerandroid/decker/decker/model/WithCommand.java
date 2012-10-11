@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 
 /** this class implements the script command "with" */
@@ -26,8 +28,8 @@ final class WithCommand extends Block
 	public ScriptNode copy ()  { return new WithCommand(this); }
 
 
-	public Value execute ()  {
-		final Value v = variable_expression.execute();
+	public Value execute (DeckerActivity activity)  {
+		final Value v = variable_expression.execute(activity);
 		if (v.type() == Value.STRUCTURE)
 			addStackItem(v.structure());
 		else {
@@ -37,7 +39,7 @@ final class WithCommand extends Block
 				System.err.println();
 			}
 		}
-		final Value ret = super.execute();
+		final Value ret = super.execute(activity);
 		if (v.type() == Value.STRUCTURE)
 			removeStackItem(v.structure());
 		return ret;

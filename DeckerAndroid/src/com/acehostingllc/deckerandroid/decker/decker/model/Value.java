@@ -1,5 +1,7 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
+
 
 /** A Value holds a value that is generated during script execution or held in a variable.
 *   Value objects can hold any type of value. */
