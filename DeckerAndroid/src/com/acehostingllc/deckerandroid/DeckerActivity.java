@@ -8,14 +8,18 @@ import com.acehostingllc.deckerandroid.decker.decker.model.ScriptNode;
 import com.acehostingllc.deckerandroid.decker.decker.model.Value;
 import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 import com.acehostingllc.deckerandroid.decker.decker.view.SplashScreen;
+
+import com.acehostingllc.deckerandroid.R;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 
 public class DeckerActivity extends Activity {
-	String[] args;
+	String[] args = new String[0];
     @Override
     public void onCreate(Bundle savedInstanceState) {
+		Log.w("DeckerActivity", "test1");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
        
@@ -38,9 +42,12 @@ public class DeckerActivity extends Activity {
      		int splashscreen = R.layout.splashscreen;
      		
      		this.setContentView(splashscreen);
-     		
+
+    		Log.w("DeckerActivity", "initializeDataModel");
      		Global.initializeDataModel(this);
-     		Global.loadRulesets();
+     		Log.w("DeckerActivity", "loadRulesets");
+     		Global.loadRulesets(this.getAssets());
+     		Log.w("DeckerActivity", "initializeRulesets");
      		// center the game window on the screen by default
      		//Global.getEngineData().add("display_center_x").set(ss.getToolkit().getScreenSize().width / 2);
      		//Global.getEngineData().add("display_center_y").set(ss.getToolkit().getScreenSize().height / 2);

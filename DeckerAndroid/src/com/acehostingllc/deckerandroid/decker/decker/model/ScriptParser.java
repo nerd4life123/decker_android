@@ -17,33 +17,33 @@ final class ScriptParser extends ScriptReader
 	private boolean inside_loop = false;
 
 
-	static Script parse (final String file_name, final Reader in, final Ruleset ruleset)  {
-		return new ScriptParser(null, file_name, in, ruleset).parseScript(null);
-	}
-
-
-	static Script parse (final File file, final Ruleset ruleset)  {
-		try{
-			return parse(file.getName(), new FileReader(file), ruleset);
-		} catch(IOException ex) {
-			System.err.println("File "+file.getName()+" not found");
-			throw new RuntimeException("File "+file.getName()+" not found");
-		}
-	}
-
-
-	static Expression parseExpression (final String expression)  {
-		// the } is needed to let the parser realize the expression has ended without throwing an end of stream exception
-		final ScriptParser msr = new ScriptParser(null, expression, new StringReader(expression+"}"), null);
-		return msr.parseExpression(msr.getLine(),msr.getColumn(), true);
-	}
-
-
 	private ScriptParser (DeckerActivity activity, final String _script_name, final Reader in, final Ruleset _ruleset)  {
 		super(_script_name, in);
 		this.activity = activity;
 		script_name = _script_name;
 		ruleset = _ruleset;
+	}
+
+
+	static Script parse (final String file_name, final Reader in, final Ruleset ruleset)  {
+		return new ScriptParser(null, file_name, in, ruleset).parseScript(null);
+	}
+
+/*
+	static Script parse (final String file, final Ruleset ruleset)  {
+		try{
+			return parse(file, new FileReader(file), ruleset);
+		} catch(IOException ex) {
+			System.err.println("File "+file.getName()+" not found");
+			throw new RuntimeException("File "+file.getName()+" not found");
+		}
+	}
+*/
+
+	static Expression parseExpression (final String expression)  {
+		// the } is needed to let the parser realize the expression has ended without throwing an end of stream exception
+		final ScriptParser msr = new ScriptParser(null, expression, new StringReader(expression+"}"), null);
+		return msr.parseExpression(msr.getLine(),msr.getColumn(), true);
 	}
 
 

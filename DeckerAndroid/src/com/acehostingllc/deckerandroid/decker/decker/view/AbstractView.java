@@ -1,16 +1,10 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
-import java.io.*;
-
 import android.graphics.Color;
-import android.renderscript.Font;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.acehostingllc.deckerandroid.decker.decker.util.StringTreeMap;
-
-import com.acehostingllc.deckerandroid.decker.decker.model.*;
-import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
 
 /** override drawContent() and the event messages relevant to your View class */

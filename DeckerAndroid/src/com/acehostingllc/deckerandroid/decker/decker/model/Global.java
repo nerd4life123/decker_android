@@ -1,4 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import android.content.res.AssetManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -36,10 +38,8 @@ public final class Global
 	private static Ruleset current_ruleset = new Ruleset(null, "(dummy)");
 
 
-
-
 	final static void addStructureType (final StructureDefinition sd)  { current_ruleset.addStructureType(sd); }
-public static Ruleset getCurrentRuleset ()  { return current_ruleset; }
+	public static Ruleset getCurrentRuleset ()  { return current_ruleset; }
 	public static Structure getEngineData ()  { return ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; }
 
 
@@ -124,39 +124,70 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 	/**
 	 * Loads the scripts from the rulesets subfolder of the folder the jar sits in
 	 */
-	public static void loadRulesets ()  {
-		File rulesetsFolder = new File("rulesets");
-		if (!rulesetsFolder.exists() || !rulesetsFolder.isDirectory()) {
-			throw new RuntimeException("Can not find 'rulesets' directory");
+	public static void loadRulesets (AssetManager mgr)  {
+		String rulesetsFolderName = "rulesets";
+		String[] dir_list;
+		try {
+			dir_list = mgr.list(rulesetsFolderName);
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+			return;
 		}
-			final File[] dir_list = rulesetsFolder.listFiles();
-			bubblesort(dir_list);
-			for (int d = 0; d < dir_list.length; d++) {
-				if (dir_list[d].isDirectory() && !dir_list[d].getName().toLowerCase().endsWith(".svn")) {
-if (Global.debug_level > 0)
-System.out.println("loading Ruleset "+dir_list[d].getName());
-					final Ruleset r = new Ruleset(null, dir_list[d].getName());
-					final File[] script_list = dir_list[d].listFiles();
-					bubblesort(script_list);
-					// load the scripts from the ruleset
-					boolean has_scripts = false;
-					for (int i = 0; i < script_list.length; i++)
-						if (script_list[i].getName().toLowerCase().endsWith(".txt")) {
-							r.addScript(ScriptParser.parse(script_list[i], r));
-							has_scripts = true;
-						}
-					// if the ruleset has at least one script, add it to the list of available rulesets
-					if (has_scripts)
-						ruleset = (Ruleset[]) ArrayModifier.addElement(ruleset, new Ruleset[ruleset.length+1], r);
+		bubblesort(dir_list);
+		for (int d = 0; d < dir_list.length; d++) {
+			if (Global.debug_level > 0)
+				System.out.println("loading Ruleset "+dir_list[d]);
+			final Ruleset r = new Ruleset(null, dir_list[d]);
+			
+			String[] script_list;
+			try {
+				script_list = mgr.list(rulesetsFolderName + "/" + dir_list[d]);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return;
+			}
+			Log.w("DeckerActivity", "test");
+			bubblesort(script_list);
+			// load the scripts from the ruleset
+			boolean has_scripts = false;
+			for (int i = 0; i < script_list.length; i++)
+				if (script_list[i].toLowerCase().endsWith(".txt"))
+				{
+					try {
+						r.addScript(ScriptParser.parse(script_list[i],
+								new InputStreamReader(mgr.open(rulesetsFolderName + "/" + dir_list[d] + "/" + script_list[i])),
+								r));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					has_scripts = true;
+				}
+				// if the ruleset has at least one script, add it to the list of available rulesets
+				if (has_scripts)
+					ruleset = (Ruleset[]) ArrayModifier.addElement(ruleset, new Ruleset[ruleset.length+1], r);
+		
+		}
+		
+			// add the global scripts which sit directly in the rulesets folder to the engine ruleset
+		if (Global.debug_level > 0)
+			System.out.println("loading engine scripts");
+		for (int i = 0; i < dir_list.length; i++)
+		{
+			if (dir_list[i].toLowerCase().endsWith(".txt"))
+			{
+				try {
+					engine.addScript(ScriptParser.parse(dir_list[i],
+							new InputStreamReader(mgr.open(rulesetsFolderName + "/" + dir_list[i])),
+							engine));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-
-			// add the global scripts which sit directly in the rulesets folder to the engine ruleset
-if (Global.debug_level > 0)
-System.out.println("loading engine scripts");
-			for (int i = 0; i < dir_list.length; i++)
-				if (dir_list[i].getName().toLowerCase().endsWith(".txt"))
-					engine.addScript(ScriptParser.parse(dir_list[i], engine));
+		}
 	}
 
 	public static void setCurrentRuleset (final Ruleset r)  {
@@ -195,19 +226,23 @@ System.out.println("loading engine scripts");
 
 	public static Value getDisplayedScreen ()  { final Structure e = ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; return (e==null) ? null : e.get("displayed_screen"); }
 
-	public static void setDisplayedComponent (final View c)  { displayed_component = c; }
+	public static void setDisplayedComponent (DeckerActivity activity, final View c) 
+	{
+		activity.setContentView(c);
+		displayed_component = c;
+	}
 
 
 // private methods ************************************************************************************************************************************
 
 
-	private static void bubblesort (final File[] list)  {
+	private static void bubblesort (final String[] list)  {
 		boolean list_modified = true;
 		for(int i = 0; i+1 < list.length && list_modified; i++) {
 			list_modified = false;
 			for(int j = list.length-2; j >= i; j--) {
-				if(list[j].getName().toLowerCase().compareTo(list[j+1].getName().toLowerCase()) > 0) {
-					File x = list[j];
+				if(list[j].toLowerCase().compareTo(list[j+1].toLowerCase()) > 0) {
+					String x = list[j];
 					list[j] = list[j+1];
 					list[j+1] = x;
 					list_modified = true;

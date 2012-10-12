@@ -1,57 +1,63 @@
-package decker.view;
-import java.awt.*;
-import java.awt.event.*;
-import decker.model.*;
-import decker.util.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
+import com.acehostingllc.deckerandroid.decker.decker.util.*;
+import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 
 
-public final class ViewWrapper extends Canvas implements ComponentListener
+public final class ViewWrapper extends RelativeLayout
 {
-// methods other parts of this program will call ************************************************************************
-
-
-	public ViewWrapper () {
-		enableEvents(AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
-		// add a dummy AbstractView to avoid NullPointerExceptions
-		view = new AbstractView();
-		if (Global.getDisplayedComponent() instanceof Frame)
-			Global.getDisplayedComponent().addComponentListener(this);
+	public ViewWrapper(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
 	}
 
 
-	protected AWTEvent getLastEvent () { return lastEvent; }
-	public AbstractView getView () { return view; }
-
-
-	public void setView (final AbstractView view) {
-		if (view == null)
-			throw new RuntimeException("component must not be null");
-		if (view == this.view)
-			return;
-		this.view = view;
-		repaint();
-	}
-
-
-// methods and variables which implement the class functionality **********************************************************************
-
-
-	private Image buffer;
+	// methods other parts of this program will call ************************************************************************
+	private ImageView buffer;
 	private boolean painting;
 	private AbstractView view;
-	private AWTEvent lastEvent;
+	//private AWTEvent lastEvent;
 	private final Queue events = new Queue();
 	private int mouse_x, mouse_y;
 	private int frame_x, frame_y;
 	private int old_width = -1, old_height = -1;
 	private String oldScreenTitle = "";
 	private Value oldDisplayedScreen = new Value();
+	/*
+	public ViewWrapper () {
+		view = new AbstractView();
+		if (Global.getDisplayedComponent() instanceof Frame)
+			Global.getDisplayedComponent().addComponentListener(this);
+	}
+	*/
+
+	//protected AWTEvent getLastEvent () { return lastEvent; }
+	public AbstractView getView () { return view; }
 
 
-	public void componentHidden (ComponentEvent e)  {}
+	public void setView (final AbstractView view) {
+		if (view == null)
+			throw new RuntimeException("view must not be null");
+		if (view == this.view)
+			return;
+		this.view = view;
+		//repaint();
+	}
 
 
+// methods and variables which implement the class functionality **********************************************************************
+
+
+	//public void componentHidden (ComponentEvent e)  {}
+
+	/*
 	public void componentMoved (ComponentEvent e)  {
 		final Component c = e.getComponent();
 		if (e.getComponent().getX() != frame_x)
@@ -59,15 +65,16 @@ public final class ViewWrapper extends Canvas implements ComponentListener
 		if (e.getComponent().getY() != frame_y)
 			Global.getEngineData().get("display_center_y").set(c.getY()+c.getHeight()/2);
 	}
+	*/
+
+	//public void componentResized (ComponentEvent e)  {}
 
 
-	public void componentResized (ComponentEvent e)  {}
-
-
-	public void componentShown (ComponentEvent e)  {}
+	//public void componentShown (ComponentEvent e)  {}
 
 
 	private void handleUserInput () {
+		/*
 		for (int i = events.size(); --i >= 0; ) {
 			final AWTEvent e = (AWTEvent) events.remove();
 			final AWTEvent e2 = lastEvent;
@@ -91,22 +98,24 @@ public final class ViewWrapper extends Canvas implements ComponentListener
 				lastEvent = e2;
 			}
 		}
+		*/
 	}
 
 
 
-
+	/*
 	public void paint (final Graphics g) {
 		update(g);
 	}
-
-
+	*/
+	/*
 	public void processEvent (final AWTEvent e) {
 		events.add(e);
 	}
-
+	*/
 
 	/** adjusts the Bounds of the Frame when the top level view's bounds settings change */
+		/*
 	private void setScreenSize (int new_width, int new_height)  {
 		if (new_width <= 10)
 			new_width = 11;
@@ -137,8 +146,8 @@ public final class ViewWrapper extends Canvas implements ComponentListener
 			((Frame)parent).doLayout();
 		}
 	}
-
-
+		*/
+	/*
 	private void setTitle (final String new_title)  {
 		// the Frame should be the top-most parent object of the ViewWrapper
 		Component parent = Global.getViewWrapper().getParent();
@@ -147,8 +156,9 @@ public final class ViewWrapper extends Canvas implements ComponentListener
 		if (parent != null && parent instanceof Frame)
 			((Frame)parent).setTitle(new_title);
 	}
+	*/
 
-
+	/*
 	private void synchronizedUpdate (final Graphics g) {
 		if (!isVisible()) {
 			return;
@@ -185,7 +195,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 					bg.setFont(getFont());
 
 					// fetch the background color
-/*						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");
+						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");
 					if (bgcolor_string != null && bgcolor_string.type() == Value.STRING) {
 						final Color bgcolor = AbstractView.getColor(bgcolor_string.string());
 						if (bgcolor != null) {
@@ -195,7 +205,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 						}
 					}
 					bg.setColor(getForeground());
-*/
+
 					DisplayedComponent.drawScreen(bg);
 //						view.drawContent(bg); // call drawContent() instead of paint(), because the coordinate system already sits where it should
 					if (w != old_width || h != old_height) {
@@ -222,11 +232,12 @@ System.exit(1);
 		}
 		painting = false;
 	}
-
-
+	*/
+	/*
 	public void update (final Graphics g) {
 		if (painting || getSize().width == 0 || getSize().height == 0)
 			return;
 		synchronizedUpdate(g);
 	}
+	*/
 }

@@ -1,0 +1,21 @@
+localization english
+	ENGINE.createArray = FUNCTION
+		return_value = ARRAY
+		for i = 0 to argument.size-1
+			return_value[] = argument[i]
+
+
+	// returns the maximum value from a list of parameters. max(1) returns 1, max(4,5,6,7) returns 7
+	ENGINE.max = FUNCTION
+		return_value = argument[0]
+		for i = 1 to argument.size-1
+			if return_value < argument[i]
+				return_value = argument[i]
+
+
+	// returns the minimum value from a list of parameters. min(1) returns 1, min(4,5,6,7) returns 4
+	ENGINE.min = FUNCTION
+		return_value = argument[0]
+		for i = 1 to argument.size-1
+			if return_value > argument[i]
+				return_value = argument[i]

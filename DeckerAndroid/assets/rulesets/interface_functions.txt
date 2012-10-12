@@ -1,0 +1,150 @@
+localization english
+	ENGINE.addScreenOverlay = FUNCTION (overlay)
+		if ENGINE.screen_overlays == UNDEFINED
+			ENGINE.screen_overlays = ARRAY
+		ENGINE.screen_overlays[] = overlay
+
+
+	ENGINE.addTableRow = FUNCTION (table)
+		// create the new table row
+		LOCAL.row = ARRAY
+		table.cell[] = row
+		LOCAL.columns = table.columns
+		LOCAL.k
+		LOCAL.can_expand
+		for i = 0 to columns-1
+			k = argument[i+1]
+			row[] = k
+			// use the default values for all undefined cell values
+			if k != UNDEFINED
+				can_expand = isExpandable(k)
+				if k.x == UNDEFINED && table.cell_x != UNDEFINED && ( can_expand || hasVariable(k,"x") )
+					if value_type(table.cell_x) == "CONSTANT"
+						k.x = table.cell_x
+					else
+						k.x = table.cell_x[i]
+				if k.y == UNDEFINED && table.cell_y != UNDEFINED && ( can_expand || hasVariable(k,"y") )
+					if value_type(table.cell_y) == "CONSTANT"
+						k.y = table.cell_y
+					else
+						k.y = table.cell_y[i]
+				if k.v_align == UNDEFINED && table.cell_v_align != UNDEFINED && ( can_expand || hasVariable(k,"v_align") )
+					if value_type(table.cell_v_align) == "CONSTANT"
+						k.v_align = table.cell_v_align
+					else
+						k.v_align = table.cell_v_align[i]
+				if k.h_align == UNDEFINED && table.cell_h_align != UNDEFINED && ( can_expand || hasVariable(k,"h_align") )
+					if value_type(table.cell_h_align) == "CONSTANT"
+						k.h_align = table.cell_h_align
+					else
+						k.h_align = table.cell_h_align[i]
+		// adjust the table size
+		table.rows = table.cell.size
+		table.height = table.cell_height * table.rows
+
+
+	// after calling this function, all column cells are right aligned, but the resulting column is centered
+	ENGINE.centerRightAlignedTableColumn = FUNCTION (table, column)
+		if table.rows > 0
+			// determine the maximum width of the column entries
+			LOCAL.max_width = 0
+			for y = table.rows-1 downto 0
+				max_width = max(max_width, pixelwidth(table.cell[y][column]))
+			// calculate the x-offset for the right edge of the column content
+			LOCAL.adjusted_x = ( ( value_type(table.cell_width) == "INTEGER" ? table.cell_width : table.cell_width[column] ) + max_width + 1 ) / 2
+			// manually set the x coordinate for all table cells in the column
+			for y = table.rows-1 downto 0
+				LOCAL.c = table.cell[y][column]
+				if value_type(c) == "STRUCTURE"
+					c.h_align = LEFT
+					c.x = adjusted_x
+
+
+	ENGINE.deleteScreenOverlay = FUNCTION (overlay)
+		LOCAL.index = indexof(overlay, ENGINE.screen_overlays)
+		if index != UNDEFINED
+			delete(ENGINE.screen_overlays, index)
+
+
+	ENGINE.deleteTableRow = FUNCTION (table, row_index)
+		if row_index >= 0 && row_index < table.rows
+			table.rows = table.rows - 1
+			table.height = table.cell_height * table.rows
+			delete(table.cell, row_index)
+			if row_index == table.selected_row
+				table.selected_row = UNDEFINED     // this will not trigger the "on_selection_change" event
+
+
+	ENGINE.displayScreen = FUNCTION (screen, remember_old_screen)
+		if screen.structure_type != UNDEFINED && screen != displayed_screen && value_type(screen) == "STRUCTURE"
+			if remember_old_screen
+				previous_displayed_screen[] = displayed_screen
+			screen_overlays = UNDEFINED  // remove the screen overlays which have been displayed on top of the old screen
+			displayed_screen = screen
+			if value_type(screen.setup) == "FUNCTION"
+				screen.setup()
+
+
+	ENGINE.displayPreviousScreen = FUNCTION
+		if previous_displayed_screen.size > 0
+			displayed_screen = delete(previous_displayed_screen, previous_displayed_screen.size-1)
+			screen_overlays = UNDEFINED  // remove the screen overlays which have been displayed on top of the old screen
+			if value_type(displayed_screen.setup) == "FUNCTION"
+				displayed_screen.setup()
+
+
+	ENGINE.getPreviousScreen = FUNCTION
+		if previous_displayed_screen.size > 0
+			return_value = previous_displayed_screen[previous_displayed_screen.size-1]
+
+
+	// moves the slider of a scrollbar to a new logical position
+	ENGINE.setSliderPosition = FUNCTION (_scrollbar, _slider_position)
+		// the logical slider position cannot be negative
+		if _slider_position < 0
+			_slider_position = 0
+		// make sure it really is a scrollbar
+		if _scrollbar.slider_position != UNDEFINED && _scrollbar.slider_position != _slider_position
+			// the logical slider position cannot exceed the slider_max setting for the scrollbar
+			if _slider_position > _scrollbar.slider_max
+				_slider_position = _scrollbar.slider_max
+			// make sure the slider position isn't the same as before, before you change it
+			if _slider_position != _scrollbar.slider_position
+				_scrollbar.slider_position = _slider_position
+			if _scrollbar.effect != UNDEFINED
+				_scrollbar.effect(_scrollbar, _scrollbar.slider_position)
+
+
+	ENGINE.setTableCell = FUNCTION (table,row,column,content)
+		// if it's not a structure, wrap a COMPONENT around it so we can set its position within the table cell
+		if value_type(content) != "STRUCTURE" && content != UNDEFINED
+			content = COMPONENT
+				component = content
+		table.cell[row][column] = content
+		// use the default values for all undefined cell values
+		if content != UNDEFINED
+			LOCAL.can_expand = isExpandable(content)
+			if content.x == UNDEFINED && table.cell_x != UNDEFINED && ( can_expand || hasVariable(content,"x") )
+				if value_type(table.cell_x) == "CONSTANT"
+					content.x = table.cell_x
+				else
+					content.x = table.cell_x[i]
+			if content.y == UNDEFINED && table.cell_y != UNDEFINED && ( can_expand || hasVariable(content,"y") )
+				if value_type(table.cell_y) == "CONSTANT"
+					content.y = table.cell_y
+				else
+					content.y = table.cell_y[i]
+			if content.v_align == UNDEFINED && table.cell_v_align != UNDEFINED && ( can_expand || hasVariable(content,"v_align") )
+				if value_type(table.cell_v_align) == "CONSTANT"
+					content.v_align = table.cell_v_align
+				else
+					content.v_align = table.cell_v_align[i]
+			if content.h_align == UNDEFINED && table.cell_h_align != UNDEFINED && ( can_expand || hasVariable(content,"h_align") )
+				if value_type(table.cell_h_align) == "CONSTANT"
+					content.h_align = table.cell_h_align
+				else
+					content.h_align = table.cell_h_align[i]
+
+
+	ENGINE.getTableCell = FUNCTION (table, row, column)
+		return_value = table.cell[row][column]
