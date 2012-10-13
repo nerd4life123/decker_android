@@ -25,8 +25,8 @@ final class ScriptParser extends ScriptReader
 	}
 
 
-	static Script parse (final String file_name, final Reader in, final Ruleset ruleset)  {
-		return new ScriptParser(null, file_name, in, ruleset).parseScript(null);
+	static Script parse (DeckerActivity activity, final String file_name, final Reader in, final Ruleset ruleset)  {
+		return new ScriptParser(activity, file_name, in, ruleset).parseScript(null);
 	}
 
 /*

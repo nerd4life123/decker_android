@@ -34,7 +34,7 @@ public final class Global
 	public static int debug_level = 0;
 	public static Locale[] accepted_locales = { Locale.getDefault(), new Locale("en") };
 	public static Ruleset[] ruleset = new Ruleset[0];
-	private final static Ruleset engine = new Ruleset(null, "");
+	private static Ruleset engine = new Ruleset(null, "");
 	private static Ruleset current_ruleset = new Ruleset(null, "(dummy)");
 
 
@@ -47,6 +47,7 @@ public final class Global
 	/** sets things up for the game to launch and load the rulesets */
 	public final static void initializeDataModel (DeckerActivity activity)  {
 		// set up the data stack
+		engine = new Ruleset(activity, "");
 		engine.data.add("copyArraySection").set(new Function(F_COPY_ARRAY_SECTION, new String[]{ "from_array", "from_index", "to_array", "to_index", "entries" }));
 		engine.data.add("createSizedArray").set(new Function(F_CREATE_SIZED_ARRAY, new String[]{ "size" }));
 		engine.data.add("date_day_of_month").set(new Function(F_DATE_DAY_OF_MONTH, new String[]{ "year", "month", "day" }));
@@ -85,21 +86,18 @@ public final class Global
 
 
 	public final static void initializeRulesets ()  {
-if (Global.debug_level > 0) {
-System.out.println();
-System.out.println(ruleset.length+" rulesets found");
-System.out.println();
-}
+//if (Global.debug_level > 0) {
+Log.w("DeckerActivity", ruleset.length+" rulesets found");
+//}
 		final Ruleset r = current_ruleset;
 		// first run the global scripts
-if (Global.debug_level > 0)
-System.out.println("running global scripts");
+//if (Global.debug_level > 0)
+		Log.w("DeckerActivity", "running global scripts");
 		setCurrentRuleset(engine);
 		current_ruleset.initialize(accepted_locales);
 		// then run the scripts of each ruleset
 		for (int i = 0; i < ruleset.length; i++)  {
-if (Global.debug_level > 0)
-System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").toString());
+//if (Global.debug_level > 0)
 			setCurrentRuleset(ruleset[i]);
 			current_ruleset.initialize(accepted_locales);
 		}
@@ -124,7 +122,8 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 	/**
 	 * Loads the scripts from the rulesets subfolder of the folder the jar sits in
 	 */
-	public static void loadRulesets (AssetManager mgr)  {
+	public static void loadRulesets (DeckerActivity activity)  {
+		AssetManager mgr = activity.getAssets();
 		String rulesetsFolderName = "rulesets";
 		String[] dir_list;
 		try {
@@ -136,9 +135,9 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 		}
 		bubblesort(dir_list);
 		for (int d = 0; d < dir_list.length; d++) {
-			if (Global.debug_level > 0)
-				System.out.println("loading Ruleset "+dir_list[d]);
-			final Ruleset r = new Ruleset(null, dir_list[d]);
+			//if (Global.debug_level > 0)
+				Log.w("DeckerActivity", "loading Ruleset "+dir_list[d]);
+			final Ruleset r = new Ruleset(activity, dir_list[d]);
 			
 			String[] script_list;
 			try {
@@ -148,15 +147,16 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 				e1.printStackTrace();
 				return;
 			}
-			Log.w("DeckerActivity", "test");
 			bubblesort(script_list);
 			// load the scripts from the ruleset
 			boolean has_scripts = false;
 			for (int i = 0; i < script_list.length; i++)
+			{
+				Log.w("DeckerActivity", "ruleset " + dir_list[d] + " has script: " + script_list[i]);
 				if (script_list[i].toLowerCase().endsWith(".txt"))
 				{
 					try {
-						r.addScript(ScriptParser.parse(script_list[i],
+						r.addScript(ScriptParser.parse(activity, script_list[i],
 								new InputStreamReader(mgr.open(rulesetsFolderName + "/" + dir_list[d] + "/" + script_list[i])),
 								r));
 					} catch (IOException e) {
@@ -165,21 +165,25 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 					}
 					has_scripts = true;
 				}
+			}
 				// if the ruleset has at least one script, add it to the list of available rulesets
-				if (has_scripts)
-					ruleset = (Ruleset[]) ArrayModifier.addElement(ruleset, new Ruleset[ruleset.length+1], r);
-		
+			if (has_scripts)
+			{
+				Log.w("DeckerActivity", "has scripts!!!");
+				ruleset = (Ruleset[]) ArrayModifier.addElement(ruleset, new Ruleset[ruleset.length+1], r);
+			}
 		}
 		
 			// add the global scripts which sit directly in the rulesets folder to the engine ruleset
-		if (Global.debug_level > 0)
-			System.out.println("loading engine scripts");
+		//if (Global.debug_level > 0)
+			Log.w("DeckerActivity", "loading engine scripts");
 		for (int i = 0; i < dir_list.length; i++)
 		{
 			if (dir_list[i].toLowerCase().endsWith(".txt"))
 			{
 				try {
-					engine.addScript(ScriptParser.parse(dir_list[i],
+					Log.w("DeckerActivity", "loaded engine script: " + dir_list[i]);
+					engine.addScript(ScriptParser.parse(activity, dir_list[i],
 							new InputStreamReader(mgr.open(rulesetsFolderName + "/" + dir_list[i])),
 							engine));
 				} catch (IOException e) {
@@ -191,6 +195,7 @@ System.out.println("initializing ruleset "+ruleset[i].data.get("RULESET_NAME").t
 	}
 
 	public static void setCurrentRuleset (final Ruleset r)  {
+		Log.w("DeckerActivity", "setting current ruleset to " + r.data.get("RULESET_NAME"));
 		final Ruleset old_ruleset = current_ruleset;
 		current_ruleset = r;
 		ScriptNode.stack[ScriptNode.RULESET_STACK_SLOT] = r.data;

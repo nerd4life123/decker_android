@@ -1,14 +1,19 @@
-package decker.view;
-import decker.model.*;
-import decker.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.acehostingllc.deckerandroid.DeckerActivity;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
+import com.acehostingllc.deckerandroid.decker.decker.util.*;
+import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
+import com.acehostingllc.deckerandroid.decker.decker.view.UIText;
+import com.acehostingllc.deckerandroid.decker.decker.view.UITextBlock;
 
 
 
-
-public class DisplayedComponent implements Comparable, ValueListener
+public class DisplayedComponent extends View
 {
 	final static String[] EVENT_FUNCTION_NAME = { "on_key_down",   "on_mouse_down",   "on_mouse_dragged",   "on_mouse_entered",   "on_mouse_exited",   "on_mouse_moved",   "on_mouse_up", "on_double_click" };
 	final static int                               ON_KEY_DOWN = 0, ON_MOUSE_DOWN = 1, ON_MOUSE_DRAGGED = 2, ON_MOUSE_ENTERED = 3, ON_MOUSE_EXITED = 4, ON_MOUSE_MOVED = 5, ON_MOUSE_UP =6, ON_DOUBLE_CLICK = 7;
@@ -40,7 +45,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 	int cx, cy, cw, ch;
 
 	// the shape of the component, if it's a STRUCTURE
-	private BufferedImage shape;
+	private ImageView shape;
 	// child structures of this component
 	DisplayedComponent[] child;
 	int child_count;
@@ -61,7 +66,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	final static DisplayedComponent createDisplayedComponent (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+	final static DisplayedComponent createDisplayedComponent (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		DisplayedComponent ret = null;
 		if (_component.type() != Value.STRUCTURE) {
 			throw new RuntimeException(_component+" is not a structure");
@@ -69,37 +74,37 @@ public class DisplayedComponent implements Comparable, ValueListener
 		else { // it's a structure
 			final String t = _component.get("structure_type").string();
 			if (t.equals("BORDER"))
-				ret = new UIBorder(_component, _parent, current_clip_source);
+				ret = null;//new UIBorder(_component, _parent, current_clip_source);
 			else if (t.equals("BUTTON") || t.equals("BORDER_BUTTON"))
-				ret = new UIButton(_component, _parent, current_clip_source);
+				ret = null;//new UIButton(_component, _parent, current_clip_source);
 			else if (t.equals("CLIP"))
-				ret = new UIClip(_component, _parent, current_clip_source);
+				ret = null;//new UIClip(_component, _parent, current_clip_source);
 			else if (t.equals("IMAGE"))
-				ret = new UIImage(_component, _parent, current_clip_source);
+				ret = null;//new UIImage(_component, _parent, current_clip_source);
 			else if (t.equals("SCROLLBAR"))
-				ret = new UIScrollbar(_component, _parent, current_clip_source);
+				ret = null;//new UIScrollbar(_component, _parent, current_clip_source);
 			else if (t.equals("SCROLLPANE"))
-				ret = new UIScrollpane(_component, _parent, current_clip_source);
+				ret = null;//new UIScrollpane(_component, _parent, current_clip_source);
 			else if (t.equals("TABLE"))
-				ret = new UITable(_component, _parent, current_clip_source);
+				ret = null;//new UITable(_component, _parent, current_clip_source);
 			else if (t.equals("TEXT"))
-				ret = new UIText(_component, _parent, current_clip_source);
+				ret = new UIText(activity, _component, _parent, current_clip_source);
 			else if (t.equals("TEXTBLOCK"))
-				ret = new UITextBlock(_component, _parent, current_clip_source);
+				ret = null;//new UITextBlock(_component);
 			else if (t.equals("TEXTFIELD"))
-				ret = new UITextField(_component, _parent, current_clip_source);
+				ret = new UITextField(activity, _component, _parent, current_clip_source);//new UITextField(_component, _parent, current_clip_source);
 		}
 		if (ret == null) {
-			ret = new UIGenericComponent(_component, _parent, current_clip_source);
+			ret = null;//new UIGenericComponent(_component, _parent, current_clip_source);
 		}
 		if (ret.child_count == -1) {
-			ret.updateChildren(current_clip_source);
-			ret.eventSizeChanged(current_clip_source, Integer.MIN_VALUE, Integer.MIN_VALUE, false, false);
+			ret.updateChildren(activity, current_clip_source);
+			ret.eventSizeChanged(null, current_clip_source, Integer.MIN_VALUE, Integer.MIN_VALUE, false, false);
 		}
 		// call the "on_resize" function if there is one
 		final Value v;
 		if (_component.type() == Value.STRUCTURE && (v=_component.get("on_resize")) != null && v.type() == Value.FUNCTION) {
-			FunctionCall.executeFunctionCall(v.function(), new Value[]{ new Value().set(ret.w), new Value().set(ret.h) }, new Structure[]{ Global.getDisplayedScreen().structure(), _component.structure() });
+			FunctionCall.executeFunctionCall(null, v.function(), new Value[]{ new Value().set(ret.w), new Value().set(ret.h) }, new Structure[]{ Global.getDisplayedScreen().structure(), _component.structure() });
 		}
 		return ret;
 	}
@@ -237,9 +242,9 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	public final static void drawScreen (final Graphics g) {
-		if (currentScreen != null)
-			currentScreen.child[0].draw(g);
+	public final static void drawScreen () {
+		//if (currentScreen != null)
+			//currentScreen.child[0].draw());
 	}
 
 
@@ -275,8 +280,9 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-
-	private final static void handleKeyDown (final KeyEvent e) {
+	
+	private final static void handleKeyDown () {
+		/*
 		// if there is no key listener, don't waste time generating the event info
 		if (eventListenerCount[ON_KEY_DOWN] == 0)
 			return;
@@ -329,12 +335,14 @@ public class DisplayedComponent implements Comparable, ValueListener
 				}
 			}
 		}
+		*/
 	}
 
 
 
 
-	final static boolean handleUserInput (final AWTEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	final static boolean handleUserInput (final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+		/*
 		int eventID = -1;
 		switch (e.getID()) {
 			case MouseEvent.MOUSE_DRAGGED :
@@ -522,6 +530,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 			if (a != null &&( atype == Value.INTEGER || atype == Value.REAL ||( atype == Value.CONSTANT &&( (s=a.constant()).equals("LEFT") || s.equals("CENTER") || s.equals("RIGHT") ))))
 				return true;
 		}
+		*/
 		return false;
 	}
 
@@ -546,7 +555,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	public static void setDisplayedScreen (final Value screen) {
+	public static void setDisplayedScreen (DeckerActivity activity, final Value screen) {
 		// remove the old event listeners
 		for (int i = eventListener.length; --i >= 0; ) {
 			final DisplayedComponent[] el = eventListener[i];
@@ -556,7 +565,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 			eventListenerCount[i] = 0;
 		}
 		// create the data for the new screen
-		currentScreen = new DisplayedComponent(screen);
+		currentScreen = new DisplayedComponent(activity, screen);
 	}
 
 
@@ -570,7 +579,8 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 	/** this constructor is solely used for the dummy parent component of the current screen */
-	DisplayedComponent (final Value _component) {
+	DisplayedComponent (DeckerActivity activity, final Value _component) {
+		super(activity.getBaseContext());
 		component = new Value();
 		cx = -100000;
 		cy = cx;
@@ -578,13 +588,14 @@ public class DisplayedComponent implements Comparable, ValueListener
 		ch = -2*cx;
 		child = new DisplayedComponent[5];  // for the current screen and its overlays
 		child_count = 1;
-		child[0] = createDisplayedComponent(_component, this, this);
+		child[0] = createDisplayedComponent(activity, _component, this, this);
 	}
 
 
 
 
-	DisplayedComponent (final Value _component, final DisplayedComponent _parent) {
+	DisplayedComponent (Context context, final Value _component, final DisplayedComponent _parent) {
+		super(context);
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
@@ -593,14 +604,15 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	DisplayedComponent (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+	protected DisplayedComponent (Context context, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+		super(context);
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
 		if (_component != null) {
 			update(0, current_clip_source);
 			if (_component.type() == Value.STRUCTURE) {
-				_component.structure().addValueListener(this);
+				//_component.structure().addValueListener(this);
 			}
 		}
 	}
@@ -620,7 +632,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-
+/*
 	void applyInnerBounds (UIInnerArea _inner_area) {
 		_inner_area.x = x;
 		_inner_area.y = y;
@@ -631,7 +643,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 		_inner_area.cw = cw;
 		_inner_area.ch = ch;
 	}
-
+*/
 
 
 
@@ -650,7 +662,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 	void destroy () {
 		// stop listening to the scripted component
 		if (component != null && component.type() == Value.STRUCTURE) {
-			component.structure().removeValueListener(this);
+			//component.structure().removeValueListener(this);
 		}
 		// destroy the child components
 		for (int i = child_count; --i >= 0; ) {
@@ -717,7 +729,8 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	void draw (final Graphics g) {
+	protected void draw () {
+		/*
 		final Value display_this = component;
 		if (display_this.type() == Value.STRUCTURE) {
 			final Structure d = display_this.structure();
@@ -772,6 +785,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 			if (clip != null)
 				g.setClip(clip);
 		}
+		*/
 	}
 
 
@@ -786,7 +800,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	void eventSizeChanged (final DisplayedComponent current_clip_source, final int old_width, final int old_height, final boolean old_relative_to_parent_width, final boolean old_relative_to_parent_height) {
+	void eventSizeChanged (DeckerActivity activity, final DisplayedComponent current_clip_source, final int old_width, final int old_height, final boolean old_relative_to_parent_width, final boolean old_relative_to_parent_height) {
 		// if it's the dummy parent node, stop here
 		if (component == null)
 			return;
@@ -813,7 +827,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 			if (width_has_changed || height_has_changed) {
 				final Value k = c.get("on_resize");
 				if (k != null) {
-					FunctionCall.executeFunctionCall(k.function(), new Value[]{ new Value().set(w), new Value().set(h) }, new Structure[]{ Global.getDisplayedScreen().structure(), component.structure() });
+					FunctionCall.executeFunctionCall(activity, k.function(), new Value[]{ new Value().set(w), new Value().set(h) }, new Structure[]{ Global.getDisplayedScreen().structure(), component.structure() });
 				}
 				if (( children_relative_to_width > 0 && width_has_changed )||( children_relative_to_height > 0 && height_has_changed )) {
 					for (int i = child_count; --i >= 0; ) {
@@ -845,28 +859,28 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 	/** returns true if the event handler should also call the scripted function for the event (if there is one), false otherwise */
-	boolean eventUserInput (final int event_id, final AWTEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		return true;
 	}
 
 
 
 
-	public void eventValueChanged (final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
+	public void eventValueChanged (DeckerActivity activity, final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
 		final DisplayedComponent clip_source = getCurrentClipSource();
 		update(0, clip_source);
-		updateChildren(clip_source);
+		updateChildren(activity, clip_source);
 	}
 
 
 
 
-	public void eventValueChanged (final String variable_name, final Structure container, final Value old_value, final Value new_value) {
+	public void eventValueChanged (DeckerActivity activity, final String variable_name, final Structure container, final Value old_value, final Value new_value) {
 //System.out.println("DC.eventValueChanged() "+getClass().getName()+" "+variable_name+" "+old_value+" -> "+new_value);
 //System.out.println(x+","+y+" "+w+","+h);
 		final DisplayedComponent clip_source = getCurrentClipSource();
 		update(0, clip_source);
-		updateChildren(clip_source);
+		updateChildren(activity, clip_source);
 //System.out.println(x+","+y+" "+w+","+h);
 	}
 
@@ -899,7 +913,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		relative_to_parent_width = false;
 		relative_to_parent_height = false;
 		// if the displayed component is not a structure, use the parent's x and y
@@ -973,7 +987,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 			determineClip(current_clip_source);
 			// the component may have a shape
 			if ((v=s.get("shape")) != null && v.type() == Value.STRING) {
-				shape = (BufferedImage) AbstractView.getImage(v.string(), true);
+				shape = (ImageView) AbstractView.getImage(v.string(), true);
 			}
 			// finally update the event listener functions
 			updateEventListeners();
@@ -983,7 +997,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 
 
 
-	void updateChildren (final DisplayedComponent current_clip_source) {
+	void updateChildren (DeckerActivity activity, final DisplayedComponent current_clip_source) {
 		// destroy the old children
 		for (int i = child_count; --i >= 0; ) {
 			child[i].destroy();
@@ -997,7 +1011,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 			final Value v = component.get("component");
 			if (v != null && !v.equalsConstant("UNDEFINED")) {
 				if (v.type() != Value.ARRAY) {
-					child = new DisplayedComponent[]{ createDisplayedComponent(v, this, current_clip_source) };
+					child = new DisplayedComponent[]{ createDisplayedComponent(activity, v, this, current_clip_source) };
 					child_count = 1;
 				}
 				else {
@@ -1006,7 +1020,7 @@ public class DisplayedComponent implements Comparable, ValueListener
 					child = new DisplayedComponent[clength];
 					for (int i = 0; i < clength; i++) {
 						if (!c[i].equalsConstant("UNDEFINED")) {
-							child[child_count] = createDisplayedComponent(c[i], this, current_clip_source);
+							child[child_count] = createDisplayedComponent(activity, c[i], this, current_clip_source);
 							child_count++;
 						}
 					}

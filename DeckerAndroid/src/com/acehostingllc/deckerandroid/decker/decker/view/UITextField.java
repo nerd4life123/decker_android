@@ -1,54 +1,54 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
-import java.awt.event.*;
-
-
-
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.DeckerActivity;
+import com.acehostingllc.deckerandroid.decker.decker.model.ScriptNode;
+import com.acehostingllc.deckerandroid.decker.decker.model.Structure;
+import com.acehostingllc.deckerandroid.decker.decker.model.Value;
+import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
+import com.acehostingllc.deckerandroid.decker.decker.view.DisplayedComponent;
 
 final class UITextField extends DisplayedComponent
 {
 	private String text;
-	private Color color;
-	private Font font;
-	private FontMetrics font_metrics;
+	private int color;
+	private String font;
+	//private FontMetrics font_metrics;
 	private int char_limit;
 	private Object cursor;
 
 
 
-	UITextField (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(_component, _parent);
+	UITextField (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+		super(activity.getApplicationContext(), _component, _parent, current_clip_source);
 		updateText();
 		update(0, current_clip_source);
-		child_count = 0; // cannot have children
+		//child_count = 0; // cannot have children
 		// register it as a hard coded key listener
-		hasHardcodedEventFunction[ON_KEY_DOWN] = true;
-		if (!eventFunctionRegistered[ON_KEY_DOWN])
-			addEventListener(ON_KEY_DOWN);
+		//hasHardcodedEventFunction[ON_KEY_DOWN] = true;
+		//if (!eventFunctionRegistered[ON_KEY_DOWN])
+		//	addEventListener(ON_KEY_DOWN);
 	}
 
 
 
 
-	void draw (final Graphics g) {
+	protected void draw () {
 		Value v = null, w;
 		// if the color is explicitly defined, use it, otherwise try to use the default color from TEXTFIELD_STYLE
-		if (color != null) {
-			g.setColor(color);
+		if (color != -1) {
+			//g.setColor(color);
 		}
 		else {
 			v = ScriptNode.getVariable("TEXTFIELD_STYLE");
 			if (v != null && v.type() == Value.STRUCTURE && (w=v.get("color")) != null) {
-				Color c = AbstractView.getColor(v.toString());
-				if (c != null) {
-					g.setColor(c);
+				int c = AbstractView.getColor(v.toString());
+				if (c != -1) {
+					//g.setColor(c);
 				}
 			}
 		}
 		// if the font is explicitly defined, use it, otherwise try to use the default front from TEXTFIELD_STYLE
 		if (font != null) {
-			g.setFont(font);
+			//g.setFont(font);
 		}
 		else {
 			// fetch TEXTFIELD_STYLE if we haven't done so before
@@ -56,29 +56,29 @@ final class UITextField extends DisplayedComponent
 				v = ScriptNode.getVariable("TEXTFIELD_STYLE");
 			}
 			if (v != null && v.type() == Value.STRUCTURE && (w=v.get("font")) != null) {
-				Font f = AbstractView.getFont(w.toString(), null, false);
+				String f = AbstractView.getFont(w.toString(), null, false);
 				if (f != null) {
-					g.setFont(f);
+					//g.setFont(f);
 				}
 			}
 		}
-		font_metrics = AbstractView.getFontMetrics(g.getFont());
-		final int font_ascent = font_metrics.getAscent();
-		g.drawString(text, x, y+font_ascent);
+		//font_metrics = AbstractView.getFontMetrics(g.getFont());
+		//final int font_ascent = font_metrics.getAscent();
+		//g.drawString(text, x, y+font_ascent);
 		if (cursor instanceof DisplayedComponent) {
-			((DisplayedComponent)cursor).x = x+font_metrics.stringWidth(text);
-			((DisplayedComponent)cursor).draw(g);
+			//((DisplayedComponent)cursor).x = x+font_metrics.stringWidth(text);
+			//((DisplayedComponent)cursor).draw();
 		}
 		else {
-			g.drawString((String)cursor, x+font_metrics.stringWidth(text), y+font_ascent);
+			//g.drawString((String)cursor, x+font_metrics.stringWidth(text), y+font_ascent);
 		}
 	}
 
 
 
 
-	boolean eventUserInput (final int event_id, final AWTEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
-		if (event_id == ON_KEY_DOWN) {
+	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+		/*if (event_id == ON_KEY_DOWN) {
 			final KeyEvent k = (KeyEvent) e;
 			if (k.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 				if (text.length() > 0) {
@@ -95,7 +95,7 @@ final class UITextField extends DisplayedComponent
 				text = text + k.getKeyChar();
 				component.get("text").set(text);
 			}
-		}
+		}*/
 		return true;
 	}
 
@@ -105,13 +105,13 @@ final class UITextField extends DisplayedComponent
 	public void eventValueChanged (final String variable_name, final Structure container, final Value old_value, final Value new_value) {
 		if (variable_name.equals("text") && container.get("text").equals(text))
 			return;
-		super.eventValueChanged(variable_name, container, old_value, new_value);
+		//super.eventValueChanged(variable_name, container, old_value, new_value);
 	}
 
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		super.update(customSettings, current_clip_source);
 		updateText();
 		updateCursor(current_clip_source);
@@ -121,29 +121,29 @@ final class UITextField extends DisplayedComponent
 
 
 	private void updateCursor (final DisplayedComponent current_clip_source) {
-		final Value v = component.get("cursor");
-		if (v.type() == Value.STRUCTURE) {
-			if (!(cursor instanceof DisplayedComponent) || !((DisplayedComponent)cursor).component.equals(v)) {
-				cursor = createDisplayedComponent(v, this, current_clip_source);
-			}
-		}
-		else {
-			cursor = v.toString();
-		}
+		//final Value v = component.get("cursor");
+		//if (v.type() == Value.STRUCTURE) {
+			//if (!(cursor instanceof DisplayedComponent) || !((DisplayedComponent)cursor).component.equals(v)) {
+				//cursor = createDisplayedComponent(v, this, current_clip_source);
+			//}
+		//}
+		//else {
+			//cursor = v.toString();
+		//}
 	}
 
 
 
 
 	private void updateText () {
-		final Structure t = component.structure();
+		//final Structure t = component.structure();
 		Value v;
 		// fetch the text and its style settings
-		text = t.get("text").toString();
-		v = t.get("font");
-		font = (v.type() == Value.STRING) ? AbstractView.getFont(v.string(), null, false) : null;
-		font_metrics = AbstractView.getFontMetrics( (font!=null) ? font : AbstractView.getFont("", null, false) );
-		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : null;
-		char_limit = ((v=t.get("char_limit")).type() == Value.INTEGER) ? v.integer() : Integer.MAX_VALUE;
+		//text = t.get("text").toString();
+		//v = t.get("font");
+		//font = (v.type() == Value.STRING) ? AbstractView.getFont(v.string(), null, false) : null;
+		//font_metrics = AbstractView.getFontMetrics( (font!=null) ? font : AbstractView.getFont("", null, false) );
+		//color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : null;
+		//char_limit = ((v=t.get("char_limit")).type() == Value.INTEGER) ? v.integer() : Integer.MAX_VALUE;
 	}
 }

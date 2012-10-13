@@ -1,4 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import android.util.Log;
+
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
@@ -51,8 +53,14 @@ public final class Ruleset
 
 	void initialize (final Locale[] accepted_localizations)  {
 		final String s = data.get("DEFAULT_LOCALIZATION").toString();
+
+		Log.w("DeckerActivity", "initializing ruleset: " + this.getName() + " (" + script.length + " scripts)");
 		for (int i = 0; i < script.length; i++)
+		{
+			Log.w("DeckerActivity", "  executing script: " + script[i].getFilename());
 			script[i].execute(accepted_localizations, s);
+			
+		}
 	}
 
 

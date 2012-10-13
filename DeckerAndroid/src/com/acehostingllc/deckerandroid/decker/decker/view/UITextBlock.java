@@ -1,32 +1,46 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.graphics.Color;
+import android.renderscript.Font;
+import android.view.View;
+import android.widget.TextView;
 
-
-
+import com.acehostingllc.deckerandroid.DeckerActivity;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 /** displays a TEXTBLOCK structure */
-final class UITextBlock extends DisplayedComponent
+public final class UITextBlock extends DisplayedComponent
 {
-	private final static int X = 0, Y = 1, ROW_HEIGHT = 2, ELEMENTS = 3, CHILDREN = 4, LAST_FONT_HEIGHT = 5;
-//	private final static int aLEFT = 0, aCENTER = 1, aRIGHT = 2, aBLOCK = 3;
-//	private int alignment;
-//	private boolean has_explicit_height;
-//	private Value next_block;
-//	private Value previous_block;
-
-
-
-
-	UITextBlock (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(_component, _parent, current_clip_source);
-		component.structure().addValueListener(this);
+	UITextBlock(DeckerActivity activity, Value _component) {
+		super(activity, _component);
+		// TODO Auto-generated constructor stub
 	}
 
 
 
 
+	private final static int X = 0, Y = 1, ROW_HEIGHT = 2, ELEMENTS = 3, CHILDREN = 4, LAST_FONT_HEIGHT = 5;
+	private final static int aLEFT = 0, aCENTER = 1, aRIGHT = 2, aBLOCK = 3;
+	private int alignment;
+	private boolean has_explicit_height;
+	private Value next_block;
+	private Value previous_block;
+
+
+
+	/*
+	UITextBlock (final Value _component, final View _parent, final DisplayedComponent current_clip_source) {
+		//super(context);
+		//super(_component, _parent, current_clip_source);
+		//component.structure().addValueListener(this);
+	}*/
+	
+
 	/** data[X] is the current x position for appending children, data[Y] is the current y position for that, data[ROW_HEIGHT] is the height of the current row, data[ELEMENTS] is the number  of components on the current row so far */
+	
+	
+	@TargetApi(11)
 	private void addChild (final Value c, final int[] data, final DisplayedComponent[][] current_row, final DisplayedComponent[][] children, final DisplayedComponent current_clip_source) {
 		// add the component c
 		if (c.type() == Value.STRUCTURE && !c.get("structure_type").equals("TEXT")) {
@@ -41,9 +55,9 @@ final class UITextBlock extends DisplayedComponent
 				children[0][data[CHILDREN]] = k;
 				data[CHILDREN]++;
 				// move k to the next line if the current one already contains something and there is not enough room left for k
-				if (data[X] > 0 && k.w > w-data[X]) {
+				if (data[X] > 0 && k.w > this.getWidth()-data[X]) {
 					finishUpRow(data, current_row);
-					k.x = x;
+					k.x = (int) this.getX();
 					data[X] = k.w;
 					data[ROW_HEIGHT] = k.h;
 					current_row[0][0] = k;
@@ -51,7 +65,7 @@ final class UITextBlock extends DisplayedComponent
 				}
 				else {
 					// otherwise add it to the current row
-					k.x = x + data[X];
+					k.x = (int) this.getX() + data[X];
 					data[X] += k.w;
 					if (k.h > data[ROW_HEIGHT])
 						data[ROW_HEIGHT] = k.h;
@@ -74,8 +88,8 @@ final class UITextBlock extends DisplayedComponent
 			// display whatever we've come across as either a TEXT or use toString()
 			// determine the text, font and color
 			String text = null;
-			Font font = null;
-			Color color = null;
+			String font = null;
+			int color = 0;
 			Value v;
 			if (c.type() == Value.STRUCTURE && c.get("structure_type").equals("TEXT")) {
 				if ((v=c.get("text")).equalsConstant("UNDEFINED"))
@@ -91,35 +105,35 @@ final class UITextBlock extends DisplayedComponent
 			else
 				text = c.toString();
 			// if we don't have a color or font yet, use the default values
-			if (font == null || color == null) {
+			if (font == null || color == -1) {
 				v = ScriptNode.getVariable("TEXT_STYLE");
 				if (font == null)
 					font = AbstractView.getFont(v.get("font").toString());
-				if (color == null)
+				if (color == -1)
 					color = AbstractView.getColor(v.get("color").toString());
 			}
 			// split the text into chunks which fit into a line
-			final FontMetrics fm = AbstractView.getFontMetrics(font);
-			final int fm_height = fm.getHeight();
+			//final FontMetrics fm = AbstractView.getFontMetrics(font);
+			final int fm_height = 10;//fm.getHeight();
 			data[LAST_FONT_HEIGHT] = fm_height;
 			final int text_length = text.length();
 			int start = 0;
 			int a, b, alength, blength;
 			while (start < text_length) {
 				// find the next chunk
-				final int limit = w-data[X];
+				final int limit = this.getWidth()-data[X];
 				b = text_length;
-				blength = fm.stringWidth(text.substring(start,b));
+				blength = 50; //fm.stringWidth(text.substring(start,b));
 				if (blength <= limit) {
 					a = b;
 					alength = blength;
 				}
 				else {
 					a = start+1;
-					alength = fm.stringWidth(text.substring(start,a));
+					alength = 50;//fm.stringWidth(text.substring(start,a));
 					while (b > a+1) {
 						final int split = (a+b) / 2;
-						final int chunk_length = fm.stringWidth(text.substring(start,split));
+						final int chunk_length = 50;//fm.stringWidth(text.substring(start,split));
 						if (chunk_length <= limit) {
 							a = split;
 							alength = chunk_length;
@@ -148,10 +162,10 @@ final class UITextBlock extends DisplayedComponent
 					continue;
 				}
 				// add the chunk to the row
-				final UITextChunk k = new UITextChunk(text.substring(start,a), font, color, x+data[X], alength, fm_height, c, this, current_clip_source);
-				children[0][data[CHILDREN]] = k;
+				//final UITextChunk k = new UITextChunk(text.substring(start,a), font, color, this.getX()+data[X], alength, fm_height, c, this, current_clip_source);
+				//children[0][data[CHILDREN]] = k;
 				data[CHILDREN]++;
-				current_row[0][data[ELEMENTS]] = k;
+				//current_row[0][data[ELEMENTS]] = k;
 				data[ELEMENTS]++;
 				data[X] += alength;
 				if (data[ROW_HEIGHT] < fm_height)
@@ -171,6 +185,15 @@ final class UITextBlock extends DisplayedComponent
 
 
 
+	private DisplayedComponent createDisplayedComponent(Value c, UITextBlock uiTextBlock,
+			DisplayedComponent current_clip_source) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	
+
 
 	private void finishUpRow (final int[] data, final DisplayedComponent[][] current_row) {
 		// center all the row elements in the row
@@ -180,15 +203,15 @@ final class UITextBlock extends DisplayedComponent
 			// if the component has a valid y, use that value
 			if (k.h < data[ROW_HEIGHT] && k.component != null && k.component.type() == Value.STRUCTURE && (v=k.component.get("y")) != null &&( v.type() == Value.INTEGER || v.equalsConstant("TOP") || v.equalsConstant("BOTTOM") )) {
 				if (v.equalsConstant("TOP"))
-					k.y = y + data[Y];
+					k.y = (int) (this.getY() + data[Y]);
 				else if (v.equalsConstant("BOTTOM"))
-					k.y = y + data[Y] + data[ROW_HEIGHT] - k.h;
+					k.y = (int) (this.getY() + data[Y] + data[ROW_HEIGHT] - k.h);
 				else
-					k.y = y + data[Y] + v.integer();
+					k.y = (int) (this.getY() + data[Y] + v.integer());
 			}
 			// otherwise center it vertically
 			else {
-				k.y = y + data[Y] + (data[ROW_HEIGHT] - k.h) / 2;
+				k.y = (int) (this.getY() + data[Y] + (data[ROW_HEIGHT] - k.h) / 2);
 			}
 		}
 		data[X] = 0;
@@ -198,16 +221,16 @@ final class UITextBlock extends DisplayedComponent
 	}
 
 
+	
 
-
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
-		super.update(customSettings|CUSTOM_SIZE, current_clip_source);
-		updateChildren(current_clip_source);
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
+		//super.update(customSettings|10, current_clip_source);
+		//updateChildren(current_clip_source);
 	}
 
 
 
-
+	/*
 	void updateChildren (final DisplayedComponent current_clip_source) {
 		// destroy the old children
 		for (int i = child_count; --i >= 0; ) {
@@ -240,5 +263,6 @@ final class UITextBlock extends DisplayedComponent
 		// register the children with the display system
 		child = children[0];
 		child_count = row_data[CHILDREN];
-	}
+	}*/
+	
 }

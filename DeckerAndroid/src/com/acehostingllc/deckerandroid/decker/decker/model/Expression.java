@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
+import android.util.Log;
+
 import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
@@ -122,43 +124,59 @@ public class Expression extends ScriptNode
 
 		// move this expression to the right place in the current Expression tree - the lower its priority the higher it gets moved
 		if (expression_stack != null) {
-try {
-			int index = expression_stack_top[0];
-			if(OPERATOR_PRIORITY[operator] == 0) {
-				// do nothing. it's a leaf operator and does not move up within the expression tree
-			}
-			else if (operator == CONDITIONAL_COLON) {
-				// move up through the tree until you find the corresponding ? operator. stop when the ? operator is found, the top of the expression_stack is reached, the top of the expression is reached or there is an enclosing Expression (it puts a dummy ScriptNode that is not an Expression on the expression_stack while its contents are parsed)
-				if (index >= 0) {
-					do {
+			try {
+				int index = expression_stack_top[0];
+				if(OPERATOR_PRIORITY[operator] == 0) {
+					// do nothing. it's a leaf operator and does not move up within the expression tree
+				}
+				else if (operator == CONDITIONAL_COLON) {
+					if (this.isTheFileWeAreStuckOn(_script_name)) this.Log(_script_line + "|operator is conditional colon");
+					// move up through the tree until you find the corresponding ? operator. stop when the ? operator is found, the top of the expression_stack is reached, the top of the expression is reached or there is an enclosing Expression (it puts a dummy ScriptNode that is not an Expression on the expression_stack while its contents are parsed)
+					if (index >= 0) {
+						do {
+							first_operand = expression_stack[index];
+							expression_stack[index] = null;
+							index--;
+						} while (index > -1 && first_operand.operator != CONDITIONAL);
+					}
+					if (first_operand == null || first_operand.operator != CONDITIONAL)
+						throwException("found the : but not the corresponding ? of the a?b:c operator");
+				}
+				else { // all other expressions are sorted by their order of priority
+					if (this.isTheFileWeAreStuckOn(_script_name)) this.Log(_script_line + "|operator is othertype");
+					// the ?'s of a?b:c are executed left to right so a ? that is added is weaker than an existing :
+					final int priority = OPERATOR_PRIORITY[operator] - ((operator==CONDITIONAL) ? 2 : 0);
+					// now find the place in the expression tree where this expression belongs
+					while (index > -1 && OPERATOR_PRIORITY[expression_stack[index].operator] <= priority) {
+						if (this.isTheFileWeAreStuckOn(_script_name))
+							{
+								this.Log("first operand set to " + expression_stack[index]);
+							}
 						first_operand = expression_stack[index];
 						expression_stack[index] = null;
 						index--;
-					} while (index > -1 && first_operand.operator != CONDITIONAL);
+					}
 				}
-				if (first_operand == null || first_operand.operator != CONDITIONAL)
-					throwException("found the : but not the corresponding ? of the a?b:c operator");
+				// add this Expression to the Expression it's nested in if there is one
+				if (index > -1)
+					expression_stack[index].addExpression(this);
+				expression_stack[++index] = this;
+				expression_stack_top[0] = index;
+			} catch (Throwable t) {
+				t.printStackTrace();
+				throwException(t.toString());
 			}
-			else { // all other expressions are sorted by their order of priority
-				// the ?'s of a?b:c are executed left to right so a ? that is added is weaker than an existing :
-				final int priority = OPERATOR_PRIORITY[operator] - ((operator==CONDITIONAL) ? 2 : 0);
-				// now find the place in the expression tree where this expression belongs
-				while (index > -1 && OPERATOR_PRIORITY[expression_stack[index].operator] <= priority) {
-					first_operand = expression_stack[index];
-					expression_stack[index] = null;
-					index--;
-				}
-			}
-			// add this Expression to the Expression it's nested in if there is one
-			if (index > -1)
-				expression_stack[index].addExpression(this);
-			expression_stack[++index] = this;
-			expression_stack_top[0] = index;
-} catch (Throwable t) {
-	t.printStackTrace();
-	throwException(t.toString());
-}
 		}
+	}
+	
+	private boolean isTheFileWeAreStuckOn(String scriptname)
+	{
+		return (scriptname.contains("default"));
+	}
+	
+	private void Log(String message)
+	{
+		Log.w("DeckerActivity", message);
 	}
 
 
@@ -177,10 +195,17 @@ try {
 
 	void addExpression (final Expression expression)  {
 		// add the expression to this expression as the first or second operand
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("addExpression called");
 		if (first_operand != null && operator != NEGATIVE && operator != NOT && operator != BRACKET)
 			second_operand = expression;
 		else
 			first_operand = expression;
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("  first operand: " + first_operand);
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("  second operand: " + second_operand);
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    first-first operand: " + first_operand.first_operand);
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    first-second operand: " + first_operand.second_operand);
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    second-first operand: " + second_operand.first_operand);
+		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    second-second operand: " + second_operand.second_operand);
 	}
 
 
@@ -199,7 +224,12 @@ try {
 					a = new Value();
 			}
 			else if (operator != VARIABLE && operator != CONSTANT)
+			{
+				Log.e("DeckerActivity", "operator: " + this.operator);
+				Log.e("DeckerActivity", "first operand: " + this.first_operand);
+				Log.e("DeckerActivity", "second operand: " + this.second_operand);
 				throwException("first operand missing");
+			}
 			if(second_operand != null && operator != AND && operator != OR && operator != CONDITIONAL_COLON && operator != CONDITIONAL) {
 				b = second_operand.execute(activity);
 				if (b == null)
@@ -211,11 +241,11 @@ try {
 
 		// now execute the operator
 		switch(operator) {
-			/*case VARIABLE :
+			case VARIABLE :
 					final Value r = getVar(operator_element.string());
 					final Value r2 = stack[RULESET_STACK_SLOT].get("STRUCTURE_TYPES").get(operator_element.string());
 					final Value r3 = stack[ENGINE_STACK_SLOT].get("STRUCTURE_TYPES").get(operator_element.string());
-				return ( r != r2 && r != r3 ) ? r : new Value().set(new Structure(operator_element.string(), this));*/ // return a new instance if the found value is a structure type
+				return ( r != r2 && r != r3 ) ? r : new Value().set(new Structure(activity, operator_element.string(), this)); // return a new instance if the found value is a structure type
 			case CONSTANT :
 					return_value.set(operator_element);
 				break;
