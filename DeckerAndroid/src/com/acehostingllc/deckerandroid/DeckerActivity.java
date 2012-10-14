@@ -75,7 +75,7 @@ public class DeckerActivity extends Activity {
      		if (displayScreenFunction == null || displayScreenFunction.type() != Value.FUNCTION) {
      			throw new RuntimeException("displayScreen must be a FUNCTION but instead has the value "+displayScreenFunction+" ("+((displayScreenFunction==null)?"null":displayScreenFunction.typeName()));
      		}
-     		Log.w("DeckerActivity", "place4");
+     		Log.w("DeckerActivity", "initial screen type: "+initial_screen.type());
      		FunctionCall.executeFunctionCall(this, displayScreenFunction.function(), new Value[]{ initial_screen }, null);
     }
 

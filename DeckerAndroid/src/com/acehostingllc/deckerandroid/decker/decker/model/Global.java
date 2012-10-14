@@ -8,6 +8,8 @@ import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.*;
 
+import com.acehostingllc.deckerandroid.decker.decker.view.ViewWrapper;
+
 import java.io.*;
 import java.util.Locale;
 import java.util.Random;
@@ -46,6 +48,7 @@ public final class Global
 
 	/** sets things up for the game to launch and load the rulesets */
 	public final static void initializeDataModel (DeckerActivity activity)  {
+		view_wrapper = new ViewWrapper(activity.getApplicationContext());
 		// set up the data stack
 		engine = new Ruleset(activity, "");
 		engine.data.add("copyArraySection").set(new Function(F_COPY_ARRAY_SECTION, new String[]{ "from_array", "from_index", "to_array", "to_index", "entries" }));
@@ -218,10 +221,11 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 
 // view methods ***************************************************************************************************************************************
 
+	private static ViewWrapper view_wrapper;
 
 	private static View displayed_component;
 
-
+	public final static ViewWrapper getViewWrapper ()  { return view_wrapper; }
 
 	//final static void displayTickerMessage (final String message) { view_wrapper.getView().displayTickerMessage(message); }
 

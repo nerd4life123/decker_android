@@ -158,7 +158,7 @@ final class AssignmentCommand extends ScriptNode
 
 	public Value execute (DeckerActivity activity)  {
 		Object[] data;
-//		Value old_value = variable.execute();
+		//Value old_value = variable.execute(activity);
 		// determine the new value of the variable
 		Value assigned_value = null;
 		if (value_definition != null && value_definition instanceof Expression)

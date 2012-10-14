@@ -195,18 +195,11 @@ public class Expression extends ScriptNode
 
 	void addExpression (final Expression expression)  {
 		// add the expression to this expression as the first or second operand
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("addExpression called");
 		if (first_operand != null && operator != NEGATIVE && operator != NOT && operator != BRACKET)
 			second_operand = expression;
 		else
 			first_operand = expression;
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("  first operand: " + first_operand);
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("  second operand: " + second_operand);
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    first-first operand: " + first_operand.first_operand);
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    first-second operand: " + first_operand.second_operand);
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    second-first operand: " + second_operand.first_operand);
-		if (this.isTheFileWeAreStuckOn(getScriptName())) this.Log("    second-second operand: " + second_operand.second_operand);
-	}
+		}
 
 
 	Expression copy ()  { return new Expression(this); }

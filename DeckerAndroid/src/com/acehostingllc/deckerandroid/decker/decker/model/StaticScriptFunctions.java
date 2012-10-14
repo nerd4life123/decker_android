@@ -1,4 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.widget.TextView;
+
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.view.*;
 
@@ -34,8 +38,8 @@ final class StaticScriptFunctions extends ScriptNode
 			case Global.F_INSERT : return execute_insert(args);
 			case Global.F_INTEGER_TO_TEXT : return execute_integer_to_text(args);
 			case Global.F_IS_EXPANDABLE : return execute_isExpandable(args);
-			//case Global.F_PIXELHEIGHT : return execute_pixelheight(args);
-			//case Global.F_PIXELWIDTH : return execute_pixelwidth(args);
+			case Global.F_PIXELHEIGHT : return execute_pixelheight(args);
+			case Global.F_PIXELWIDTH : return execute_pixelwidth(args);
 			case Global.F_RANDOM : return execute_random(args);
 			//case Global.F_REPAINT : if ((v=stack[ENGINE_STACK_SLOT].get("frames_per_second")) == null || v.type() != Value.INTEGER || v.integer() <= 0) try { Global.getDisplayedComponent().repaint(); } catch (Throwable t) {}; return new Value();
 			case Global.F_SIZE : return execute_size(args);
@@ -401,8 +405,9 @@ final class StaticScriptFunctions extends ScriptNode
 		return new Value().set(v != null && v.equals(true));
 	}
 
-/*
+
 	private final static Value execute_pixelheight (final Value[] args)  {
+		int height = 0;
 		return new Value().set((args.length == 0 || args[0] == null) ? 0 : Global.getViewWrapper().getView().height(args[0], 0));
 	}
 
@@ -411,7 +416,7 @@ final class StaticScriptFunctions extends ScriptNode
 		return new Value().set((args.length == 0 || args[0] == null) ? 0 : Global.getViewWrapper().getView().width(args[0], 0));
 	}
 
-*/
+
 	private final static Value execute_random (final Value[] args)  {
 		if (args.length >= 2 && args[0] != null && args[1] != null) {
 			if (args[0].type() == Value.INTEGER && args[1].type() == Value.INTEGER) {

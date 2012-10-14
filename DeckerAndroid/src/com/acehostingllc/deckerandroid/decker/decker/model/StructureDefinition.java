@@ -43,7 +43,7 @@ final class StructureDefinition extends Expression
 	public StructureDefinition copy ()  { return new StructureDefinition(this); }
 
 
-	public Value execute () {
+	public Value execute (DeckerActivity activity) {
 		// create the new structure
 		final Value x = (structure_type instanceof String) ? null : ((Expression)structure_type).execute(activity);
 		if (x != null && x.type() != Value.STRUCTURE)

@@ -1,6 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.renderscript.Font;
 import android.renderscript.Font.Style;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import com.acehostingllc.deckerandroid.decker.decker.util.StringTreeMap;
 
 import com.acehostingllc.deckerandroid.decker.decker.model.Global;
+import com.acehostingllc.deckerandroid.decker.decker.model.Value;
 
 
 /** override drawContent() and the event messages relevant to your View class */
@@ -81,14 +84,42 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 
 
 	public final static int height (Object visible_object, final int parent_height) {
+		Rect bounds = new Rect();
+		Paint paint = new Paint();
+		Value value = (Value) visible_object;
 		
-		return 0;
+		int height = 0;
+		
+		switch (value.type())
+		{
+		case Value.STRING:
+			String string = value.string();
+			paint.getTextBounds(string, 0, string.length(), bounds);
+			height = bounds.height();
+			break;
+		}
+		
+		return height;
 	}
 
 
 	public final static int width (Object visible_object, final int parent_width) {
+		Rect bounds = new Rect();
+		Paint paint = new Paint();
+		Value value = (Value) visible_object;
 		
-		return 0;
+		int width = 0;
+		
+		switch (value.type())
+		{
+		case Value.STRING:
+			String string = value.string();
+			paint.getTextBounds(string, 0, string.length(), bounds);
+			width = bounds.width();
+			break;
+		}
+		
+		return width;
 	}
 	
 
@@ -143,7 +174,7 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 		if (base_font == null)
 			base_font = last_font;
 		String face = "Arial";
-		Style style = Font.Style.NORMAL;
+		//Style style = null;
 		int size = 12;
 		final String s = description.trim();
 		String s2, s3;
@@ -154,25 +185,25 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 				end = s.length();
 			s2 = s.substring(start, end).trim();
 			s3 = s2.toLowerCase();
-			if (s3.equals("plain"))
+			/*if (s3.equals("plain"))
 				style = Font.Style.NORMAL;
-			/*else if (s3.equals("bold"))
+			else if (s3.equals("bold"))
 				style = (style==Font.Style.ITALIC) ? (Font.Style.ITALIC|Font.Style.BOLD) : Font.Style.BOLD;
 			else if (s3.equals("italic"))
-				style = (style==Font.Style.BOLD) ? (Font.Style.ITALIC|Font.Style.BOLD) : Font.Style.ITALIC;*/
+				style = (style==Font.Style.BOLD) ? (Font.Style.ITALIC|Font.Style.BOLD) : Font.Style.ITALIC;
 			else if (s2.endsWith("pt") && Global.isInteger(s2.substring(0,s2.length()-2).trim()))
 				size = Integer.parseInt(s2.substring(0,s2.length()-2).trim());
 			else if (Global.isInteger(s2.trim()))
 				size = Integer.parseInt(s2.trim());
 			else if (s2.length() > 0)
-				face = s2;
+				face = s2;*/
 			start = end + 1;
 		}
-		return getFont(face, style, size, new_default_font);
+		return getFont(face, null, size, new_default_font);
 	}
 
 
-	public final static String getFont (final String face, final Style style, final int size, final boolean new_default_font) {
+	public final static String getFont (final String face, final String style, final int size, final boolean new_default_font) {
 		String f = FONTS.get(face+";"+style+";"+size).toString();
 		if (f == null) {
 			f = "Arial;10pt;plain";
