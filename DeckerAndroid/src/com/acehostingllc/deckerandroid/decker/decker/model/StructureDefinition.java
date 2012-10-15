@@ -9,10 +9,9 @@ final class StructureDefinition extends Expression
 {
 	private Object structure_type;
 	private Block definition_body;
-	private DeckerActivity activity;
 
 	/** _structure_type is either a String or, if this is a copy() command, an Expression */
-	StructureDefinition (DeckerActivity activity, Object _structure_type, final String _script_name, final int _script_line, final int _script_column, final Expression[] expression_stack, final int[] expression_stack_top)  {
+	StructureDefinition (Object _structure_type, final String _script_name, final int _script_line, final int _script_column, final Expression[] expression_stack, final int[] expression_stack_top)  {
 		super(_script_name, _script_line, _script_column);
 		structure_type = _structure_type;
 		setOperator(STRUCTURE_DEFINITION);
@@ -43,16 +42,16 @@ final class StructureDefinition extends Expression
 	public StructureDefinition copy ()  { return new StructureDefinition(this); }
 
 
-	public Value execute (DeckerActivity activity) {
+	public Value execute () {
 		// create the new structure
-		final Value x = (structure_type instanceof String) ? null : ((Expression)structure_type).execute(activity);
+		final Value x = (structure_type instanceof String) ? null : ((Expression)structure_type).execute();
 		if (x != null && x.type() != Value.STRUCTURE)
 			throwException(structure_type.toString() + " should return a structure, but it returned the "+x.typeName()+" "+x.toString());
-		final Structure k = (structure_type instanceof String) ? new Structure(activity, (String)structure_type, this) : new Structure(x.structure());
+		final Structure k = (structure_type instanceof String) ? new Structure((String)structure_type, this) : new Structure(x.structure());
 		// execute the definition body if there is one
 		if (definition_body != null) {
 			addStackItem(k); // in case the structure is referenced by Expressions in the definition body
-			definition_body.execute(activity);
+			definition_body.execute();
 			removeStackItem(k, this);
 		}
 		return new Value().set(k);

@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -22,7 +21,7 @@ final class BreakCommand extends ScriptNode
 	public ScriptNode copy()  { return new BreakCommand(this); }
 
 
-	public Value execute (DeckerActivity activity)  { return BREAK_VALUE; }
+	public Value execute ()  { return BREAK_VALUE; }
 
 
 	boolean print (final PrintStream out, final String indentation, final boolean line_start, final int depth)  {

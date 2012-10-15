@@ -1,16 +1,27 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.Picture;
 import android.graphics.Rect;
-import android.renderscript.Font;
-import android.renderscript.Font.Style;
+import android.graphics.Typeface;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.acehostingllc.deckerandroid.decker.decker.util.BMPReader;
 import com.acehostingllc.deckerandroid.decker.decker.util.StringTreeMap;
 
+import com.acehostingllc.deckerandroid.decker.decker.model.FunctionCall;
 import com.acehostingllc.deckerandroid.decker.decker.model.Global;
+import com.acehostingllc.deckerandroid.decker.decker.model.ScriptNode;
+import com.acehostingllc.deckerandroid.decker.decker.model.Structure;
 import com.acehostingllc.deckerandroid.decker.decker.model.Value;
 
 
@@ -31,30 +42,77 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 	private final static StringTreeMap COLORS = new StringTreeMap(true);
 	private final static StringTreeMap IMAGES = new StringTreeMap(true);
 	private final static StringTreeMap FONTS = new StringTreeMap();
-	private final static StringTreeMap FONTMETRICS = new StringTreeMap();
-	private static String last_font = null; // this is the last font that has been displayed. it will be used to fill in any missing data when fetching a new font
+	private static Paint last_font = null; // this is the last font that has been displayed. it will be used to fill in any missing data when fetching a new font
 	private static int last_color = Color.WHITE;
 
-	public final static ImageView getImage (final String name) {
+	public final static Bitmap getImage (final String name) {
 		return getImage(name, false, 0xffff00ff);
 	}
 
 
-	public final static ImageView getImage (final String name, final boolean buffered_image) {
+	public final static Bitmap getImage (final String name, final boolean buffered_image) {
 		return getImage(name, buffered_image, 0xffff00ff);
 	}
 
 
-	public final static ImageView getImage (final String name, final boolean buffered_image, final int transparent_color) {
+	public final static Bitmap getImage (final String name, final boolean buffered_image, final int transparent_color) {
 		if (name == null)
 			return null;
-		//redo entire method for android
+		Object o = IMAGES.get(name);
+		if (name.equals("UNDEFINED"))
+			return null;
+		// there is no image of that name. if the name has no suffix, try to fetch one with a suffix
+		if (o == null) {
+			int suffix = name.lastIndexOf('.');
+			if (suffix == -1 ||( suffix != name.length()-4 && !name.toLowerCase().endsWith(".jpeg") )) {
+				final String[] type = { ".png", ".gif", ".bmp", ".jpg", ".jpeg" };
+				for (int i = 0; i < type.length; i++) {
+					if ((o=IMAGES.get(name+type[i])) != null) {
+						IMAGES.put(name, o);
+						break;
+					}
+				}
+			}
+		}
+		// if we haven't done so before, fetch the image now
+		if (o instanceof File) {
+			final String path = ((File)o).getPath();
+			final View c = Global.getDisplayedComponent();
+			if (path.toLowerCase().endsWith(".bmp")) {
+				try {
+					InputStream stream = Global.getAppContext().getAssets().open(path);
+					o = BMPReader.readBMP(stream, c, transparent_color);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else {
+				// TODO: Handle non-bitmap
+			/*	final MediaTracker mt = new MediaTracker(c);
+				mt.addImage((Image)(o = c.getToolkit().getImage(AbstractView.class.getClassLoader().getResource( path ))), 0);
+				try {
+					mt.waitForAll();
+				} catch (InterruptedException e) {
+					System.err.println("interrupted while loading image "+path);
+					System.exit(1);
+				}*/
+			}
+			IMAGES.put(name, o);
+		}
+		if (o instanceof Bitmap) {
+			final Bitmap image = (Bitmap) o;
+			if (!buffered_image)// || image instanceof BufferedImage)
+				return image;
+			IMAGES.put(name, image);
+			return image;
+		}
 		return null;
 	}
 
 
-	public final static ImageView getTurnedImage (final String name, int angle) {
-		//redo for android
+	public final static Bitmap getTurnedImage (Bitmap bitmap, int angle) {
+		//bitmap.
 		return null;
 	}
 
@@ -81,45 +139,166 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 	public void eventMouseMoved (final int x, final int y)  {}
 	public void eventMousePressed (final int x, final int y)  {}
 	public void eventMouseReleased (final int x, final int y)  {}
-
-
-	public final static int height (Object visible_object, final int parent_height) {
-		Rect bounds = new Rect();
+	
+	public final static Paint createFontPaint(final String face, final int style, final int size) {
 		Paint paint = new Paint();
-		Value value = (Value) visible_object;
-		
-		int height = 0;
-		
-		switch (value.type())
-		{
-		case Value.STRING:
-			String string = value.string();
-			paint.getTextBounds(string, 0, string.length(), bounds);
-			height = bounds.height();
-			break;
+		paint.setTypeface(Typeface.create(face,  style));
+		paint.setTextSize(size);
+		return paint;
+	}
+	
+	public final static Paint getFontPaint (final String face, final int style, final int size, Object g) {
+		Paint fm = (Paint) FONTS.get(face+";"+style+";"+size);
+		if (fm == null) {
+			fm = createFontPaint(face, style, size);
+			FONTS.put(face+";"+style+";"+size, fm);
 		}
-		
-		return height;
+		return fm;
 	}
 
-
-	public final static int width (Object visible_object, final int parent_width) {
-		Rect bounds = new Rect();
-		Paint paint = new Paint();
-		Value value = (Value) visible_object;
-		
-		int width = 0;
-		
-		switch (value.type())
-		{
-		case Value.STRING:
-			String string = value.string();
-			paint.getTextBounds(string, 0, string.length(), bounds);
-			width = bounds.width();
-			break;
+	public final static int height (Object visible_object, final int parent_height) {
+		Value v;
+		if (visible_object instanceof Value) {
+			v = (Value) visible_object;
+			if (v.type() == Value.STRUCTURE)
+				visible_object = v.structure();
+			else if (!v.equalsConstant("UNDEFINED"))
+				visible_object = v.toString();
 		}
-		
-		return width;
+		// is it a string with the name of an image?
+		if (visible_object instanceof String) {
+			final Bitmap image = getImage((String)visible_object);
+			if (image != null)
+				return image.getHeight();
+		}
+		// is it a structure?
+		if (visible_object instanceof Structure) {
+			final Structure d = (Structure) visible_object;
+			final String type = d.get("structure_type").string();
+			// check whether the height is explicitly defined
+			v = d.get("height");
+			if (v != null) {
+				if (v.type() == Value.INTEGER)
+					return v.integer();
+				// check whether it's a percentage value
+				if (v.type() == Value.STRING) {
+					final String s = v.string();
+					if (s.endsWith("%")) {
+						try {
+							return (Integer.parseInt(s.substring(0, s.length()-1)) * parent_height + 50)/100;
+						} catch (NumberFormatException ex) {}
+					}
+				}
+			}
+			// if this is a BUTTON, use the definition for the idle state instead
+/*			if (type.equals("BUTTON") && !d.get("idle").equalsConstant("UNDEFINED"))
+				return height(d.get("idle"));
+			if (type.equals("BORDER_BUTTON") && !d.get("idle").equalsConstant("UNDEFINED"))
+				return height(d.get("idle")) + 2*ScriptNode.getValue("DEFAULT_BORDER_THICKNESS").integer();
+*/			// if this is a STRING, determine its height
+			if (type.equals("TEXT")) {
+				if ((v=d.get("font")) != null && v.type() == Value.STRING)
+					return getFont(v.string()).getFontMetricsInt().ascent;
+				else
+					return getFont("").getFontMetricsInt().ascent; // use the last font that was used to draw a string
+			}
+			else if (type.equals("IMAGE")) {
+				Bitmap image;
+				if ((v=d.get("image")) != null && (image=getImage(v.toString())) != null)
+					return image.getHeight();
+			}
+			// if its structure type has a special pixelheight function, call it
+			final Value t = ScriptNode.getStructureType(type);
+			if (t != null) {
+				if ((v=t.get("pixelheight")) != null && v.type() == Value.FUNCTION) {
+					v = FunctionCall.executeFunctionCall(v, null, new Structure[]{ (Structure) visible_object } );
+					if (v.type() == Value.INTEGER)
+						return v.integer();
+				}
+			}
+			// if not, use the height of the first sub-component
+/*			if ((v=d.get("component")) != null) {
+				if (v.type() == Value.ARRAY && v.array().length > 0)
+					return height(v.get(0));
+				else
+					return height(v);
+			}
+*/		}
+		// everything has failed, assume a height of 0 for the structure
+		return 0;
+	}
+	
+	public final static int width (Object visible_object, final int parent_width) {
+		Value v;
+		if (visible_object instanceof Value) {
+			v = (Value) visible_object;
+			if (v.type() == Value.STRUCTURE)
+				visible_object = v.structure();
+			else if (!v.equalsConstant("UNDEFINED"))
+				visible_object = v.toString();
+		}
+		// is it a string with the name of an image?
+		if (visible_object instanceof String) {
+			final Bitmap image = getImage((String)visible_object);
+			if (image != null)
+				return image.getWidth();
+		}
+		// is it a structure?
+		if (visible_object instanceof Structure) {
+			final Structure d = (Structure) visible_object;
+			final String type = d.get("structure_type").string();
+			// check whether the width is explicitly defined
+			v = d.get("width");
+			if (v != null) {
+				if (v.type() == Value.INTEGER)
+					return v.integer();
+				// check whether it's a percentage value
+				if (v.type() == Value.STRING) {
+					final String s = v.string();
+					if (s.endsWith("%")) {
+						try {
+							return (Integer.parseInt(s.substring(0, s.length()-1)) * parent_width + 50)/100;
+						} catch (NumberFormatException ex) {}
+					}
+				}
+			}
+			// if this is a BUTTON, use the definition for the idle state instead
+/*			if (type.equals("BUTTON") && !d.get("idle").equalsConstant("UNDEFINED"))
+				return width(d.get("idle"));
+			if (type.equals("BORDER_BUTTON") && !d.get("idle").equalsConstant("UNDEFINED"))
+				return width(d.get("idle")) + 2*ScriptNode.getValue("DEFAULT_BORDER_THICKNESS").integer();
+*/			// if this is a STRING, calculate its width
+			if (type.equals("TEXT")) {
+				Paint fm;
+				if ((v=d.get("font")) != null && v.type() == Value.STRING)
+					fm = getFont(v.string());
+				else
+					fm = getFont(""); // use the last font that was used to draw a string
+				return (int) fm.measureText((d.get("text").toString()));
+			}
+			else if (type.equals("IMAGE")) {
+				Bitmap image;
+				if ((v=d.get("image")) != null && (image=getImage(v.toString())) != null)
+					return image.getWidth();
+			}
+			// if its structure type has a special pixelwidth function, call it
+			final Value t = ScriptNode.getStructureType(type);
+			if (t != null) {
+				if ((v=t.get("pixelwidth")) != null && v.type() == Value.FUNCTION) {
+					v = FunctionCall.executeFunctionCall(v, null, new Structure[]{ (Structure) visible_object });
+					if (v.type() == Value.INTEGER)
+						return v.integer();
+				}
+			}
+			// if not, use the width of the first sub-component
+/*			if ((v=d.get("component")) != null) {
+				if (v.type() == Value.ARRAY && v.array().length > 0)
+					return width(v.get(0));
+				return width(v);
+			}
+*/		}
+		// everything has failed, assume a width of 0 for the structure
+		return 0;
 	}
 	
 
@@ -151,31 +330,31 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 	}
 
 
-	public final static String getFont (final String description) {
+	public final static Paint getFont (final String description) {
 		return getFont(description, last_font, false);
 	}
 
 
-	public final static String getFont (final String description, final boolean new_default_font) {
+	public final static Paint getFont (final String description, final boolean new_default_font) {
 		return getFont(description, last_font, new_default_font);
 	}
 
 
 	/** parses the description, fills in missing data using the base_font and returns the new Font
 	*   if base_font is null, last_font is used instead */
-	public final static String getFont (final String description, String base_font) {
+	public final static Paint getFont (final String description, Paint base_font) {
 		return getFont(description, base_font, false);
 	}
 
 
 	/** parses the description, fills in missing data using the base_font and returns the new Font
 	*   if base_font is null, last_font is used instead */
-	public final static String getFont (final String description, String base_font, final boolean new_default_font) {
+	public final static Paint getFont (final String description, Paint base_font, final boolean new_default_font) {
 		if (base_font == null)
 			base_font = last_font;
 		String face = "Arial";
-		//Style style = null;
 		int size = 12;
+		int style = 0;
 		final String s = description.trim();
 		String s2, s3;
 		int start = 0, end;
@@ -185,30 +364,26 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 				end = s.length();
 			s2 = s.substring(start, end).trim();
 			s3 = s2.toLowerCase();
-			/*if (s3.equals("plain"))
-				style = Font.Style.NORMAL;
+			if (s3.equals("plain"))
+				style = Typeface.NORMAL;
 			else if (s3.equals("bold"))
-				style = (style==Font.Style.ITALIC) ? (Font.Style.ITALIC|Font.Style.BOLD) : Font.Style.BOLD;
+				style = (style==Typeface.ITALIC) ? (Typeface.BOLD_ITALIC) : Typeface.BOLD;
 			else if (s3.equals("italic"))
-				style = (style==Font.Style.BOLD) ? (Font.Style.ITALIC|Font.Style.BOLD) : Font.Style.ITALIC;
+				style = (style==Typeface.BOLD) ? (Typeface.BOLD_ITALIC) : Typeface.ITALIC;
 			else if (s2.endsWith("pt") && Global.isInteger(s2.substring(0,s2.length()-2).trim()))
 				size = Integer.parseInt(s2.substring(0,s2.length()-2).trim());
 			else if (Global.isInteger(s2.trim()))
 				size = Integer.parseInt(s2.trim());
 			else if (s2.length() > 0)
-				face = s2;*/
+				face = s2;
 			start = end + 1;
 		}
-		return getFont(face, null, size, new_default_font);
+		return getFontPaint(face, style, size, new_default_font);
 	}
 
 
-	public final static String getFont (final String face, final String style, final int size, final boolean new_default_font) {
-		String f = FONTS.get(face+";"+style+";"+size).toString();
-		if (f == null) {
-			f = "Arial;10pt;plain";
-			FONTS.put(face+";"+style+";"+size, f);
-		}
+	public final static Paint getFontPaint (final String face, final int style, final int size, final boolean new_default_font) {
+		Paint f = getFontPaint(face, style, size, null);
 		if (new_default_font)
 			last_font = f;
 		return f;

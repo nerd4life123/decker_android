@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -29,11 +28,11 @@ final class TypeDefinitionCommand extends ScriptNode
 	public ScriptNode copy()  { return new TypeDefinitionCommand(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		final TypeDefinition[] t = type;
 		final int count = t.length;
 		for (int i = 0; i < count; i++)
-			t[i].execute(activity);
+			t[i].execute();
 		return null;
 	}
 

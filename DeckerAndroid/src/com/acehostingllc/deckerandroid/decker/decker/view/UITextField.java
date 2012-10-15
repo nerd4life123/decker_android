@@ -1,4 +1,7 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
+
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.ScriptNode;
 import com.acehostingllc.deckerandroid.decker.decker.model.Structure;
@@ -18,9 +21,9 @@ final class UITextField extends DisplayedComponent
 
 
 	UITextField (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(activity.getApplicationContext(), _component, _parent, current_clip_source);
+		super(activity, _component, _parent, current_clip_source);
 		updateText();
-		update(0, current_clip_source);
+		update(activity, 0, current_clip_source);
 		//child_count = 0; // cannot have children
 		// register it as a hard coded key listener
 		//hasHardcodedEventFunction[ON_KEY_DOWN] = true;
@@ -56,7 +59,7 @@ final class UITextField extends DisplayedComponent
 				v = ScriptNode.getVariable("TEXTFIELD_STYLE");
 			}
 			if (v != null && v.type() == Value.STRUCTURE && (w=v.get("font")) != null) {
-				String f = AbstractView.getFont(w.toString(), null, false);
+				Paint f = AbstractView.getFont(w.toString(), null, false);
 				if (f != null) {
 					//g.setFont(f);
 				}
@@ -111,8 +114,8 @@ final class UITextField extends DisplayedComponent
 
 
 
-	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
-		super.update(customSettings, current_clip_source);
+	protected void update (DeckerActivity activity, final int customSettings, final DisplayedComponent current_clip_source) {
+		super.update(activity, customSettings, current_clip_source);
 		updateText();
 		updateCursor(current_clip_source);
 	}

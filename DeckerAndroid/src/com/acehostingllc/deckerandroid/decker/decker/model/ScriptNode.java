@@ -1,5 +1,4 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.StringPrintStream;
 
 import java.io.PrintStream;
@@ -117,7 +116,7 @@ public abstract class ScriptNode
 	abstract ScriptNode copy ();
 
 
-	public abstract Value execute (DeckerActivity activity);
+	public abstract Value execute ();
 
 
 	int getScriptColumn () { return script_column; }

@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.ArrayModifier;
 
 
@@ -42,10 +41,10 @@ class Block extends ScriptNode
 	}
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		final int count = child_command.length;
 		for (int i = 0; i < count; i++) {
-			if (child_command[i].execute(activity) == BREAK_VALUE) {
+			if (child_command[i].execute() == BREAK_VALUE) {
 				return BREAK_VALUE;
 			}
 		}

@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.ArrayModifier;
 
 
@@ -43,12 +42,12 @@ final class ArrayDefinition extends Expression
 	public Expression copy ()  { return new ArrayDefinition(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		// creates a new array and returns it
 		final int count = array_definition.length;
 		final Value[] array = new Value[count];
 		for (int i = 0; i < count; i++)
-			array[i] = new Value().set(array_definition[i].execute(activity));
+			array[i] = new Value().set(array_definition[i].execute());
 		return new Value().set(new ArrayWrapper(array));
 	}
 

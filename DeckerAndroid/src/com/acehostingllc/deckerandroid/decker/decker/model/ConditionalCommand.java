@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -51,23 +50,23 @@ final class ConditionalCommand extends Block
 	}
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		if (type == IF) {
-			if (conditional_expression.execute(activity).equals(true)) {
-				if (super.execute(activity) == BREAK_VALUE) {
+			if (conditional_expression.execute().equals(true)) {
+				if (super.execute() == BREAK_VALUE) {
 					return BREAK_VALUE;
 				}
 			}
 			else if (else_branch != null) {
-				if (else_branch.execute(activity) == BREAK_VALUE) {
+				if (else_branch.execute() == BREAK_VALUE) {
 					return BREAK_VALUE;
 				}
 			}
 		}
 		else { // type == WHILE
-			while (conditional_expression.execute(activity).equals(true)) {
+			while (conditional_expression.execute().equals(true)) {
 				// execute the loop's body. if a "break" command has been reached, stop the loop
-				if (super.execute(activity) == BREAK_VALUE) {
+				if (super.execute() == BREAK_VALUE) {
 					return null;
 				}
 			}

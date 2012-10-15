@@ -2,6 +2,8 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
 import android.renderscript.Font;
 import android.view.View;
 import android.widget.TextView;
@@ -88,7 +90,7 @@ public final class UITextBlock extends DisplayedComponent
 			// display whatever we've come across as either a TEXT or use toString()
 			// determine the text, font and color
 			String text = null;
-			String font = null;
+			Paint font = null;
 			int color = 0;
 			Value v;
 			if (c.type() == Value.STRUCTURE && c.get("structure_type").equals("TEXT")) {

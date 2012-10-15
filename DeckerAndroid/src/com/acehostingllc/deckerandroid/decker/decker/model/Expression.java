@@ -3,7 +3,6 @@ import java.io.PrintStream;
 
 import android.util.Log;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -205,14 +204,14 @@ public class Expression extends ScriptNode
 	Expression copy ()  { return new Expression(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		final Value return_value = new Value();
 
 		// most operators use the value of their two operands. fetch them unless they won't be used
 		Value a = null, b = null;
 		if (operator != MEMBER) {
 			if(first_operand != null) {
-				a = first_operand.execute(activity);
+				a = first_operand.execute();
 				if (a == null && operator != CONDITIONAL_COLON)
 					a = new Value();
 			}
@@ -224,7 +223,7 @@ public class Expression extends ScriptNode
 				throwException("first operand missing");
 			}
 			if(second_operand != null && operator != AND && operator != OR && operator != CONDITIONAL_COLON && operator != CONDITIONAL) {
-				b = second_operand.execute(activity);
+				b = second_operand.execute();
 				if (b == null)
 					b = new Value();
 			}
@@ -238,7 +237,7 @@ public class Expression extends ScriptNode
 					final Value r = getVar(operator_element.string());
 					final Value r2 = stack[RULESET_STACK_SLOT].get("STRUCTURE_TYPES").get(operator_element.string());
 					final Value r3 = stack[ENGINE_STACK_SLOT].get("STRUCTURE_TYPES").get(operator_element.string());
-				return ( r != r2 && r != r3 ) ? r : new Value().set(new Structure(activity, operator_element.string(), this)); // return a new instance if the found value is a structure type
+				return ( r != r2 && r != r3 ) ? r : new Value().set(new Structure(operator_element.string(), this)); // return a new instance if the found value is a structure type
 			case CONSTANT :
 					return_value.set(operator_element);
 				break;
@@ -265,7 +264,7 @@ public class Expression extends ScriptNode
 						}
 					}
 					if (a == null)
-						a = first_operand.execute(activity);
+						a = first_operand.execute();
 					if (a == null)
 						throwException(first_operand+" does not exist");
 					if(a.type() != Value.STRUCTURE) {
@@ -388,7 +387,7 @@ public class Expression extends ScriptNode
 					if(at != Value.BOOLEAN || !a.bool())
 						return_value.set(false);
 					else {
-						b = second_operand.execute(activity);
+						b = second_operand.execute();
 						return_value.set(b.type() == Value.BOOLEAN && b.bool());
 					}
 				break;
@@ -396,14 +395,14 @@ public class Expression extends ScriptNode
 					if(at == Value.BOOLEAN && a.bool())
 						return_value.set(true);
 					else {
-						b = second_operand.execute(activity);
+						b = second_operand.execute();
 						return_value.set(b.type() == Value.BOOLEAN && b.bool());
 					}
 				break;
 			case CONDITIONAL_COLON : // the : of the a?b:c operator. it's first operand is an expression with the ? operator that belongs to this :
-				return (a!=null) ? a : second_operand.execute(activity);
+				return (a!=null) ? a : second_operand.execute();
 			case CONDITIONAL : // the ? of the a?b:c operator. it's first operand is an expression with ? operator
-				return a.equals(true) ? second_operand.execute(activity) : null; // returning null will lead to an error if the parent operator is not the : operator
+				return a.equals(true) ? second_operand.execute() : null; // returning null will lead to an error if the parent operator is not the : operator
 		}
 
 		return return_value;

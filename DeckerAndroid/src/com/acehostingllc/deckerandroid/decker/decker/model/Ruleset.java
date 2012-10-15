@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import android.util.Log;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
 import java.util.Locale;
@@ -15,25 +14,25 @@ public final class Ruleset
 	private Script[] script = new Script[0]; // the list of scripts in this ruleset
 
 
-	Ruleset (DeckerActivity activity, final String ruleset_name)  {
-		data = new Structure(activity, "RULESET", null);
+	Ruleset (final String ruleset_name)  {
+		data = new Structure("RULESET", null);
 		if (ruleset_name.equals("")) { // if this is the engine ruleset, change its name to ENGINE
 			data.get("structure_type").set("ENGINE");
 		}
 		data.add("RULESET_NAME").set(ruleset_name);
 		data.add("DEFAULT_LOCALIZATION").set("english");
-		final Structure constants = new Structure(activity, "SET", null);
+		final Structure constants = new Structure("SET", null);
 		if (ruleset_name.equals("")) { // if this is the engine ruleset, add the only standard constant, UNDEFINED
 			constants.add("UNDEFINED");
 		}
 		data.add("CONSTANTS").set(constants);
 		// add the set of structure types
-		final Structure structure_types = new Structure(activity, "SET", null);
+		final Structure structure_types = new Structure("SET", null);
 		data.add("STRUCTURE_TYPES").set(structure_types);
 		if (ruleset_name.equals("")) { // if this is the engine ruleset, add the standard structure type ARRAY
 			final String[] expandable_structure_types = { "COLLECTION", "ENGINE", "GLOBAL", "LOCAL", "RULESET", "SET" };
 			for (int i = 0; i < expandable_structure_types.length; i++) {
-				final Structure s = new Structure(activity, expandable_structure_types[i], null);
+				final Structure s = new Structure(expandable_structure_types[i], null);
 				s.add("expandable").set(true);
 				structure_types.add(expandable_structure_types[i]).set(s);
 			}

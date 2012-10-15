@@ -1,5 +1,4 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
 
@@ -14,7 +13,7 @@ public final class FunctionCall extends Expression
 	*   _function must be either a Function or a Value containing a Function
 	*   the enclosing ScriptNodes are already sitting on the stack for data retrieval 
 	 * @param function2 */
-	public final static Value executeFunctionCall (DeckerActivity activity, final Object _function, Value[] args, final Structure[] enclosing_structures) {
+	public final static Value executeFunctionCall (final Object _function, Value[] args, final Structure[] enclosing_structures) {
 		final Function function = (Function) ( (_function instanceof Function) ? _function : ((Value)_function).function() );
 		if (args == null)
 			args = DUMMY_ARGS;
@@ -23,8 +22,8 @@ public final class FunctionCall extends Expression
 			return StaticScriptFunctions.execute(function.getFunctionID(), args);
 		else {
 			// calculate the values of the supplied arguments and create the FUNCTION_CALL structure
-			args = function.insertDefaultArgumentValues(activity, args);
-			final Structure function_data = new Structure(activity, args, function.getArgumentNames());
+			args = function.insertDefaultArgumentValues(args);
+			final Structure function_data = new Structure(args, function.getArgumentNames());
 			// unless the "enclosing_structures" is KEEP_STACK, remove all local stack items from the stack, then put the optional structure the function's variable is stored in, the FUNCTION_CALL and a new LOCAL structure on it
 			Structure[] old_stack = null;
 			if (enclosing_structures != KEEP_STACK) {
@@ -39,7 +38,7 @@ public final class FunctionCall extends Expression
 			}
 			addStackItem(function_data);
 			// execute the function
-			function.getFunctionBody().execute(activity);
+			function.getFunctionBody().execute();
 			// restore the original local stack and return the function's return value
 			if (enclosing_structures != KEEP_STACK)
 				restoreLocalStack(old_stack);
@@ -82,12 +81,12 @@ public final class FunctionCall extends Expression
 	public Expression copy ()  { return new FunctionCall(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		Function function = null;
 		Structure structure = null;
 		try {
 			// fetch the function we will execute
-			final Value v = getFirstOperand().execute(activity);
+			final Value v = getFirstOperand().execute();
 			function = v.function();
 			structure = v.getEnclosingStructure();
 			// make sure structure is not one of the global structures
@@ -107,14 +106,14 @@ public final class FunctionCall extends Expression
 		final Value[] arguments = new Value[argument.length];
 		for (int i = 0; i < argument.length; i++)
 			if (argument[i] != null) {
-				arguments[i] = argument[i].execute(activity);
+				arguments[i] = argument[i].execute();
 				// we need to create a new variable so just the value of the original variable from the expression is transferred, and not the variable itself
 				if (arguments[i].getEnclosingStructure() != null)
 					arguments[i] = new Value().set(arguments[i]);
 			}
 		// execute the function call and return the resulting Value
 //System.err.println(toString());
-		return this.executeFunctionCall(activity, function, arguments, (structure==null)?null:new Structure[]{structure});
+		return this.executeFunctionCall(function, arguments, (structure==null)?null:new Structure[]{structure});
 	}
 
 

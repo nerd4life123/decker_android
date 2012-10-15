@@ -1,4 +1,7 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
+
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
@@ -9,14 +12,14 @@ public final class UIText extends DisplayedComponent
 {
 	private String text;
 	private int color;
-	private String font;
+	private Paint font;
 	private int y_offset;
 
 	UIText (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(activity, _component, _parent);
 		//component.structure().addValueListener(this);
 		updateText();
-		super.update(CUSTOM_SIZE, current_clip_source);
+		super.update(activity, CUSTOM_SIZE, current_clip_source);
 		child_count = 0; // cannot have children
 	}
 
@@ -51,8 +54,8 @@ public final class UIText extends DisplayedComponent
 
 
 
-	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
-		super.update(customSettings|CUSTOM_SIZE, current_clip_source);
+	protected void update (DeckerActivity activity, final int customSettings, final DisplayedComponent current_clip_source) {
+		super.update(activity, customSettings|CUSTOM_SIZE, current_clip_source);
 		updateText();
 	}
 

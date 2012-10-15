@@ -1,6 +1,7 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -45,7 +46,7 @@ public class DisplayedComponent extends View
 	int cx, cy, cw, ch;
 
 	// the shape of the component, if it's a STRUCTURE
-	private ImageView shape;
+	private Bitmap shape;
 	// child structures of this component
 	DisplayedComponent[] child;
 	int child_count;
@@ -104,7 +105,7 @@ public class DisplayedComponent extends View
 		// call the "on_resize" function if there is one
 		final Value v;
 		if (_component.type() == Value.STRUCTURE && (v=_component.get("on_resize")) != null && v.type() == Value.FUNCTION) {
-			FunctionCall.executeFunctionCall(null, v.function(), new Value[]{ new Value().set(ret.w), new Value().set(ret.h) }, new Structure[]{ Global.getDisplayedScreen().structure(), _component.structure() });
+			FunctionCall.executeFunctionCall(v.function(), new Value[]{ new Value().set(ret.w), new Value().set(ret.h) }, new Structure[]{ Global.getDisplayedScreen().structure(), _component.structure() });
 		}
 		return ret;
 	}
@@ -604,13 +605,13 @@ public class DisplayedComponent extends View
 
 
 
-	protected DisplayedComponent (Context context, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(context);
+	protected DisplayedComponent (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+		super(activity.getBaseContext());
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
 		if (_component != null) {
-			update(0, current_clip_source);
+			update(activity, 0, current_clip_source);
 			if (_component.type() == Value.STRUCTURE) {
 				//_component.structure().addValueListener(this);
 			}
@@ -827,12 +828,12 @@ public class DisplayedComponent extends View
 			if (width_has_changed || height_has_changed) {
 				final Value k = c.get("on_resize");
 				if (k != null) {
-					FunctionCall.executeFunctionCall(activity, k.function(), new Value[]{ new Value().set(w), new Value().set(h) }, new Structure[]{ Global.getDisplayedScreen().structure(), component.structure() });
+					FunctionCall.executeFunctionCall(k.function(), new Value[]{ new Value().set(w), new Value().set(h) }, new Structure[]{ Global.getDisplayedScreen().structure(), component.structure() });
 				}
 				if (( children_relative_to_width > 0 && width_has_changed )||( children_relative_to_height > 0 && height_has_changed )) {
 					for (int i = child_count; --i >= 0; ) {
 						if (( child[i].relative_to_parent_width && width_has_changed )||( child[i].relative_to_parent_height && height_has_changed )) {
-							child[i].update(0, current_clip_source);
+							child[i].update(activity, 0, current_clip_source);
 						}
 					}
 				}
@@ -868,7 +869,7 @@ public class DisplayedComponent extends View
 
 	public void eventValueChanged (DeckerActivity activity, final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
 		final DisplayedComponent clip_source = getCurrentClipSource();
-		update(0, clip_source);
+		update(activity, 0, clip_source);
 		updateChildren(activity, clip_source);
 	}
 
@@ -879,7 +880,7 @@ public class DisplayedComponent extends View
 //System.out.println("DC.eventValueChanged() "+getClass().getName()+" "+variable_name+" "+old_value+" -> "+new_value);
 //System.out.println(x+","+y+" "+w+","+h);
 		final DisplayedComponent clip_source = getCurrentClipSource();
-		update(0, clip_source);
+		update(activity, 0, clip_source);
 		updateChildren(activity, clip_source);
 //System.out.println(x+","+y+" "+w+","+h);
 	}
@@ -913,7 +914,7 @@ public class DisplayedComponent extends View
 
 
 
-	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (DeckerActivity activity, final int customSettings, final DisplayedComponent current_clip_source) {
 		relative_to_parent_width = false;
 		relative_to_parent_height = false;
 		// if the displayed component is not a structure, use the parent's x and y
@@ -987,7 +988,7 @@ public class DisplayedComponent extends View
 			determineClip(current_clip_source);
 			// the component may have a shape
 			if ((v=s.get("shape")) != null && v.type() == Value.STRING) {
-				shape = (ImageView) AbstractView.getImage(v.string(), true);
+				shape = (Bitmap) AbstractView.getImage(v.string(), true);
 			}
 			// finally update the event listener functions
 			updateEventListeners();

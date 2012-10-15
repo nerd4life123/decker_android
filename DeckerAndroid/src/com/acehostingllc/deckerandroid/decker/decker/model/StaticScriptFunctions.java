@@ -3,7 +3,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.widget.TextView;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.view.*;
 
 import java.io.*;
@@ -501,14 +500,11 @@ final class StaticScriptFunctions extends ScriptNode
 	ScriptNode copy () { throw new RuntimeException("should never get called"); }
 
 
-	public Value execute ()  { throw new RuntimeException("should never get called"); }
-
-
 	boolean print (final PrintStream out, final String indentation, final boolean line_start, final int depth)  { throw new RuntimeException("should never get called"); }
 
 
 	@Override
-	public Value execute(DeckerActivity activity) {
+	public Value execute() {
 		throw new RuntimeException("should never get called");
 	}
 }

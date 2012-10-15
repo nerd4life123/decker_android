@@ -44,9 +44,9 @@ public class DeckerActivity extends Activity {
      		this.setContentView(splashscreen);
 
     		Log.w("DeckerActivity", "initializeDataModel");
-     		Global.initializeDataModel(this);
+     		Global.initializeDataModel();
      		Log.w("DeckerActivity", "loadRulesets");
-     		Global.loadRulesets(this);
+     		Global.loadRulesets();
      		Log.w("DeckerActivity", "initializeRulesets");
      		// center the game window on the screen by default
      		//Global.getEngineData().add("display_center_x").set(ss.getToolkit().getScreenSize().width / 2);
@@ -76,7 +76,7 @@ public class DeckerActivity extends Activity {
      			throw new RuntimeException("displayScreen must be a FUNCTION but instead has the value "+displayScreenFunction+" ("+((displayScreenFunction==null)?"null":displayScreenFunction.typeName()));
      		}
      		Log.w("DeckerActivity", "initial screen type: "+initial_screen.type());
-     		FunctionCall.executeFunctionCall(this, displayScreenFunction.function(), new Value[]{ initial_screen }, null);
+     		FunctionCall.executeFunctionCall(displayScreenFunction.function(), new Value[]{ initial_screen }, null);
     }
 
     @Override

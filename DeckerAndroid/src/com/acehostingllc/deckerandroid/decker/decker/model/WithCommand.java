@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -28,8 +27,8 @@ final class WithCommand extends Block
 	public ScriptNode copy ()  { return new WithCommand(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
-		final Value v = variable_expression.execute(activity);
+	public Value execute ()  {
+		final Value v = variable_expression.execute();
 		if (v.type() == Value.STRUCTURE)
 			addStackItem(v.structure());
 		else {
@@ -39,7 +38,7 @@ final class WithCommand extends Block
 				System.err.println();
 			}
 		}
-		final Value ret = super.execute(activity);
+		final Value ret = super.execute();
 		if (v.type() == Value.STRUCTURE)
 			removeStackItem(v.structure());
 		return ret;

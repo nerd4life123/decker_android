@@ -40,9 +40,9 @@ final class TypeDefinition extends ScriptNode
 	public TypeDefinition copy ()  { return new TypeDefinition(this); }
 
 
-	public Value execute (DeckerActivity activity) {
+	public Value execute () {
 		// create the new structure
-		final Structure k = (extends_structure_type!=null) ? new Structure(activity, extends_structure_type, null) : new Structure(activity, "", null); // using "" will keep the Structure that holds the new structure type definition from instantiating the old type definition (if there is one for this type)
+		final Structure k = (extends_structure_type!=null) ? new Structure(extends_structure_type, null) : new Structure("", null); // using "" will keep the Structure that holds the new structure type definition from instantiating the old type definition (if there is one for this type)
 		k.get("structure_type").set(structure_type);
 		// execute the definition body if there is one
 		if (definition_body != null) {
@@ -51,7 +51,7 @@ final class TypeDefinition extends ScriptNode
 				if (definition_body[i] instanceof String)
 					k.add((String)definition_body[i]);
 				else
-					((AssignmentCommand)definition_body[i]).execute(activity);
+					((AssignmentCommand)definition_body[i]).execute();
 			}
 			removeStackItem(k, this);
 		}

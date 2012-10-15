@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -64,27 +63,27 @@ final class ForLoopCommand extends Block
 	}
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		if (java_style) { // Java style loop, e.g. for (i = 0; i <= 5; i++)
 			// the variable section is optional, execute it if it exists
 			if (variable != null) {
-				Value v = (Value) AssignmentCommand.fetchOrCreateVariable(activity, variable, true, this, false)[2];
+				Value v = (Value) AssignmentCommand.fetchOrCreateVariable(variable, true, this, false)[2];
 				if (initial_value != null) {
-					v.set(initial_value.execute(activity));
+					v.set(initial_value.execute());
 				}
 			}
 			// the condition section is optional too. if it is omitted, the loop will be infinite, unless it contains a break command
 			final Expression c = condition;
 			final ScriptNode inc = increment;
-			while (c == null || c.execute(activity).equals(true)) {
+			while (c == null || c.execute().equals(true)) {
 				// the loop may have been terminated by a break command
-				if (super.execute(activity) == BREAK_VALUE) {
+				if (super.execute() == BREAK_VALUE) {
 					return null;
 				}
 				// the increment section is optional
 				if (inc != null) {
 					// the increment section may contain the break command
-					if (inc.execute(activity) == BREAK_VALUE) {
+					if (inc.execute() == BREAK_VALUE) {
 						return null;
 					}
 				}
@@ -92,8 +91,8 @@ final class ForLoopCommand extends Block
 		}
 		else { // BASIC style loop, e.g. for i = 0 to 5
 			// create the loop variable and initialize it
-			Value v = (Value) AssignmentCommand.fetchOrCreateVariable(activity, variable, true, this, false)[2];
-			v.set(initial_value.execute(activity));
+			Value v = (Value) AssignmentCommand.fetchOrCreateVariable(variable, true, this, false)[2];
+			v.set(initial_value.execute());
 			int vt = v.type();
 			if (vt != Value.INTEGER && vt != Value.REAL) {
 				throwException("the initial value of "+variable+" must be INTEGER or REAL, not "+v+" ("+v.typeName()+")");
@@ -102,14 +101,14 @@ final class ForLoopCommand extends Block
 			if (step != null) {
 				{
 					// check whether the loop variable has passed the limit before the loop was even executed for the first time
-					Value vstep = step.execute(activity);
+					Value vstep = step.execute();
 					int vst = vstep.type();
 					if (vst != Value.INTEGER && vst != Value.REAL) {
 						throwException("the step value of the loop must be INTEGER or REAL, not "+vstep+" ("+vstep.typeName()+")");
 					}
 					double vr = v.real();
 					double vsr = vstep.real();
-					Value vlimit = final_value.execute(activity);
+					Value vlimit = final_value.execute();
 					final int vlt = vlimit.type();
 					if (vlt != Value.INTEGER && vlt != Value.REAL) {
 						throwException("the limiting value of the loop must be INTEGER or REAL, not "+vlimit+" ("+vlimit.typeName()+")");
@@ -120,7 +119,7 @@ final class ForLoopCommand extends Block
 				}
 				while (true) {
 					// the loop limit has not been reached yet. execute the loop body (again)
-					if (super.execute(activity) == BREAK_VALUE) {
+					if (super.execute() == BREAK_VALUE) {
 						// the loop has been terminated by a break command in the loop's block
 						return null;
 					}
@@ -129,7 +128,7 @@ final class ForLoopCommand extends Block
 					if (vt != Value.INTEGER && vt != Value.REAL) {
 						throwException("when you change the for loop variable in the looped block, you must give it an INTEGER or REAL value, not "+v+" ("+v.typeName()+")");
 					}
-					Value vlimit = final_value.execute(activity);
+					Value vlimit = final_value.execute();
 					int vlt = vlimit.type();
 					if (vlt != Value.INTEGER && vlt != Value.REAL) {
 						throwException("the limiting value of the loop must be INTEGER or REAL, not "+vlimit+" ("+vlimit.typeName()+")");
@@ -139,7 +138,7 @@ final class ForLoopCommand extends Block
 					if (vr == vlr)
 						break;
 					// advance the loop variable one step
-					Value vstep = step.execute(activity);
+					Value vstep = step.execute();
 					int vst = vstep.type();
 					if (vst != Value.INTEGER && vst != Value.REAL) {
 						throwException("the step value of the loop must be INTEGER or REAL, not "+vstep+" ("+vstep.typeName()+")");
@@ -153,7 +152,7 @@ final class ForLoopCommand extends Block
 					}
 					vr += vsr;
 					// stop here if the loop variable has passed the limit
-					vlimit = final_value.execute(activity);
+					vlimit = final_value.execute();
 					vlt = vlimit.type();
 					if (vlt != Value.INTEGER && vlt != Value.REAL) {
 						throwException("the limiting value of the loop must be INTEGER or REAL, not "+vlimit+" ("+vlimit.typeName()+")");
@@ -171,7 +170,7 @@ final class ForLoopCommand extends Block
 					throwException("the loop variable's initial value must be INTEGER or REAL, not "+v+" ("+v.typeName()+")");
 				}
 				// calculate the limit and determine whether the loop needs to terminate
-				Value vlimit = final_value.execute(activity);
+				Value vlimit = final_value.execute();
 				int vlt = vlimit.type();
 				if (vlt != Value.INTEGER && vlt != Value.REAL) {
 					throwException("the limiting value of the loop must be INTEGER or REAL, not "+vlimit+" ("+vlimit.typeName()+")");
@@ -180,7 +179,7 @@ final class ForLoopCommand extends Block
 				double vr = v.real();
 				while (( (vlr > vr) == loop_goes_up )|| v.equals(vlimit)) {
 					// execute the loop body
-					if (super.execute(activity) == BREAK_VALUE) {
+					if (super.execute() == BREAK_VALUE) {
 						// the loop has been terminated by a break command in the loop's block
 						return null;
 					}
@@ -191,7 +190,7 @@ final class ForLoopCommand extends Block
 					}
 					vr = v.real();
 					// move towards the limit and determine whether the loop needs to terminate
-					vlimit = final_value.execute(activity);
+					vlimit = final_value.execute();
 					vlt = vlimit.type();
 					if (vlt != Value.INTEGER && vlt != Value.REAL) {
 						throwException("the limiting value of the loop must be INTEGER or REAL, not "+vlimit+" ("+vlimit.typeName()+")");

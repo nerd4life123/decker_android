@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -28,7 +27,7 @@ final class ConstantDefinitionCommand extends ScriptNode
 	public ScriptNode copy()  { return new ConstantDefinitionCommand(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
+	public Value execute ()  {
 		final Structure s = stack[RULESET_STACK_SLOT].get("CONSTANTS").structure();
 		final String[] c = constant;
 		for (int i = c.length; --i >= 0; )

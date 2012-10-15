@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.ArrayModifier;
 
 
@@ -51,14 +50,14 @@ public final class Function extends ScriptNode
 	public Function copy ()  { return new Function(this, false); }
 
 
-	public Value execute (DeckerActivity activity)  { return new Value().set(this); }
+	public Value execute ()  { return new Value().set(this); }
 
 
 	String[] getArgumentNames ()  { return argument_name; }
 
 
 	/** args must contain an ARRAY */
-	Value[] insertDefaultArgumentValues (DeckerActivity activity, final Value[] args)  {
+	Value[] insertDefaultArgumentValues (final Value[] args)  {
 		// determine the last index where we may have to insert a default value
 		int last_index = -1;
 		for (int i = argument_default_value.length; --i >= 0; )
@@ -77,7 +76,7 @@ public final class Function extends ScriptNode
 			if (ret[i] == null) {
 				ret[i] = new Value();
 				if (argument_default_value[i] != null) {
-					ret[i].set(argument_default_value[i].execute(activity));
+					ret[i].set(argument_default_value[i].execute());
 				}
 			}
 		}

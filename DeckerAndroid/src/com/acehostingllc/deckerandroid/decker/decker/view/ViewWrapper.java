@@ -11,13 +11,14 @@ import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 
 
-public final class ViewWrapper extends RelativeLayout
+public final class ViewWrapper
 {
+	/*
 	public ViewWrapper(Context context) {
-		super(context);
+		//super(context);
 		// TODO Auto-generated constructor stub
 	}
-
+	*/
 
 	// methods other parts of this program will call ************************************************************************
 	private ImageView buffer;
@@ -30,13 +31,13 @@ public final class ViewWrapper extends RelativeLayout
 	private int old_width = -1, old_height = -1;
 	private String oldScreenTitle = "";
 	private Value oldDisplayedScreen = new Value();
-	/*
+	
 	public ViewWrapper () {
 		view = new AbstractView();
-		if (Global.getDisplayedComponent() instanceof Frame)
-			Global.getDisplayedComponent().addComponentListener(this);
+		//if (Global.getDisplayedComponent() instanceof Frame)
+		//	Global.getDisplayedComponent().addComponentListener(this);
 	}
-	*/
+	
 
 	//protected AWTEvent getLastEvent () { return lastEvent; }
 	public AbstractView getView () { return view; }

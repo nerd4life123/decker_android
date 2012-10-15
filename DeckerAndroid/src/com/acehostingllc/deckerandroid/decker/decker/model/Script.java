@@ -19,7 +19,7 @@ final class Script
 		return filename;
 	}
 
-	Script (DeckerActivity activity, final String _filename)  { filename = _filename; }
+	Script (DeckerActivity activity, final String _filename)  { this.activity = activity; filename = _filename; }
 
 
 	void execute (final Locale[] accepted_localizations, final String default_localization)  {
@@ -32,9 +32,9 @@ final class Script
 				// we need a LOCAL object on the stack for the script execution
 //if (Global.debug_level > 0)
 Log.w("DeckerActivity", "   running script from file : "+filename);
-				final Structure local = new Structure(activity, "LOCAL", null);
+				final Structure local = new Structure("LOCAL", null);
 				ScriptNode.addStackItem(local);
-				((Block)ls).execute(activity);
+				((Block)ls).execute();
 				ScriptNode.removeStackItem(local, (Block)ls);
 				return;
 			}

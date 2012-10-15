@@ -1,7 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
 import java.io.PrintStream;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 
 
 
@@ -27,8 +26,8 @@ final class PrintCommand extends ScriptNode
 	public ScriptNode copy()  { return new PrintCommand(this); }
 
 
-	public Value execute (DeckerActivity activity)  {
-System.out.println("PrintCommand : "+displayed_expression.execute(activity).toString());
+	public Value execute ()  {
+System.out.println("PrintCommand : "+displayed_expression.execute().toString());
 //Global.displayTickerMessage(displayed_expression.execute().toString());
 return null;
 }
