@@ -1,6 +1,5 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 class UIScrollbarButton extends UIButton
 {
@@ -39,12 +38,12 @@ class UIScrollbarButton extends UIButton
 
 
 
-	boolean eventUserInput (final int event_id, final AWTEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		String s;
 		if (component.type() != Value.STRUCTURE ||( !(s=component.get("structure_type").string()).equals("BUTTON") && !s.equals("BORDER_BUTTON") ))
 			return true;
 		final int old_state = getState();
-		super.eventUserInput(event_id, e, mouse_x, mouse_y, mouse_dx, mouse_dy);
+		super.eventUserInput(event_id, mouse_x, mouse_y, mouse_dx, mouse_dy);
 		final int state = getState();
 		if (old_state != state) {
 if (state == PRESSED_STATE_ID && event_id == ON_MOUSE_DOWN)
@@ -67,7 +66,7 @@ if (old_state == PRESSED_STATE_ID && event_id == ON_MOUSE_UP)
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		super.update(customSettings, current_clip_source);
 		if (listens_everywhere) {
 			cx = Integer.MIN_VALUE / 2;

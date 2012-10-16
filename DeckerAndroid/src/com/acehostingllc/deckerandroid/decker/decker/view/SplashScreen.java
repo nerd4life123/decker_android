@@ -1,13 +1,21 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 import java.io.*;
 
+import android.content.Context;
 import android.view.View;
+
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.BMPReader;
 
 
 
-public class SplashScreen
+public class SplashScreen extends View
 {
+
+	public SplashScreen() {
+		super(DeckerActivity.getAppContext());
+		// TODO Auto-generated constructor stub
+	}
 	//private Image splashscreen;
 	/*
 	public SplashScreen ()  {

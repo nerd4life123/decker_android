@@ -5,20 +5,23 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 
 
-public final class ViewWrapper
+public final class ViewWrapper extends View
 {
-	/*
-	public ViewWrapper(Context context) {
-		//super(context);
-		// TODO Auto-generated constructor stub
+	
+	public ViewWrapper() {
+		super(DeckerActivity.getAppContext());
+		view = new AbstractView();
+		this.setMinimumWidth(10);
+		this.setMinimumHeight(10);
 	}
-	*/
+	
 
 	// methods other parts of this program will call ************************************************************************
 	private ImageView buffer;
@@ -32,11 +35,10 @@ public final class ViewWrapper
 	private String oldScreenTitle = "";
 	private Value oldDisplayedScreen = new Value();
 	
-	public ViewWrapper () {
-		view = new AbstractView();
+	//public ViewWrapper () {
 		//if (Global.getDisplayedComponent() instanceof Frame)
 		//	Global.getDisplayedComponent().addComponentListener(this);
-	}
+	//}
 	
 
 	//protected AWTEvent getLastEvent () { return lastEvent; }
@@ -49,7 +51,7 @@ public final class ViewWrapper
 		if (view == this.view)
 			return;
 		this.view = view;
-		//repaint();
+		repaint();
 	}
 
 
@@ -103,22 +105,28 @@ public final class ViewWrapper
 	}
 
 
-
-	/*
-	public void paint (final Graphics g) {
-		update(g);
+	public void repaint() {
+		// TODO Auto-generated method stub
+		paint();
 	}
-	*/
-	/*
-	public void processEvent (final AWTEvent e) {
+
+
+
+	
+	public void paint () {
+		update();
+	}
+	
+	
+	public void processEvent (final Object e) {
 		events.add(e);
 	}
-	*/
+	
 
 	/** adjusts the Bounds of the Frame when the top level view's bounds settings change */
-		/*
+		
 	private void setScreenSize (int new_width, int new_height)  {
-		if (new_width <= 10)
+		/*if (new_width <= 10)
 			new_width = 11;
 		if (new_height <= 11)
 			new_height = 11;
@@ -144,26 +152,28 @@ public final class ViewWrapper
 				frame_y = 0;
 			// set the Frame bounds to the new values
 			((Frame)parent).setBounds(frame_x, frame_y, new_width, new_height);
-			((Frame)parent).doLayout();
-		}
+			((Frame)parent).doLayout();*/
+		//}
 	}
-		*/
-	/*
+		
+	
 	private void setTitle (final String new_title)  {
 		// the Frame should be the top-most parent object of the ViewWrapper
-		Component parent = Global.getViewWrapper().getParent();
-		while (parent.getParent() != null)
-			parent = parent.getParent();
-		if (parent != null && parent instanceof Frame)
-			((Frame)parent).setTitle(new_title);
+		//Component parent = Global.getViewWrapper().getParent();
+		//while (parent.getParent() != null)
+			//parent = parent.getParent();
+		//if (parent != null && parent instanceof Frame)
+			//((Frame)parent).setTitle(new_title);
+		
+		// LOL
 	}
-	*/
-
-	/*
-	private void synchronizedUpdate (final Graphics g) {
-		if (!isVisible()) {
+	
+	
+	private void synchronizedUpdate () {
+		/*
+		if (!this.isFocused()) {
 			return;
-		}
+		}*/
 		painting = true;
 		try {
 			handleUserInput();
@@ -181,7 +191,7 @@ System.out.println("ViewWrapper: ** switching screens **");
 final int w = Math.max(11, DisplayedComponent.getScreenWidth()), h = Math.max(11, DisplayedComponent.getScreenHeight());
 
 					// draw the next frame
-					if (buffer == null || buffer.getWidth(this) != w || buffer.getHeight(this) != h) {
+					if (buffer == null || buffer.getWidth() != w || buffer.getHeight() != h) {
 						try {
 							buffer = createImage(w, h);
 						} catch (Throwable t) {
@@ -192,11 +202,11 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 						}
 					}
 
-					final Graphics bg = buffer.getGraphics();
-					bg.setFont(getFont());
+					//final Graphics bg = buffer.getGraphics();
+					//bg.setFont(getFont());
 
 					// fetch the background color
-						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");
+/*						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");
 					if (bgcolor_string != null && bgcolor_string.type() == Value.STRING) {
 						final Color bgcolor = AbstractView.getColor(bgcolor_string.string());
 						if (bgcolor != null) {
@@ -206,8 +216,8 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 						}
 					}
 					bg.setColor(getForeground());
-
-					DisplayedComponent.drawScreen(bg);
+*/
+					DisplayedComponent.drawScreen();
 //						view.drawContent(bg); // call drawContent() instead of paint(), because the coordinate system already sits where it should
 					if (w != old_width || h != old_height) {
 						old_width = w;
@@ -223,7 +233,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 							oldScreenTitle = s;
 						}
 					}
-					g.drawImage(buffer, 0, 0, this);
+					drawImage(buffer, 0, 0, this);
 				}
 //			}
 		} catch (Throwable t) {
@@ -233,12 +243,32 @@ System.exit(1);
 		}
 		painting = false;
 	}
-	*/
-	/*
-	public void update (final Graphics g) {
-		if (painting || getSize().width == 0 || getSize().height == 0)
-			return;
-		synchronizedUpdate(g);
+
+	private void drawImage(ImageView buffer2, int i, int j,
+			ViewWrapper viewWrapper) {
+		// TODO Auto-generated method stub
+		System.out.println("Drawimage called");
 	}
-	*/
+
+
+	private ImageView createImage(int w, int h) {
+		// TODO Auto-generated method stub
+		return new ImageView(DeckerActivity.getAppContext());
+	}
+
+
+	public void update () {
+		if (painting)
+		{
+			System.out.println("ispainting!");
+			return;
+		}
+		/*
+		if (this.getWidth() == 0 || this.getHeight() == 0)
+		{
+			System.out.println("width or height is 0, not updating");
+			return;
+		}*/
+		synchronizedUpdate();
+	}
 }

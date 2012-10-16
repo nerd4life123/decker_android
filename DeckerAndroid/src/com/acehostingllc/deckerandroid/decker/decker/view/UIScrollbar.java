@@ -1,11 +1,7 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
-
-
-
-class UIScrollbar extends DisplayedComponent
+public class UIScrollbar extends DisplayedComponent
 {
 	private boolean vertical;
 	private int slider_position, slider_max, slider_stepping;
@@ -141,13 +137,15 @@ class UIScrollbar extends DisplayedComponent
 
 
 
-	void draw (final Graphics g) {
+	protected void draw () {
+		/*
 		if (minus_button != null)
 			minus_button.draw(g);
 		if (plus_button != null)
 			plus_button.draw(g);
 		if (slider != null)
 			slider.draw(g);
+			*/
 	}
 
 
@@ -248,7 +246,7 @@ class UIScrollbar extends DisplayedComponent
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		if (component.type() != Value.STRUCTURE)
 			return;
 		final Structure d = component.structure();

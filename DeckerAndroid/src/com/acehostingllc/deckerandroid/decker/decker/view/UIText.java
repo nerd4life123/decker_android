@@ -15,11 +15,11 @@ public final class UIText extends DisplayedComponent
 	private Paint font;
 	private int y_offset;
 
-	UIText (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(activity, _component, _parent);
+	UIText (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+		super(_component, _parent);
 		//component.structure().addValueListener(this);
 		updateText();
-		super.update(activity, CUSTOM_SIZE, current_clip_source);
+		super.update(CUSTOM_SIZE, current_clip_source);
 		child_count = 0; // cannot have children
 	}
 
@@ -38,24 +38,24 @@ public final class UIText extends DisplayedComponent
 		//g.drawString(text, x, y+y_offset);
 	}
 
-	public void eventValueChanged (DeckerActivity activity, final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
+	public void eventValueChanged (final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
 		updateText();
-		super.eventValueChanged(activity, index, wrapper, old_value, new_value);
+		super.eventValueChanged(index, wrapper, old_value, new_value);
 	}
 
 
 
 
-	public void eventValueChanged (DeckerActivity activity, final String variable_name, final Structure container, final Value old_value, final Value new_value) {
+	public void eventValueChanged (final String variable_name, final Structure container, final Value old_value, final Value new_value) {
 		updateText();
-		super.eventValueChanged(activity, variable_name, container, old_value, new_value);
+		super.eventValueChanged(variable_name, container, old_value, new_value);
 	}
 
 
 
 
-	protected void update (DeckerActivity activity, final int customSettings, final DisplayedComponent current_clip_source) {
-		super.update(activity, customSettings|CUSTOM_SIZE, current_clip_source);
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
+		super.update(customSettings|CUSTOM_SIZE, current_clip_source);
 		updateText();
 	}
 
@@ -70,6 +70,6 @@ public final class UIText extends DisplayedComponent
 		v = t.get("font");
 		font = AbstractView.getFont((v.type() == Value.STRING)?v.string():"", null, false);
 		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : null;
-		//y_offset = AbstractView.getFontMetrics(font).getAscent();
+		y_offset = font.getFontMetricsInt().ascent;
 	}
 }

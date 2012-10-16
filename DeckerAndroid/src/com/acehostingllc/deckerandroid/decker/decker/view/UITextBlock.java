@@ -14,8 +14,8 @@ import com.acehostingllc.deckerandroid.decker.decker.model.*;
 /** displays a TEXTBLOCK structure */
 public final class UITextBlock extends DisplayedComponent
 {
-	UITextBlock(DeckerActivity activity, Value _component) {
-		super(activity, _component);
+	UITextBlock(Value _component) {
+		super(_component);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -42,7 +42,7 @@ public final class UITextBlock extends DisplayedComponent
 	/** data[X] is the current x position for appending children, data[Y] is the current y position for that, data[ROW_HEIGHT] is the height of the current row, data[ELEMENTS] is the number  of components on the current row so far */
 	
 	
-	@TargetApi(11)
+	//@TargetApi(11)
 	private void addChild (final Value c, final int[] data, final DisplayedComponent[][] current_row, final DisplayedComponent[][] children, final DisplayedComponent current_clip_source) {
 		// add the component c
 		if (c.type() == Value.STRUCTURE && !c.get("structure_type").equals("TEXT")) {
@@ -186,12 +186,12 @@ public final class UITextBlock extends DisplayedComponent
 	}
 
 
-
+/*
 	private DisplayedComponent createDisplayedComponent(Value c, UITextBlock uiTextBlock,
 			DisplayedComponent current_clip_source) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 	
 
 	

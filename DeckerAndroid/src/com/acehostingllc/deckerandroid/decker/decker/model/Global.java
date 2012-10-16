@@ -1,7 +1,10 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -23,8 +26,6 @@ import java.util.TreeSet;
 */
 public final class Global extends Application
 {
-	private static Context context;
-	
 	final static Random random = new Random();
 	final static String COMMANDS = " if for while with print copy structure break constant localization default_localization "; // the string must start and end with spaces
 	final static String BLOCK_INDENT = "   ";
@@ -45,15 +46,6 @@ public final class Global extends Application
 	final static void addStructureType (final StructureDefinition sd)  { current_ruleset.addStructureType(sd); }
 	public static Ruleset getCurrentRuleset ()  { return current_ruleset; }
 	public static Structure getEngineData ()  { return ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; }
-
-	public void onCreate(){
-		super.onCreate();
-		Global.context = getApplicationContext();
-	}
-	
-	public static Context getAppContext() {
-		return Global.context;
-	}
 
 	/** sets things up for the game to launch and load the rulesets */
 	public final static void initializeDataModel ()  {
@@ -99,24 +91,18 @@ public final class Global extends Application
 
 
 	public final static void initializeRulesets ()  {
-//if (Global.debug_level > 0) {
-Log.w("DeckerActivity", ruleset.length+" rulesets found");
-//}
 		final Ruleset r = current_ruleset;
 		// first run the global scripts
-//if (Global.debug_level > 0)
-		Log.w("DeckerActivity", "running global scripts");
 		setCurrentRuleset(engine);
 		current_ruleset.initialize(accepted_locales);
 		// then run the scripts of each ruleset
 		for (int i = 0; i < ruleset.length; i++)  {
-//if (Global.debug_level > 0)
 			setCurrentRuleset(ruleset[i]);
 			current_ruleset.initialize(accepted_locales);
 		}
 		setCurrentRuleset(r);
-// print all ENGINE level structure types
- engine.data.get("STRUCTURE_TYPES").structure().print(System.err, "", true, 0);
+		// print all ENGINE level structure types
+		 engine.data.get("STRUCTURE_TYPES").structure().print(System.err, "", true, 0);
 	}
 
 
@@ -136,7 +122,7 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 	 * Loads the scripts from the rulesets subfolder of the folder the jar sits in
 	 */
 	public static void loadRulesets ()  {
-		AssetManager mgr = Global.getAppContext().getAssets();
+		AssetManager mgr = DeckerActivity.getAppContext().getAssets();
 		String rulesetsFolderName = "rulesets";
 		String[] dir_list;
 		try {
@@ -148,8 +134,6 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 		}
 		bubblesort(dir_list);
 		for (int d = 0; d < dir_list.length; d++) {
-			//if (Global.debug_level > 0)
-				Log.w("DeckerActivity", "loading Ruleset "+dir_list[d]);
 			final Ruleset r = new Ruleset(dir_list[d]);
 			
 			String[] script_list;
@@ -165,7 +149,6 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 			boolean has_scripts = false;
 			for (int i = 0; i < script_list.length; i++)
 			{
-				Log.w("DeckerActivity", "ruleset " + dir_list[d] + " has script: " + script_list[i]);
 				if (script_list[i].toLowerCase().endsWith(".txt"))
 				{
 					try {
@@ -182,20 +165,17 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 				// if the ruleset has at least one script, add it to the list of available rulesets
 			if (has_scripts)
 			{
-				Log.w("DeckerActivity", "has scripts!!!");
 				ruleset = (Ruleset[]) ArrayModifier.addElement(ruleset, new Ruleset[ruleset.length+1], r);
 			}
 		}
 		
 			// add the global scripts which sit directly in the rulesets folder to the engine ruleset
 		//if (Global.debug_level > 0)
-			Log.w("DeckerActivity", "loading engine scripts");
 		for (int i = 0; i < dir_list.length; i++)
 		{
 			if (dir_list[i].toLowerCase().endsWith(".txt"))
 			{
 				try {
-					Log.w("DeckerActivity", "loaded engine script: " + dir_list[i]);
 					engine.addScript(ScriptParser.parse(dir_list[i],
 							new InputStreamReader(mgr.open(rulesetsFolderName + "/" + dir_list[i])),
 							engine));
@@ -208,7 +188,6 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 	}
 
 	public static void setCurrentRuleset (final Ruleset r)  {
-		Log.w("DeckerActivity", "setting current ruleset to " + r.data.get("RULESET_NAME"));
 		final Ruleset old_ruleset = current_ruleset;
 		current_ruleset = r;
 		ScriptNode.stack[ScriptNode.RULESET_STACK_SLOT] = r.data;
@@ -245,9 +224,9 @@ Log.w("DeckerActivity", ruleset.length+" rulesets found");
 
 	public static Value getDisplayedScreen ()  { final Structure e = ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; return (e==null) ? null : e.get("displayed_screen"); }
 
-	public static void setDisplayedComponent (DeckerActivity activity, final View c) 
+	public static void setDisplayedComponent (final View c) 
 	{
-		activity.setContentView(c);
+		//((DeckerActivity) DeckerActivity.getAppContext()).setContentView(c);
 		displayed_component = c;
 	}
 

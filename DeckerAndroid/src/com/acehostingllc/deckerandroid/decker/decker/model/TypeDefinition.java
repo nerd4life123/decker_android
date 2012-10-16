@@ -10,7 +10,6 @@ final class TypeDefinition extends ScriptNode
 	private String structure_type;
 	private String extends_structure_type;
 	private Object[] definition_body;
-	private DeckerActivity activity; 
 
 	/** _structure_type is either a String or, if this is a copy() command, an Expression */
 	TypeDefinition (final String _structure_type, final String _extends_structure_type, final String _script_name, final int _script_line, final int _script_column)  {

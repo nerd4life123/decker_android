@@ -129,7 +129,6 @@ public class Expression extends ScriptNode
 					// do nothing. it's a leaf operator and does not move up within the expression tree
 				}
 				else if (operator == CONDITIONAL_COLON) {
-					if (this.isTheFileWeAreStuckOn(_script_name)) this.Log(_script_line + "|operator is conditional colon");
 					// move up through the tree until you find the corresponding ? operator. stop when the ? operator is found, the top of the expression_stack is reached, the top of the expression is reached or there is an enclosing Expression (it puts a dummy ScriptNode that is not an Expression on the expression_stack while its contents are parsed)
 					if (index >= 0) {
 						do {
@@ -142,15 +141,10 @@ public class Expression extends ScriptNode
 						throwException("found the : but not the corresponding ? of the a?b:c operator");
 				}
 				else { // all other expressions are sorted by their order of priority
-					if (this.isTheFileWeAreStuckOn(_script_name)) this.Log(_script_line + "|operator is othertype");
 					// the ?'s of a?b:c are executed left to right so a ? that is added is weaker than an existing :
 					final int priority = OPERATOR_PRIORITY[operator] - ((operator==CONDITIONAL) ? 2 : 0);
 					// now find the place in the expression tree where this expression belongs
 					while (index > -1 && OPERATOR_PRIORITY[expression_stack[index].operator] <= priority) {
-						if (this.isTheFileWeAreStuckOn(_script_name))
-							{
-								this.Log("first operand set to " + expression_stack[index]);
-							}
 						first_operand = expression_stack[index];
 						expression_stack[index] = null;
 						index--;
@@ -167,17 +161,6 @@ public class Expression extends ScriptNode
 			}
 		}
 	}
-	
-	private boolean isTheFileWeAreStuckOn(String scriptname)
-	{
-		return (scriptname.contains("default"));
-	}
-	
-	private void Log(String message)
-	{
-		Log.w("DeckerActivity", message);
-	}
-
 
 	/** copies the Expression e */
 	private Expression (final Expression e)  {

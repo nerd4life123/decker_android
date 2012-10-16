@@ -1,11 +1,8 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
-
-
-class UIScrollpaneScrollbar extends UIScrollbar
+public class UIScrollpaneScrollbar extends UIScrollbar
 {
 	private int old_slider_position;
 
@@ -42,7 +39,7 @@ class UIScrollpaneScrollbar extends UIScrollbar
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		super.update(customSettings, current_clip_source);
 		if (getSliderPosition() != old_slider_position) {
 			old_slider_position = getSliderPosition();

@@ -73,7 +73,7 @@ RULESET.new_character_screen = COMPONENT
 			width = 82
 			height = 28
 			inverted = true
-			background_color = NCS_IMAGE_BACKGROUND_COLOR
+			background_color = "#0000ff" //NCS_IMAGE_BACKGROUND_COLOR
 			component = ARRAY
 				char_image
 				BORDER_BUTTON

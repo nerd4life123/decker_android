@@ -2,6 +2,7 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -16,13 +17,20 @@ import com.acehostingllc.deckerandroid.decker.decker.view.UITextBlock;
 
 public class DisplayedComponent extends View
 {
-	final static String[] EVENT_FUNCTION_NAME = { "on_key_down",   "on_mouse_down",   "on_mouse_dragged",   "on_mouse_entered",   "on_mouse_exited",   "on_mouse_moved",   "on_mouse_up", "on_double_click" };
-	final static int                               ON_KEY_DOWN = 0, ON_MOUSE_DOWN = 1, ON_MOUSE_DRAGGED = 2, ON_MOUSE_ENTERED = 3, ON_MOUSE_EXITED = 4, ON_MOUSE_MOVED = 5, ON_MOUSE_UP =6, ON_DOUBLE_CLICK = 7;
+	protected final static String[] EVENT_FUNCTION_NAME = { "on_key_down",   "on_mouse_down",   "on_mouse_dragged",   "on_mouse_entered",   "on_mouse_exited",   "on_mouse_moved",   "on_mouse_up", "on_double_click" };
+	protected final static int                               ON_KEY_DOWN = 0;
+	protected static final int ON_MOUSE_DOWN = 1;
+	protected static final int ON_MOUSE_DRAGGED = 2;
+	protected static final int ON_MOUSE_ENTERED = 3;
+	protected static final int ON_MOUSE_EXITED = 4;
+	protected static final int ON_MOUSE_MOVED = 5;
+	protected static final int ON_MOUSE_UP =6;
+	protected static final int ON_DOUBLE_CLICK = 7;
 	// when calling DisplayedComponentt.update(), derived classes use these constants to tell the default update algorithm which settings have custom functions
-	final static int CUSTOM_SIZE = 0x1;
+	protected final static int CUSTOM_SIZE = 0x1;
 	// number of pixels the mouse may move during each event associated with a double click
-	static int MOUSE_DOUBLE_CLICK_RADIUS = 1;
-	static long MOUSE_DOUBLE_CLICK_DURATION = 1000; // a double click may last this many milliseconds
+	protected static int MOUSE_DOUBLE_CLICK_RADIUS = 1;
+	protected static long MOUSE_DOUBLE_CLICK_DURATION = 1000; // a double click may last this many milliseconds
 
 	private final static DisplayedComponent[][] eventListener = new DisplayedComponent[EVENT_FUNCTION_NAME.length][5];
 	private final static int[] eventListenerCount = new int[EVENT_FUNCTION_NAME.length];
@@ -36,12 +44,16 @@ public class DisplayedComponent extends View
 
 
 	// the displayed component
-	Value component;
+	protected Value component;
 	// the parent Structure of this component
-	DisplayedComponent parent;
+	protected DisplayedComponent parent;
 	// the bounding rectangle
-	int x, y, w = Integer.MIN_VALUE, h = Integer.MIN_VALUE;
-	boolean relative_to_parent_width, relative_to_parent_height;
+	protected int x;
+	protected int y;
+	protected int w = Integer.MIN_VALUE;
+	protected int h = Integer.MIN_VALUE;
+	protected boolean relative_to_parent_width;
+	protected boolean relative_to_parent_height;
 	// the clipped bounding rectangle. if the component is invisible w is <= 0, h possibly too
 	int cx, cy, cw, ch;
 
@@ -67,7 +79,7 @@ public class DisplayedComponent extends View
 
 
 
-	final static DisplayedComponent createDisplayedComponent (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+	final static DisplayedComponent createDisplayedComponent (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		DisplayedComponent ret = null;
 		if (_component.type() != Value.STRUCTURE) {
 			throw new RuntimeException(_component+" is not a structure");
@@ -75,32 +87,32 @@ public class DisplayedComponent extends View
 		else { // it's a structure
 			final String t = _component.get("structure_type").string();
 			if (t.equals("BORDER"))
-				ret = null;//new UIBorder(_component, _parent, current_clip_source);
+				ret = new UIBorder(_component, _parent, current_clip_source);
 			else if (t.equals("BUTTON") || t.equals("BORDER_BUTTON"))
-				ret = null;//new UIButton(_component, _parent, current_clip_source);
+				ret = new UIButton(_component, _parent, current_clip_source);
 			else if (t.equals("CLIP"))
-				ret = null;//new UIClip(_component, _parent, current_clip_source);
+				ret = new UIClip(_component, _parent, current_clip_source);
 			else if (t.equals("IMAGE"))
-				ret = null;//new UIImage(_component, _parent, current_clip_source);
+				ret = new UIImage(_component, _parent, current_clip_source);
 			else if (t.equals("SCROLLBAR"))
-				ret = null;//new UIScrollbar(_component, _parent, current_clip_source);
+				ret = new UIScrollbar(_component, _parent, current_clip_source);
 			else if (t.equals("SCROLLPANE"))
-				ret = null;//new UIScrollpane(_component, _parent, current_clip_source);
+				ret = new UIScrollpane(_component, _parent, current_clip_source);
 			else if (t.equals("TABLE"))
-				ret = null;//new UITable(_component, _parent, current_clip_source);
+				ret = new UITable(_component, _parent, current_clip_source);
 			else if (t.equals("TEXT"))
-				ret = new UIText(activity, _component, _parent, current_clip_source);
+				ret = new UIText(_component, _parent, current_clip_source);
 			else if (t.equals("TEXTBLOCK"))
-				ret = null;//new UITextBlock(_component);
+				ret = new UITextBlock(_component);
 			else if (t.equals("TEXTFIELD"))
-				ret = new UITextField(activity, _component, _parent, current_clip_source);//new UITextField(_component, _parent, current_clip_source);
+				ret = new UITextField(_component, _parent, current_clip_source);//new UITextField(_component, _parent, current_clip_source);
 		}
 		if (ret == null) {
-			ret = null;//new UIGenericComponent(_component, _parent, current_clip_source);
+			ret = new UIGenericComponent(_component, _parent, current_clip_source);
 		}
 		if (ret.child_count == -1) {
-			ret.updateChildren(activity, current_clip_source);
-			ret.eventSizeChanged(null, current_clip_source, Integer.MIN_VALUE, Integer.MIN_VALUE, false, false);
+			ret.updateChildren(current_clip_source);
+			ret.eventSizeChanged(current_clip_source, Integer.MIN_VALUE, Integer.MIN_VALUE, false, false);
 		}
 		// call the "on_resize" function if there is one
 		final Value v;
@@ -244,8 +256,8 @@ public class DisplayedComponent extends View
 
 
 	public final static void drawScreen () {
-		//if (currentScreen != null)
-			//currentScreen.child[0].draw());
+		if (currentScreen != null)
+			currentScreen.child[0].draw();
 	}
 
 
@@ -556,7 +568,7 @@ public class DisplayedComponent extends View
 
 
 
-	public static void setDisplayedScreen (DeckerActivity activity, final Value screen) {
+	public static void setDisplayedScreen (final Value screen) {
 		// remove the old event listeners
 		for (int i = eventListener.length; --i >= 0; ) {
 			final DisplayedComponent[] el = eventListener[i];
@@ -566,7 +578,7 @@ public class DisplayedComponent extends View
 			eventListenerCount[i] = 0;
 		}
 		// create the data for the new screen
-		currentScreen = new DisplayedComponent(activity, screen);
+		currentScreen = new DisplayedComponent( screen);
 	}
 
 
@@ -580,8 +592,8 @@ public class DisplayedComponent extends View
 
 
 	/** this constructor is solely used for the dummy parent component of the current screen */
-	DisplayedComponent (DeckerActivity activity, final Value _component) {
-		super(activity.getBaseContext());
+	DisplayedComponent (final Value _component) {
+		super(DeckerActivity.getAppContext());
 		component = new Value();
 		cx = -100000;
 		cy = cx;
@@ -589,14 +601,14 @@ public class DisplayedComponent extends View
 		ch = -2*cx;
 		child = new DisplayedComponent[5];  // for the current screen and its overlays
 		child_count = 1;
-		child[0] = createDisplayedComponent(activity, _component, this, this);
+		child[0] = createDisplayedComponent(_component, this, this);
 	}
 
 
 
 
-	DisplayedComponent (Context context, final Value _component, final DisplayedComponent _parent) {
-		super(context);
+	protected DisplayedComponent (final Value _component, final DisplayedComponent _parent) {
+		super(DeckerActivity.getAppContext());
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
@@ -605,13 +617,13 @@ public class DisplayedComponent extends View
 
 
 
-	protected DisplayedComponent (DeckerActivity activity, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(activity.getBaseContext());
+	protected DisplayedComponent (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+		super(DeckerActivity.getAppContext());
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
 		if (_component != null) {
-			update(activity, 0, current_clip_source);
+			update(0, current_clip_source);
 			if (_component.type() == Value.STRUCTURE) {
 				//_component.structure().addValueListener(this);
 			}
@@ -660,7 +672,7 @@ public class DisplayedComponent extends View
 
 
 
-	void destroy () {
+	protected void destroy () {
 		// stop listening to the scripted component
 		if (component != null && component.type() == Value.STRUCTURE) {
 			//component.structure().removeValueListener(this);
@@ -801,7 +813,7 @@ public class DisplayedComponent extends View
 
 
 
-	void eventSizeChanged (DeckerActivity activity, final DisplayedComponent current_clip_source, final int old_width, final int old_height, final boolean old_relative_to_parent_width, final boolean old_relative_to_parent_height) {
+	protected void eventSizeChanged (final DisplayedComponent current_clip_source, final int old_width, final int old_height, final boolean old_relative_to_parent_width, final boolean old_relative_to_parent_height) {
 		// if it's the dummy parent node, stop here
 		if (component == null)
 			return;
@@ -833,7 +845,7 @@ public class DisplayedComponent extends View
 				if (( children_relative_to_width > 0 && width_has_changed )||( children_relative_to_height > 0 && height_has_changed )) {
 					for (int i = child_count; --i >= 0; ) {
 						if (( child[i].relative_to_parent_width && width_has_changed )||( child[i].relative_to_parent_height && height_has_changed )) {
-							child[i].update(activity, 0, current_clip_source);
+							child[i].update(0, current_clip_source);
 						}
 					}
 				}
@@ -867,28 +879,28 @@ public class DisplayedComponent extends View
 
 
 
-	public void eventValueChanged (DeckerActivity activity, final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
+	public void eventValueChanged (final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
 		final DisplayedComponent clip_source = getCurrentClipSource();
-		update(activity, 0, clip_source);
-		updateChildren(activity, clip_source);
+		update(0, clip_source);
+		updateChildren(clip_source);
 	}
 
 
 
 
-	public void eventValueChanged (DeckerActivity activity, final String variable_name, final Structure container, final Value old_value, final Value new_value) {
+	public void eventValueChanged (final String variable_name, final Structure container, final Value old_value, final Value new_value) {
 //System.out.println("DC.eventValueChanged() "+getClass().getName()+" "+variable_name+" "+old_value+" -> "+new_value);
 //System.out.println(x+","+y+" "+w+","+h);
 		final DisplayedComponent clip_source = getCurrentClipSource();
-		update(activity, 0, clip_source);
-		updateChildren(activity, clip_source);
+		update(0, clip_source);
+		updateChildren(clip_source);
 //System.out.println(x+","+y+" "+w+","+h);
 	}
 
 
 
 
-	DisplayedComponent getCurrentClipSource () {
+	protected DisplayedComponent getCurrentClipSource () {
 		DisplayedComponent source = parent;
 		while ( source.parent != null )
 //		while ( source.component != null && !(source instanceof UIDrawingBoundary) )
@@ -914,7 +926,7 @@ public class DisplayedComponent extends View
 
 
 
-	protected void update (DeckerActivity activity, final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		relative_to_parent_width = false;
 		relative_to_parent_height = false;
 		// if the displayed component is not a structure, use the parent's x and y
@@ -998,7 +1010,7 @@ public class DisplayedComponent extends View
 
 
 
-	void updateChildren (DeckerActivity activity, final DisplayedComponent current_clip_source) {
+	void updateChildren (final DisplayedComponent current_clip_source) {
 		// destroy the old children
 		for (int i = child_count; --i >= 0; ) {
 			child[i].destroy();
@@ -1012,7 +1024,7 @@ public class DisplayedComponent extends View
 			final Value v = component.get("component");
 			if (v != null && !v.equalsConstant("UNDEFINED")) {
 				if (v.type() != Value.ARRAY) {
-					child = new DisplayedComponent[]{ createDisplayedComponent(activity, v, this, current_clip_source) };
+					child = new DisplayedComponent[]{ createDisplayedComponent(v, this, current_clip_source) };
 					child_count = 1;
 				}
 				else {
@@ -1021,7 +1033,7 @@ public class DisplayedComponent extends View
 					child = new DisplayedComponent[clength];
 					for (int i = 0; i < clength; i++) {
 						if (!c[i].equalsConstant("UNDEFINED")) {
-							child[child_count] = createDisplayedComponent(activity, c[i], this, current_clip_source);
+							child[child_count] = createDisplayedComponent(c[i], this, current_clip_source);
 							child_count++;
 						}
 					}

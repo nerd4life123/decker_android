@@ -1,11 +1,7 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
-
-
-
-class UIScrollpane extends DisplayedComponent
+public class UIScrollpane extends DisplayedComponent
 {
 	private UIClip content_clip;
 	private DisplayedComponent content_parent;
@@ -24,15 +20,15 @@ class UIScrollpane extends DisplayedComponent
 		content_parent = new DisplayedComponent(null, content_clip, current_clip_source);
 //		content_parent.x = Integer.MIN_VALUE;
 //		content_parent.y = Integer.MIN_VALUE;
-		if (_component != null && _component.type() == Value.STRUCTURE)
-			_component.structure().addValueListener(this);
+		//if (_component != null && _component.type() == Value.STRUCTURE)
+		//	_component.structure().addValueListener(this);
 		update(0, current_clip_source);
 	}
 
 
 
 
-	void destroy () {
+	protected void destroy () {
 		super.destroy();
 		if (content_parent != null) {
 			content_parent.destroy();
@@ -54,14 +50,15 @@ class UIScrollpane extends DisplayedComponent
 			horizontal_scrollbar.destroy();
 			horizontal_scrollbar = null;
 		}
-		if (component != null && component.type() == Value.STRUCTURE)
-			component.structure().removeValueListener(this);
+		//if (component != null && component.type() == Value.STRUCTURE)
+		//	component.structure().removeValueListener(this);
 	}
 
 
 
 
-	void draw (final Graphics g) {
+	protected void draw () {
+		/*
 		if (content != null) {
 			final Shape old_clip = g.getClip();
 			g.setClip(content_clip.cx, content_clip.cy, content_clip.cw, content_clip.ch);
@@ -72,6 +69,7 @@ class UIScrollpane extends DisplayedComponent
 			vertical_scrollbar.draw(g);
 		if (horizontal_scrollbar != null)
 			horizontal_scrollbar.draw(g);
+			*/
 	}
 
 
@@ -106,7 +104,7 @@ class UIScrollpane extends DisplayedComponent
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		if (component.type() != Value.STRUCTURE || !component.get("structure_type").equals("SCROLLPANE"))
 			return;
 		final Structure d = component.structure();

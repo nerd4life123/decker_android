@@ -1,7 +1,5 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
-
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
 
@@ -33,7 +31,7 @@ class UIGenericComponent extends DisplayedComponent
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		super.update(customSettings, current_clip_source);
 		updateChildren(current_clip_source);
 	}

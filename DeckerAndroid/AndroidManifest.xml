@@ -21,7 +21,4 @@
             </intent-filter>
         </activity>
     </application>
-	<application android:name="com.acehostingllc.deckerandroid.decker.decker.model.Global">
-	
-	</application>
 </manifest>

@@ -1,28 +1,29 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
 
+import android.graphics.drawable.shapes.Shape;
 
+import com.acehostingllc.deckerandroid.decker.decker.model.ArrayWrapper;
+import com.acehostingllc.deckerandroid.decker.decker.model.Structure;
+import com.acehostingllc.deckerandroid.decker.decker.model.Value;
 
-
-class UIClip extends DisplayedComponent
+public class UIClip extends DisplayedComponent
 {
 	UIClip (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
 		if (_component != null)
 			update(0, current_clip_source);
-		if (_component != null && _component.type()  == Value.STRUCTURE)
-			_component.structure().addValueListener(this);
+		//if (_component != null && _component.type()  == Value.STRUCTURE)
+		//	_component.structure().addValueListener(this);
 	}
 
 
 
 
-	void draw (final Graphics g) {
-		final Shape old_clip = g.getClip();
-		g.setClip(x, y, w, h);
-		super.draw(g);
-		g.setClip(old_clip);
+	protected void draw () {
+		//final Shape old_clip = g.getClip();
+		//g.setClip(x, y, w, h);
+		//super.draw(g);
+		//g.setClip(old_clip);
 	}
 
 
@@ -42,14 +43,14 @@ class UIClip extends DisplayedComponent
 
 
 
-	DisplayedComponent getCurrentClipSource () {
+	protected DisplayedComponent getCurrentClipSource () {
 		return this;
 	}
 
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		if (component == null || component.type() != Value.STRUCTURE || !component.get("structure_type").equals("CLIP"))
 			return;
 		super.update(0, super.getCurrentClipSource());

@@ -1,8 +1,7 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
-class UITable extends DisplayedComponent
+public class UITable extends DisplayedComponent
 {
 //	private int[] column_width, column_x;
 	private int row_height, total_width, columns;
@@ -15,10 +14,10 @@ class UITable extends DisplayedComponent
 	UITable (Value _component, DisplayedComponent _parent, DisplayedComponent current_clip_source) {
 		super(_component, _parent);
 		update(0, current_clip_source);
-		_component.structure().addValueListener(this);
+		//_component.structure().addValueListener(this);
 	}
 
-	void destroy () {
+	protected void destroy () {
 		if (cell != null) {
 			for (int i = cell.length; --i >= 0; ) {
 				final TableCellWrapper[] row = cell[i];
@@ -30,9 +29,9 @@ class UITable extends DisplayedComponent
 			}
 		}
 		cell = null;
-		if (component.type() == Value.STRUCTURE) {
-			component.structure().removeValueListener(this);
-		}
+		//if (component.type() == Value.STRUCTURE) {
+		//	component.structure().removeValueListener(this);
+		//}
 		super.destroy();
 	}
 
@@ -42,15 +41,15 @@ class UITable extends DisplayedComponent
 		h = (cell != null) ? (row_height * cell.length) : 0;
 	}
 
-	public void draw (final Graphics g) {
+	public void draw () {
 		if (cell != null) {
 			// mark the selected row
 			if (can_select_rows && current_row > -1) {
 				if (selected_row_background.type() == Value.STRING) {
-					final Color c = AbstractView.getColor(selected_row_background.string());
-					if (c != null) {
-						g.setColor(c);
-						g.fillRect(x, y+current_row*row_height, w, row_height);
+					final int c = AbstractView.getColor(selected_row_background.string());
+					if (c != 0) {
+						//g.setColor(c);
+						//g.fillRect(x, y+current_row*row_height, w, row_height);
 					}
 				}
 			}
@@ -60,7 +59,7 @@ class UITable extends DisplayedComponent
 					final TableCellWrapper[] row = cell[i];
 					for (int j = row.length; --j >= 0; ) {
 						if (row[j].cell_content != null) {
-							row[j].cell_content.draw(g);
+							//row[j].cell_content.draw(g);
 						}
 					}
 				}
@@ -88,7 +87,7 @@ class UITable extends DisplayedComponent
 
 
 
-	boolean eventUserInput (final int event_id, final AWTEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		final int my = mouse_y-y;
 		if (row_height <= 0 || my < 0 || my >= h || mouse_x < x || mouse_x >= x+w || component == null || component.type() != Value.STRUCTURE || !component.get("structure_type").equals("TABLE")) {
 			dragging_row = false;
@@ -226,7 +225,7 @@ System.out.println("UITable : ignoring a change to TABLE.columns");
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		if (component == null || component.type() != Value.STRUCTURE || !component.get("structure_type").equals("TABLE")) {
 			super.update(0, current_clip_source);
 		}
@@ -381,10 +380,10 @@ if (true) {
 
 
 
-		void destroy () { if (cell_content != null) { cell_content.destroy(); cell_content = null; } }
-		void draw (final Graphics g) {}
+		protected void destroy () { if (cell_content != null) { cell_content.destroy(); cell_content = null; } }
+		protected void draw () {}
 		public void eventValueChanged (final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {}
 		public void eventValueChanged (final String variable_name, final Structure container, final Value old_value, final Value new_value) {}
-		void update (final int customSettings, final DisplayedComponent current_clip_source) {}
+		protected void update (final int customSettings, final DisplayedComponent current_clip_source) {}
 	}
 }

@@ -1,32 +1,31 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
 
 
-class UIInnerArea extends DisplayedComponent
+public class UIInnerArea extends DisplayedComponent
 {
-	UIInnerArea (final DisplayedComponent _parent) {
+	public UIInnerArea (final DisplayedComponent _parent) {
 		super(null, _parent);
 	}
 
 
 
 
-	void draw (final Graphics g) {
+	protected void draw () {
 		// draw the child components
 		final DisplayedComponent[] c = child;
 		final int cc = child_count;
 		for (int i = 0; i < cc; i++)
-			c[i].draw(g);
+			c[i].draw();
 	}
 
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
-		parent.applyInnerBounds(this);
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
+		((UIBorder)parent).applyInnerBounds(this);
 		updateChildren(current_clip_source);
 	}
 

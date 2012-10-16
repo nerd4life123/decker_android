@@ -24,7 +24,7 @@ final class ScriptParser extends ScriptReader
 
 
 	static Script parse (final String file_name, final Reader in, final Ruleset ruleset)  {
-		return new ScriptParser(file_name, in, ruleset).parseScript(null);
+		return new ScriptParser(file_name, in, ruleset).parseScript();
 	}
 
 /*
@@ -778,8 +778,8 @@ final class ScriptParser extends ScriptReader
 	}
 
 
-	private Script parseScript (DeckerActivity activity)  {
-		final Script ret = new Script(activity, script_name);
+	private Script parseScript ()  {
+		final Script ret = new Script(script_name);
 		// parse the script name
 if (Global.debug_level > 0)
 System.out.println("  "+script_name);
