@@ -154,7 +154,6 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 		
 		final String[] files = mgr.list(currentDir);
 		final String path_prefix = (path.length()==0) ? "/" : (path + "/");
-		System.out.println("path prefix: " + path_prefix);
 		for (int i = 0; i < files.length; i++) {
 			String subFilePath = currentDir + path_prefix + files[i];
 			if (mgr.list(subFilePath).length > 0)
@@ -356,6 +355,8 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 	
 
 	public final static int getColor (String color) {
+		return Color.BLUE;
+		/*
 		// remove the alpha if it is 100%
 		if (color.length() == 9 && color.substring(1,3).equalsIgnoreCase("ff"))
 			color = color.substring(0,1) + color.substring(3);
@@ -380,6 +381,7 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 			} catch (Throwable t) {}
 		}
 		return ret;
+		*/
 	}
 
 

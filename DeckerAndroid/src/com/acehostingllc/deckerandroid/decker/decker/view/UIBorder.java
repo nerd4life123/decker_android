@@ -14,8 +14,8 @@ public final class UIBorder extends DisplayedComponent
 
 
 
-	public UIBorder (final DisplayedComponent _parent, final DisplayedComponent current_clip_source, final boolean use_default_background_color) {
-		super(null, _parent, current_clip_source);
+	public UIBorder (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source, final boolean use_default_background_color) {
+		super(_component, _parent, current_clip_source);
 		left_color = AbstractView.getColor(ScriptNode.getVariable("BORDER_COLOR1").string());
 		top_color = left_color;
 		right_color = AbstractView.getColor(ScriptNode.getVariable("BORDER_COLOR2").string());
@@ -138,6 +138,8 @@ public final class UIBorder extends DisplayedComponent
 		if (component != null && component.type() == Value.STRUCTURE && component.get("structure_type").equals("BORDER")) {
 			Value v;
 			inverted = component.get("inverted").equals(true);
+			System.out.println("updateBorder called. structure_type is " + component.get("structure_type").toString());
+			System.out.println("updateBorder called. inverted is " + component.get("inverted").toString());
 			System.out.println("updateBorder called. background_color is " + component.get("background_color").toString());
 			background_color = AbstractView.getColor(component.get("background_color").toString());
 			Value vtc = component.get("top_color"), vlc = component.get("left_color"), vrc = component.get("right_color"), vbc = component.get("bottom_color");

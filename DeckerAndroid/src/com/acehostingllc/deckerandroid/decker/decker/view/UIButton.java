@@ -50,7 +50,7 @@ public class UIButton extends DisplayedComponent
 		// add a border if it's a BORDER_BUTTON
 		final String type = _component.get("structure_type").string();
 		if (type.equals("BORDER_BUTTON"))
-			border = new UIBorder(this, current_clip_source, true);
+			border = new UIBorder(_component, this, current_clip_source, true);
 		// fill in the remaining data
 		update(0, current_clip_source);
 updateButtonState();

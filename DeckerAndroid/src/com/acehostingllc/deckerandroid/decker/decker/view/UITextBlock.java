@@ -14,14 +14,6 @@ import com.acehostingllc.deckerandroid.decker.decker.model.*;
 /** displays a TEXTBLOCK structure */
 public final class UITextBlock extends DisplayedComponent
 {
-	UITextBlock(Value _component) {
-		super(_component);
-		// TODO Auto-generated constructor stub
-	}
-
-
-
-
 	private final static int X = 0, Y = 1, ROW_HEIGHT = 2, ELEMENTS = 3, CHILDREN = 4, LAST_FONT_HEIGHT = 5;
 	private final static int aLEFT = 0, aCENTER = 1, aRIGHT = 2, aBLOCK = 3;
 	private int alignment;
@@ -31,12 +23,11 @@ public final class UITextBlock extends DisplayedComponent
 
 
 
-	/*
-	UITextBlock (final Value _component, final View _parent, final DisplayedComponent current_clip_source) {
-		//super(context);
-		//super(_component, _parent, current_clip_source);
+	
+	UITextBlock (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+		super(_component, _parent, current_clip_source);
 		//component.structure().addValueListener(this);
-	}*/
+	}
 	
 
 	/** data[X] is the current x position for appending children, data[Y] is the current y position for that, data[ROW_HEIGHT] is the height of the current row, data[ELEMENTS] is the number  of components on the current row so far */
@@ -184,17 +175,6 @@ public final class UITextBlock extends DisplayedComponent
 			}
 		}
 	}
-
-
-/*
-	private DisplayedComponent createDisplayedComponent(Value c, UITextBlock uiTextBlock,
-			DisplayedComponent current_clip_source) {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
-	
-
-	
 
 
 	private void finishUpRow (final int[] data, final DisplayedComponent[][] current_row) {
