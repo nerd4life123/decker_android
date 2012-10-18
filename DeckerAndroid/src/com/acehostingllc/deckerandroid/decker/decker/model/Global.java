@@ -48,10 +48,11 @@ public final class Global extends Application
 	public static Structure getEngineData ()  { return ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; }
 
 	/** sets things up for the game to launch and load the rulesets */
-	public final static void initializeDataModel ()  {
+	public final static void initializeDataModel (DeckerActivity activity)  {
 		view_wrapper = new ViewWrapper();
-		// set up the data stack
+		activity.setContentView(view_wrapper);
 		
+		// set up the data stack
 		engine = new Ruleset("");
 		engine.data.add("copyArraySection").set(new Function(F_COPY_ARRAY_SECTION, new String[]{ "from_array", "from_index", "to_array", "to_index", "entries" }));
 		engine.data.add("createSizedArray").set(new Function(F_CREATE_SIZED_ARRAY, new String[]{ "size" }));

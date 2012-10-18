@@ -1,9 +1,12 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
@@ -12,14 +15,14 @@ import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 
 
-public final class ViewWrapper extends View
+public final class ViewWrapper extends ViewGroup
 {
 	
 	public ViewWrapper() {
 		super(DeckerActivity.getAppContext());
 		view = new AbstractView();
-		this.setMinimumWidth(10);
-		this.setMinimumHeight(10);
+		//this.setMinimumWidth(10);
+		//this.setMinimumHeight(10);
 	}
 	
 
@@ -247,7 +250,6 @@ System.exit(1);
 	private void drawImage(ImageView buffer2, int i, int j,
 			ViewWrapper viewWrapper) {
 		// TODO Auto-generated method stub
-		System.out.println("Drawimage called");
 	}
 
 
@@ -270,5 +272,15 @@ System.exit(1);
 			return;
 		}*/
 		synchronizedUpdate();
+	}
+
+
+	@Override
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		System.out.println("Onlayout was called");
+
+		TextView test = new TextView(DeckerActivity.getAppContext());
+		test.setText("Testing testing, 123?");
+		this.addView(test, 40, 10);
 	}
 }

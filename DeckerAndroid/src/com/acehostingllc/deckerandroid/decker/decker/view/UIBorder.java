@@ -2,7 +2,7 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
-public final class UIBorder extends DisplayedComponent
+public final class UIBorder extends DisplayedComponent implements ValueListener
 {
 	public static boolean PRINT_ILLEGAL_BORDER_SIZE_WARNING = false;
 
@@ -10,8 +10,6 @@ public final class UIBorder extends DisplayedComponent
 	int thickness;
 	boolean inverted;
 	private UIInnerArea inner_area;
-
-
 
 
 	public UIBorder (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source, final boolean use_default_background_color) {
@@ -38,7 +36,7 @@ public final class UIBorder extends DisplayedComponent
 	UIBorder (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
 		if (_component != null && _component.type() == Value.STRUCTURE){
-			//_component.structure().addValueListener(this);
+			_component.structure().addValueListener(this);
 		}
 		updateBorder();
 		child_count = 0;
@@ -127,8 +125,8 @@ public final class UIBorder extends DisplayedComponent
 	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		super.update(customSettings, current_clip_source);
 		updateBorder();
-		if (inner_area != null);
-		inner_area.update(0, current_clip_source);
+		if (inner_area != null)
+			inner_area.update(0, current_clip_source);
 	}
 
 

@@ -18,10 +18,10 @@ public class UIScrollpane extends DisplayedComponent
 		super(_component, _parent);
 		content_clip = new UIClip(null, this, current_clip_source);
 		content_parent = new DisplayedComponent(null, content_clip, current_clip_source);
-//		content_parent.x = Integer.MIN_VALUE;
-//		content_parent.y = Integer.MIN_VALUE;
-		//if (_component != null && _component.type() == Value.STRUCTURE)
-		//	_component.structure().addValueListener(this);
+		content_parent.x = Integer.MIN_VALUE;
+		content_parent.y = Integer.MIN_VALUE;
+		if (_component != null && _component.type() == Value.STRUCTURE)
+			_component.structure().addValueListener(this);
 		update(0, current_clip_source);
 	}
 

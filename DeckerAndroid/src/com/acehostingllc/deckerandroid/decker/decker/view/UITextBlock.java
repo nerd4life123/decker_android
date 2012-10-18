@@ -26,7 +26,7 @@ public final class UITextBlock extends DisplayedComponent
 	
 	UITextBlock (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent, current_clip_source);
-		//component.structure().addValueListener(this);
+		component.structure().addValueListener(this);
 	}
 	
 

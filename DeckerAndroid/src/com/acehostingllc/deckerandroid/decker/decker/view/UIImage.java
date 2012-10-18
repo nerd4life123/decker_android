@@ -16,8 +16,8 @@ class UIImage extends DisplayedComponent
 	UIImage (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
 		fetchImage();
-		//if (_component.type() == Value.STRUCTURE)
-			//_component.structure().addValueListener(this);
+		if (_component.type() == Value.STRUCTURE)
+			_component.structure().addValueListener(this);
 		update(0, current_clip_source);
 	}
 
@@ -26,8 +26,8 @@ class UIImage extends DisplayedComponent
 
 	protected void destroy () {
 		super.destroy();
-		//if (component.type() == Value.STRUCTURE)
-		//	component.structure().removeValueListener(this);
+		if (component.type() == Value.STRUCTURE)
+			component.structure().removeValueListener(this);
 	}
 
 
@@ -87,6 +87,7 @@ class UIImage extends DisplayedComponent
 		}
 		image = (angle!=0) ? AbstractView.getTurnedImage(AbstractView.getImage(image_name), angle) : AbstractView.getImage(image_name);
 		// print an error if the image is missing
+		System.out.println("image angle is " + angle);
 		if (image == null && !image_name.equals("UNDEFINED")) {
 			System.out.println("UIImage : undefined image "+image_name+" ("+((component.type() != Value.STRUCTURE || component.get("image") == null)?component:component.get("image")).typeName()+")");
 		}

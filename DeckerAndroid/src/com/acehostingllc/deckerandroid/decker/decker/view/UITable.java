@@ -14,7 +14,7 @@ public class UITable extends DisplayedComponent
 	UITable (Value _component, DisplayedComponent _parent, DisplayedComponent current_clip_source) {
 		super(_component, _parent);
 		update(0, current_clip_source);
-		//_component.structure().addValueListener(this);
+		_component.structure().addValueListener(this);
 	}
 
 	protected void destroy () {
@@ -29,9 +29,9 @@ public class UITable extends DisplayedComponent
 			}
 		}
 		cell = null;
-		//if (component.type() == Value.STRUCTURE) {
-		//	component.structure().removeValueListener(this);
-		//}
+		if (component.type() == Value.STRUCTURE) {
+			component.structure().removeValueListener(this);
+		}
 		super.destroy();
 	}
 

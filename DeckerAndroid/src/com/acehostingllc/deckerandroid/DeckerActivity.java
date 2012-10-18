@@ -46,7 +46,7 @@ public class DeckerActivity extends Activity {
      		this.setContentView(splashscreen);
 
     		Log.w("DeckerActivity", "initializeDataModel");
-     		Global.initializeDataModel();
+     		Global.initializeDataModel(this);
      		Log.w("DeckerActivity", "loadRulesets");
      		Global.loadRulesets();
      		Log.w("DeckerActivity", "initializeRulesets");
@@ -77,6 +77,7 @@ public class DeckerActivity extends Activity {
      		Log.w("DeckerActivity", "initial screen type: "+initial_screen.type());
      		FunctionCall.executeFunctionCall(displayScreenFunction.function(), new Value[]{ initial_screen }, null);
 
+     		Log.w("DeckerActivity", "I assume we're changing screens now?");
     		Global.getViewWrapper().repaint();
     }
 

@@ -12,8 +12,8 @@ public class UIClip extends DisplayedComponent
 		super(_component, _parent);
 		if (_component != null)
 			update(0, current_clip_source);
-		//if (_component != null && _component.type()  == Value.STRUCTURE)
-		//	_component.structure().addValueListener(this);
+		if (_component != null && _component.type()  == Value.STRUCTURE)
+			_component.structure().addValueListener(this);
 	}
 
 

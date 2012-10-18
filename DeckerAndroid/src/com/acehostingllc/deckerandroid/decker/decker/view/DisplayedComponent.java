@@ -15,7 +15,7 @@ import com.acehostingllc.deckerandroid.decker.decker.view.UITextBlock;
 
 
 
-public class DisplayedComponent extends View
+public class DisplayedComponent extends View implements ValueListener
 {
 	protected final static String[] EVENT_FUNCTION_NAME = { "on_key_down",   "on_mouse_down",   "on_mouse_dragged",   "on_mouse_entered",   "on_mouse_exited",   "on_mouse_moved",   "on_mouse_up", "on_double_click" };
 	protected final static int                               ON_KEY_DOWN = 0;
@@ -625,7 +625,7 @@ public class DisplayedComponent extends View
 		if (_component != null) {
 			update(0, current_clip_source);
 			if (_component.type() == Value.STRUCTURE) {
-				//_component.structure().addValueListener(this);
+				_component.structure().addValueListener(this);
 			}
 		}
 	}

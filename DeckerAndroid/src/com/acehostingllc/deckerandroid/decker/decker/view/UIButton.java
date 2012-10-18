@@ -45,7 +45,7 @@ public class UIButton extends DisplayedComponent
 
 	UIButton (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
-		//_component.structure().addValueListener(this);
+		_component.structure().addValueListener(this);
 		inner_area = new UIInnerArea(this);
 		// add a border if it's a BORDER_BUTTON
 		final String type = _component.get("structure_type").string();

@@ -17,18 +17,17 @@ public final class UIText extends DisplayedComponent
 
 	UIText (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
-		//component.structure().addValueListener(this);
+		component.structure().addValueListener(this);
 		updateText();
 		super.update(CUSTOM_SIZE, current_clip_source);
 		child_count = 0; // cannot have children
 	}
 
 	void determineSize (final boolean width_already_determined, final boolean height_already_determined, final DisplayedComponent current_clip_source) {
-		/*final FontMetrics fm = AbstractView.getFontMetrics(font);
 		if (!width_already_determined)
-			w = fm.stringWidth(text);
+			w = (int) font.measureText(text);
 		if (!height_already_determined)
-			h = fm.getHeight();*/
+			h = 10;
 	}
 
 	protected void draw () {
