@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
@@ -20,11 +21,17 @@ public final class ViewWrapper extends ViewGroup
 	
 	public ViewWrapper() {
 		super(DeckerActivity.getAppContext());
-		view = new AbstractView();
+		this.setView(new AbstractView());
+
+		RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
+				LayoutParams.FILL_PARENT,
+				LayoutParams.FILL_PARENT);
+		relativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		
+		this.setLayoutParams(relativeParams);
 		//this.setMinimumWidth(10);
 		//this.setMinimumHeight(10);
 	}
-	
 
 	// methods other parts of this program will call ************************************************************************
 	private ImageView buffer;
@@ -53,7 +60,9 @@ public final class ViewWrapper extends ViewGroup
 			throw new RuntimeException("view must not be null");
 		if (view == this.view)
 			return;
+		this.removeAllViews();
 		this.view = view;
+		this.addView(view);
 		repaint();
 	}
 
@@ -185,7 +194,7 @@ public final class ViewWrapper extends ViewGroup
 			if (scr != null) {
 				if (oldDisplayedScreen == null || !scr.equals(oldDisplayedScreen)) {
 if (Global.debug_level > 0)
-System.out.println("ViewWrapper: ** switching screens **");
+System.out.println("ViewWrapper: ** switching screens **:"+scr.toStringForPrinting());
 					oldDisplayedScreen.set(scr);
 					DisplayedComponent.setDisplayedScreen(scr);
 				}
@@ -277,10 +286,10 @@ System.exit(1);
 
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		System.out.println("Onlayout was called");
-
-		TextView test = new TextView(DeckerActivity.getAppContext());
-		test.setText("Testing testing, 123?");
-		this.addView(test, 40, 10);
+		System.out.println("Onlayout was called-ViewWrapper");
+		for (int i = 0; i < this.getChildCount(); i++)
+		{
+			this.getChildAt(i).layout(l, t, r, b);
+		}
 	}
 }

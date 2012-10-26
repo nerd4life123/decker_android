@@ -14,7 +14,9 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.provider.MediaStore.Files;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.util.BMPReader;
@@ -30,12 +32,43 @@ import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 
 /** override drawContent() and the event messages relevant to your View class */
-public class AbstractView
+public class AbstractView extends RelativeLayout
 {
 //*******************************************************************************************************************************************************
 // static view related data and methods *****************************************************************************************************************
 //*******************************************************************************************************************************************************
+	public AbstractView()
+	{
+		super(DeckerActivity.getAppContext());
+		RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
+				LayoutParams.FILL_PARENT,
+				LayoutParams.FILL_PARENT);
+		relativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		
+		this.setLayoutParams(relativeParams);
+	}
+	
+	@Override
+	public void onLayout(boolean changed, int l, int t, int r, int b)
+	{
+		System.out.println("Onlayout was called-AbstractView");
+		for (int i = 0; i < this.getChildCount(); i++)
+		{
+			this.getChildAt(i).layout(l, t, r, b);
+		}
+	}
 
+	
+	public void addChild(View child)
+	{
+		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT);
+		lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+		child.setLayoutParams(lp);
+		
+		this.addView(child);
+	}
 
 public final static int CENTER = Integer.MIN_VALUE;
 public final static int NONE = Integer.MIN_VALUE+5;

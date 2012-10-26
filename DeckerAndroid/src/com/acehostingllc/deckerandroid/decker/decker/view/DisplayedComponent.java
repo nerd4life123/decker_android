@@ -2,9 +2,13 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
@@ -743,7 +747,7 @@ public class DisplayedComponent extends View implements ValueListener
 
 
 	protected void draw () {
-		/*
+		
 		final Value display_this = component;
 		if (display_this.type() == Value.STRUCTURE) {
 			final Structure d = display_this.structure();
@@ -759,46 +763,51 @@ public class DisplayedComponent extends View implements ValueListener
 			final String type = d.get("structure_type").toString();
 			if (type.equals("TEXT")) {
 				// set the font
+				TextView view = new TextView(DeckerActivity.getAppContext());
 				if ((v2=d.get("font")) != null && v2.type() == Value.STRING)
-					g.setFont(AbstractView.getFont(d.get("font").string(), true));
+					view.setTypeface(AbstractView.getFont(d.get("font").string(), true).getTypeface());
 				// set the text color
 				if ((v2=d.get("color")) != null && v2.type() == Value.STRING) {
-					final Color c = AbstractView.getColor(v2.string());
-					if (c != null)
-						g.setColor(c);
+					final int c = AbstractView.getColor(v2.string());
+					if (c != -1)
+						view.setTextColor(c);
 				}
 				// determine the x coordinate of the string
 				String s = d.get("text").toString();
-				final FontMetrics fm = AbstractView.getFontMetrics(g.getFont());
+					//final FontMetrics fm = AbstractView.getFontMetrics(g.getFont());
 				// draw the string
-				g.drawString(s, x, y+fm.getAscent());
+					view.setText(s);//g.drawString(s, x, y+fm.getAscent());
+					view.setId(Global.getViewWrapper().getView().getChildCount()+1);
+				Global.getViewWrapper().getView().addChild(view);
 			}
 			else if (type.equals("DRAWING_BOUNDARY")) {
-				clip = g.getClip();
-				g.clipRect(x, y, w, h);
+				/*
+clip = g.getClip();
+g.clipRect(x, y, w, h);
+*/
 			}
 			else if (type.equals("LINE") && d.get("x2").type() == Value.INTEGER && d.get("y2").type() == Value.INTEGER) {
-				if ((v=d.get("color")) != null)
-					g.setColor(AbstractView.getColor(v.toString()));
-				g.drawLine(x, y, x+d.get("x2").integer()-(x-parent.x), y+d.get("y2").integer()-(y-parent.y));
+//if ((v=d.get("color")) != null)
+	//g.setColor(AbstractView.getColor(v.toString()));
+//g.drawLine(x, y, x+d.get("x2").integer()-(x-parent.x), y+d.get("y2").integer()-(y-parent.y));
 			}
 			else if (type.equals("RECTANGLE")) {
-				if ((v=d.get("color")) != null)
-					g.setColor(AbstractView.getColor(v.toString()));
-				g.fillRect(x, y, w, h);
+//if ((v=d.get("color")) != null)
+	//g.setColor(AbstractView.getColor(v.toString()));
+//g.fillRect(x, y, w, h);
 			}
 			// draw the child components of this view component
 			final DisplayedComponent[] c = child;
 			final int cc = child_count;
 			for (int i = 0; i < cc; i++)
-				c[i].draw(g);
+				c[i].draw();   /// used to be .draw(g)
 			// clean up the structure stack
 			ScriptNode.removeStackItem(d);
 			// restore the clipping area if the currently displayed element has changed it, e.g. a DRAWING_BOUNDARY structure
-			if (clip != null)
-				g.setClip(clip);
+	//if (clip != null)
+//g.setClip(clip);
 		}
-		*/
+		
 	}
 
 

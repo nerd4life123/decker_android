@@ -41,9 +41,9 @@ public class DeckerActivity extends Activity {
      		
      		    SplashScreen ss = new SplashScreen();
      		    Global.setDisplayedComponent(ss);
-     		int splashscreen = R.layout.splashscreen;
+     		//int splashscreen = R.layout.splashscreen;
      		
-     		this.setContentView(splashscreen);
+     		//this.setContentView(splashscreen);
 
     		Log.w("DeckerActivity", "initializeDataModel");
      		Global.initializeDataModel(this);

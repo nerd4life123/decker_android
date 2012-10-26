@@ -7,8 +7,14 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.acehostingllc.deckerandroid.DeckerActivity;
+import com.acehostingllc.deckerandroid.R;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 
 import com.acehostingllc.deckerandroid.decker.decker.view.ViewWrapper;
@@ -50,7 +56,8 @@ public final class Global extends Application
 	/** sets things up for the game to launch and load the rulesets */
 	public final static void initializeDataModel (DeckerActivity activity)  {
 		view_wrapper = new ViewWrapper();
-		activity.setContentView(view_wrapper);
+		//activity.setContentView(text);
+		activity.setContentView(view_wrapper, view_wrapper.getLayoutParams());
 		
 		// set up the data stack
 		engine = new Ruleset("");
