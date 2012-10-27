@@ -260,8 +260,11 @@ public class DisplayedComponent extends View implements ValueListener
 
 
 	public final static void drawScreen () {
+		System.out.println("drawScreen called");
 		if (currentScreen != null)
 			currentScreen.child[0].draw();
+		else
+			System.out.println("currentScreen was null");
 	}
 
 
@@ -779,8 +782,10 @@ public class DisplayedComponent extends View implements ValueListener
 					view.setText(s);//g.drawString(s, x, y+fm.getAscent());
 					view.setId(Global.getViewWrapper().getView().getChildCount()+1);
 				Global.getViewWrapper().getView().addChild(view);
+				System.out.println("added a text area");
 			}
 			else if (type.equals("DRAWING_BOUNDARY")) {
+				System.out.println("added a drawing boundary");
 				/*
 clip = g.getClip();
 g.clipRect(x, y, w, h);
@@ -790,11 +795,18 @@ g.clipRect(x, y, w, h);
 //if ((v=d.get("color")) != null)
 	//g.setColor(AbstractView.getColor(v.toString()));
 //g.drawLine(x, y, x+d.get("x2").integer()-(x-parent.x), y+d.get("y2").integer()-(y-parent.y));
+				System.out.println("added a line");
 			}
 			else if (type.equals("RECTANGLE")) {
+				System.out.println("added a rectangle");
 //if ((v=d.get("color")) != null)
 	//g.setColor(AbstractView.getColor(v.toString()));
 //g.fillRect(x, y, w, h);
+			}
+			else
+			{
+
+				System.out.println("added absolutely nothing!");
 			}
 			// draw the child components of this view component
 			final DisplayedComponent[] c = child;
@@ -806,6 +818,7 @@ g.clipRect(x, y, w, h);
 			// restore the clipping area if the currently displayed element has changed it, e.g. a DRAWING_BOUNDARY structure
 	//if (clip != null)
 //g.setClip(clip);
+			System.out.println("");
 		}
 		
 	}

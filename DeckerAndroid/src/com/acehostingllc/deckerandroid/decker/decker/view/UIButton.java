@@ -120,19 +120,20 @@ updateButtonState();
 
 
 	protected void draw () {
+		System.out.println("draw called on UIButton");
 		// draw the border
-		//if (border != null)
-			//border.draw(g);
+		if (border != null)
+			border.draw();
 		// draw the button face
-		//if (face[state] != null)
-			//face[state].draw(g);
+		if (face[state] != null)
+			face[state].draw();
 		// draw the child components of this view component
-		/*final int cc = child_count;
+		final int cc = child_count;
 		if (cc > 0) {
 			final DisplayedComponent[] c = child;
 			for (int i = 0; i < cc; i++)
-				c[i].draw(g);
-		}*/
+				c[i].draw();
+		}
 	}
 
 
