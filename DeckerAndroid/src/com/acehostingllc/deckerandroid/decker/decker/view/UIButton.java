@@ -1,4 +1,7 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.widget.Button;
+
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.DisplayedComponent;
 import com.acehostingllc.deckerandroid.decker.decker.view.UIBorder;
@@ -120,6 +123,8 @@ updateButtonState();
 
 
 	protected void draw () {
+		Button button = new Button(DeckerActivity.getAppContext());
+		button.setText("Hello world");
 		System.out.println("draw called on UIButton");
 		// draw the border
 		if (border != null)
@@ -132,8 +137,11 @@ updateButtonState();
 		if (cc > 0) {
 			final DisplayedComponent[] c = child;
 			for (int i = 0; i < cc; i++)
+			{
 				c[i].draw();
+			}
 		}
+		parent.addView(button);
 	}
 
 

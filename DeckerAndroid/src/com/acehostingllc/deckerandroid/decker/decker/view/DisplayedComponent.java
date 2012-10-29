@@ -7,6 +7,7 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +20,7 @@ import com.acehostingllc.deckerandroid.decker.decker.view.UITextBlock;
 
 
 
-public class DisplayedComponent extends View implements ValueListener
+public class DisplayedComponent extends ViewGroup implements ValueListener
 {
 	protected final static String[] EVENT_FUNCTION_NAME = { "on_key_down",   "on_mouse_down",   "on_mouse_dragged",   "on_mouse_entered",   "on_mouse_exited",   "on_mouse_moved",   "on_mouse_up", "on_double_click" };
 	protected final static int                               ON_KEY_DOWN = 0;
@@ -261,6 +262,8 @@ public class DisplayedComponent extends View implements ValueListener
 
 	public final static void drawScreen () {
 		System.out.println("drawScreen called");
+		Global.getViewWrapper().getView().removeAllViews();
+		Global.getViewWrapper().getView().addChild(currentScreen);
 		if (currentScreen != null)
 			currentScreen.child[0].draw();
 		else
@@ -811,6 +814,7 @@ g.clipRect(x, y, w, h);
 			// draw the child components of this view component
 			final DisplayedComponent[] c = child;
 			final int cc = child_count;
+			System.out.println("Drawing child components of DisplayedComponent");
 			for (int i = 0; i < cc; i++)
 				c[i].draw();   /// used to be .draw(g)
 			// clean up the structure stack
@@ -1087,5 +1091,17 @@ g.clipRect(x, y, w, h);
 				}
 			}
 		}
+	}
+
+
+
+
+	@Override
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		// TODO Auto-generated method stub
+		/*for (DisplayedComponent child : this.child)
+		{
+			child.onLayout(changed, l, t, r, b);
+		}*/
 	}
 }

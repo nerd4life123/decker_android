@@ -81,7 +81,8 @@ final class UITextField extends DisplayedComponent
 			System.out.println("Writing string: " + cursor);
 			view.setText((String)cursor); //x+font_metrics.stringWidth(text), y+font_ascent);
 		}
-		Global.getViewWrapper().getView().addChild(view);
+		parent.addView(view);
+		//Global.getViewWrapper().getView().addChild(view);
 	}
 
 
