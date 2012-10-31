@@ -2,13 +2,17 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.Paint.FontMetricsInt;
+import android.graphics.Rect;
 import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.acehostingllc.deckerandroid.DeckerActivity;
@@ -18,9 +22,7 @@ import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 import com.acehostingllc.deckerandroid.decker.decker.view.UIText;
 import com.acehostingllc.deckerandroid.decker.decker.view.UITextBlock;
 
-
-
-public class DisplayedComponent extends ViewGroup implements ValueListener
+public class DisplayedComponent implements ValueListener
 {
 	protected final static String[] EVENT_FUNCTION_NAME = { "on_key_down",   "on_mouse_down",   "on_mouse_dragged",   "on_mouse_entered",   "on_mouse_exited",   "on_mouse_moved",   "on_mouse_up", "on_double_click" };
 	protected final static int                               ON_KEY_DOWN = 0;
@@ -44,9 +46,6 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 	private static DisplayedComponent currentScreen;
 	private static int last_mouse_down_x, last_mouse_down_y, last_mouse_up_x, last_mouse_up_y;
 	private static long last_mouse_down_time;
-
-
-
 
 	// the displayed component
 	protected Value component;
@@ -260,12 +259,12 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 
 
 
-	public final static void drawScreen () {
+	public final static void drawScreen (AndroidGraphics g) {
 		System.out.println("drawScreen called");
-		Global.getViewWrapper().getView().removeAllViews();
-		Global.getViewWrapper().getView().addChild(currentScreen);
+		//Global.getViewWrapper().getView().removeAllViews();
+		//Global.getViewWrapper().getView().addChild(currentScreen.view);
 		if (currentScreen != null)
-			currentScreen.child[0].draw();
+			currentScreen.child[0].draw(g);
 		else
 			System.out.println("currentScreen was null");
 	}
@@ -535,6 +534,7 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 				}
 			}
 		}
+		*/
 		return false;
 	}
 
@@ -553,7 +553,7 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 			if (a != null &&( atype == Value.INTEGER || atype == Value.REAL ||( atype == Value.CONSTANT &&( (s=a.constant()).equals("LEFT") || s.equals("CENTER") || s.equals("RIGHT") ))))
 				return true;
 		}
-		*/
+		
 		return false;
 	}
 
@@ -603,7 +603,6 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 
 	/** this constructor is solely used for the dummy parent component of the current screen */
 	DisplayedComponent (final Value _component) {
-		super(DeckerActivity.getAppContext());
 		component = new Value();
 		cx = -100000;
 		cy = cx;
@@ -618,7 +617,6 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 
 
 	protected DisplayedComponent (final Value _component, final DisplayedComponent _parent) {
-		super(DeckerActivity.getAppContext());
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
@@ -628,7 +626,6 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 
 
 	protected DisplayedComponent (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
-		super(DeckerActivity.getAppContext());
 		component = _component;
 		parent = _parent;
 		child_count = -1; // the -1 will tell createDisplayedComponent() that the children still need to be added
@@ -655,7 +652,7 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 
 
 
-/*
+
 	void applyInnerBounds (UIInnerArea _inner_area) {
 		_inner_area.x = x;
 		_inner_area.y = y;
@@ -666,7 +663,7 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 		_inner_area.cw = cw;
 		_inner_area.ch = ch;
 	}
-*/
+
 
 
 
@@ -752,16 +749,17 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 
 
 
-	protected void draw () {
-		
+	protected void draw (final AndroidGraphics g) {
 		final Value display_this = component;
 		if (display_this.type() == Value.STRUCTURE) {
 			final Structure d = display_this.structure();
 			ScriptNode.addStackItem(d);
 			Value v = null, v2 = null;
-			Shape clip = null;
+			Rect clip = null;
 			// if the structure has an on_draw function, execute it
 			if ((v=d.get("on_draw")) != null && v.type() == Value.FUNCTION) {
+
+				System.out.println("calling an on_draw function");
 // gotta store the current draw coordinates, in case they get polled by the on_draw function
 				FunctionCall.executeFunctionCall(v.function(), null, new Structure[]{ Global.getDisplayedScreen().structure(), d });
 			}
@@ -769,62 +767,48 @@ public class DisplayedComponent extends ViewGroup implements ValueListener
 			final String type = d.get("structure_type").toString();
 			if (type.equals("TEXT")) {
 				// set the font
-				TextView view = new TextView(DeckerActivity.getAppContext());
 				if ((v2=d.get("font")) != null && v2.type() == Value.STRING)
-					view.setTypeface(AbstractView.getFont(d.get("font").string(), true).getTypeface());
+					g.setFont(AbstractView.getFont(d.get("font").string(), true));
 				// set the text color
 				if ((v2=d.get("color")) != null && v2.type() == Value.STRING) {
 					final int c = AbstractView.getColor(v2.string());
-					if (c != -1)
-						view.setTextColor(c);
+					if (c != 0)
+						g.setColor(c);
 				}
 				// determine the x coordinate of the string
 				String s = d.get("text").toString();
-					//final FontMetrics fm = AbstractView.getFontMetrics(g.getFont());
+				final FontMetricsInt fm = g.getFont().getFontMetricsInt();
 				// draw the string
-					view.setText(s);//g.drawString(s, x, y+fm.getAscent());
-					view.setId(Global.getViewWrapper().getView().getChildCount()+1);
-				Global.getViewWrapper().getView().addChild(view);
-				System.out.println("added a text area");
+				g.drawString(s, x, y+fm.ascent);
 			}
 			else if (type.equals("DRAWING_BOUNDARY")) {
-				System.out.println("added a drawing boundary");
-				/*
-clip = g.getClip();
-g.clipRect(x, y, w, h);
-*/
+				clip = g.getClip();
+				g.clipRect(x, y, w, h);
 			}
 			else if (type.equals("LINE") && d.get("x2").type() == Value.INTEGER && d.get("y2").type() == Value.INTEGER) {
-//if ((v=d.get("color")) != null)
-	//g.setColor(AbstractView.getColor(v.toString()));
-//g.drawLine(x, y, x+d.get("x2").integer()-(x-parent.x), y+d.get("y2").integer()-(y-parent.y));
-				System.out.println("added a line");
+
+				if ((v=d.get("color")) != null)
+					g.setColor(AbstractView.getColor(v.toString()));
+				g.drawLine(x, y, x+d.get("x2").integer()-(x-parent.x), y+d.get("y2").integer()-(y-parent.y));
 			}
 			else if (type.equals("RECTANGLE")) {
-				System.out.println("added a rectangle");
-//if ((v=d.get("color")) != null)
-	//g.setColor(AbstractView.getColor(v.toString()));
-//g.fillRect(x, y, w, h);
-			}
-			else
-			{
-
-				System.out.println("added absolutely nothing!");
+				if ((v=d.get("color")) != null)
+					g.setColor(AbstractView.getColor(v.toString()));
+				g.fillRect(x, y, w, h);
 			}
 			// draw the child components of this view component
 			final DisplayedComponent[] c = child;
 			final int cc = child_count;
-			System.out.println("Drawing child components of DisplayedComponent");
 			for (int i = 0; i < cc; i++)
-				c[i].draw();   /// used to be .draw(g)
+				c[i].draw(g);
 			// clean up the structure stack
 			ScriptNode.removeStackItem(d);
 			// restore the clipping area if the currently displayed element has changed it, e.g. a DRAWING_BOUNDARY structure
-	//if (clip != null)
-//g.setClip(clip);
-			System.out.println("");
+			if (clip != null)
+				g.setClip(clip);
+			else
+				System.out.println("clip is null");
 		}
-		
 	}
 
 
@@ -1091,17 +1075,5 @@ g.clipRect(x, y, w, h);
 				}
 			}
 		}
-	}
-
-
-
-
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		// TODO Auto-generated method stub
-		/*for (DisplayedComponent child : this.child)
-		{
-			child.onLayout(changed, l, t, r, b);
-		}*/
 	}
 }

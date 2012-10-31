@@ -48,9 +48,9 @@ public final class UITextBlock extends DisplayedComponent
 				children[0][data[CHILDREN]] = k;
 				data[CHILDREN]++;
 				// move k to the next line if the current one already contains something and there is not enough room left for k
-				if (data[X] > 0 && k.w > this.getWidth()-data[X]) {
+				if (data[X] > 0 && k.w > this.w-data[X]) {
 					finishUpRow(data, current_row);
-					k.x = (int) this.getX();
+					k.x = (int) this.x;
 					data[X] = k.w;
 					data[ROW_HEIGHT] = k.h;
 					current_row[0][0] = k;
@@ -58,7 +58,7 @@ public final class UITextBlock extends DisplayedComponent
 				}
 				else {
 					// otherwise add it to the current row
-					k.x = (int) this.getX() + data[X];
+					k.x = (int) this.x + data[X];
 					data[X] += k.w;
 					if (k.h > data[ROW_HEIGHT])
 						data[ROW_HEIGHT] = k.h;
@@ -114,7 +114,7 @@ public final class UITextBlock extends DisplayedComponent
 			int a, b, alength, blength;
 			while (start < text_length) {
 				// find the next chunk
-				final int limit = this.getWidth()-data[X];
+				final int limit = this.w-data[X];
 				b = text_length;
 				blength = 50; //fm.stringWidth(text.substring(start,b));
 				if (blength <= limit) {
@@ -185,15 +185,15 @@ public final class UITextBlock extends DisplayedComponent
 			// if the component has a valid y, use that value
 			if (k.h < data[ROW_HEIGHT] && k.component != null && k.component.type() == Value.STRUCTURE && (v=k.component.get("y")) != null &&( v.type() == Value.INTEGER || v.equalsConstant("TOP") || v.equalsConstant("BOTTOM") )) {
 				if (v.equalsConstant("TOP"))
-					k.y = (int) (this.getY() + data[Y]);
+					k.y = (int) (this.y + data[Y]);
 				else if (v.equalsConstant("BOTTOM"))
-					k.y = (int) (this.getY() + data[Y] + data[ROW_HEIGHT] - k.h);
+					k.y = (int) (this.y + data[Y] + data[ROW_HEIGHT] - k.h);
 				else
-					k.y = (int) (this.getY() + data[Y] + v.integer());
+					k.y = (int) (this.y + data[Y] + v.integer());
 			}
 			// otherwise center it vertically
 			else {
-				k.y = (int) (this.getY() + data[Y] + (data[ROW_HEIGHT] - k.h) / 2);
+				k.y = (int) (this.y + data[Y] + (data[ROW_HEIGHT] - k.h) / 2);
 			}
 		}
 		data[X] = 0;
@@ -212,7 +212,7 @@ public final class UITextBlock extends DisplayedComponent
 
 
 
-	/*
+	
 	void updateChildren (final DisplayedComponent current_clip_source) {
 		// destroy the old children
 		for (int i = child_count; --i >= 0; ) {
@@ -224,7 +224,7 @@ public final class UITextBlock extends DisplayedComponent
 		children_relative_to_height = 0;
 		// add the new children
 		Value v = component.get("component");
-		final int default_font_height = AbstractView.getFontMetrics(AbstractView.getFont(ScriptNode.getVariable("TEXT_STYLE").get("font").toString())).getHeight();
+		final int default_font_height = AbstractView.getFont(ScriptNode.getVariable("TEXT_STYLE").get("font").toString()).getFontMetricsInt().ascent;
 		int[] row_data = { 0, 0, 0, 0, 0, default_font_height };
 		DisplayedComponent[][] row_elements = new DisplayedComponent[1][50];
 		DisplayedComponent[][] children = new DisplayedComponent[1][50];
@@ -245,6 +245,6 @@ public final class UITextBlock extends DisplayedComponent
 		// register the children with the display system
 		child = children[0];
 		child_count = row_data[CHILDREN];
-	}*/
+	}
 	
 }

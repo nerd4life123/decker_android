@@ -45,9 +45,9 @@ class UIImage extends DisplayedComponent
 
 
 
-	public void draw () {
-		//if (image != null)
-		//	g.drawImage(image, x, y, null);
+	public void draw (AndroidGraphics g) {
+		if (image != null)
+			g.drawImage(image, x, y, null);
 	}
 
 

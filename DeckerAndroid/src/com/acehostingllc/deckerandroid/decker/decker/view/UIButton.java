@@ -1,13 +1,5 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
-import android.widget.Button;
-
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
-import com.acehostingllc.deckerandroid.decker.decker.view.DisplayedComponent;
-import com.acehostingllc.deckerandroid.decker.decker.view.UIBorder;
-import com.acehostingllc.deckerandroid.decker.decker.view.UIInnerArea;
-
-
 
 /** UIButtons suppress all mouse events (except for mouse wheel events) and don't call any scripted functions while DISABLED */
 public class UIButton extends DisplayedComponent
@@ -53,7 +45,7 @@ public class UIButton extends DisplayedComponent
 		// add a border if it's a BORDER_BUTTON
 		final String type = _component.get("structure_type").string();
 		if (type.equals("BORDER_BUTTON"))
-			border = new UIBorder(_component, this, current_clip_source, true);
+			border = new UIBorder(this, current_clip_source, true);
 		// fill in the remaining data
 		update(0, current_clip_source);
 updateButtonState();
@@ -122,32 +114,27 @@ updateButtonState();
 
 
 
-	protected void draw () {
-		Button button = new Button(DeckerActivity.getAppContext());
-		button.setText("Hello world");
+	protected void draw (final AndroidGraphics g) {
 		System.out.println("draw called on UIButton");
 		// draw the border
 		if (border != null)
-			border.draw();
+			border.draw(g);
 		// draw the button face
 		if (face[state] != null)
-			face[state].draw();
+			face[state].draw(g);
 		// draw the child components of this view component
 		final int cc = child_count;
 		if (cc > 0) {
 			final DisplayedComponent[] c = child;
 			for (int i = 0; i < cc; i++)
-			{
-				c[i].draw();
-			}
+				c[i].draw(g);
 		}
-		parent.addView(button);
 	}
 
 
 
 
-	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final Object e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		if (state == DISABLED_STATE_ID) // this should not be possible, but better to be safe than sorry
 			return true;
 		String s;
@@ -159,12 +146,14 @@ updateButtonState();
 					v.setConstant("PRESSED");
 				break;
 			case ON_MOUSE_ENTERED :
+				/*
 					// if one of the mouse buttons is pressed, press the button
-					//final int m = ((MouseEvent)e).getModifiersEx();
-					//if (( (MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK )||( (m&MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK )||( (m&MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK ))
-					//	v.setConstant("PRESSED");
-					//else
-					//	v.setConstant("HOVER");
+					final int m = ((MouseEvent)e).getModifiersEx();
+					if (( (m&MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK )||( (m&MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK )||( (m&MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK ))
+						v.setConstant("PRESSED");
+					else
+						v.setConstant("HOVER");
+						*/
 				break;
 			case ON_MOUSE_EXITED :
 					v.setConstant("IDLE");
@@ -380,7 +369,7 @@ updateButtonState();
 				if (i == 0 || face[i] != face[0]) {
 					face[i].update(0, current_clip_source);
 					// center the face if it has no explisit position
-					if (!hasExplicitY(face[i].component))
+					if (!hasExplicitX(face[i].component))
 						face[i].x = inner_area.x + (inner_area.w-face[i].w)/2;
 					if (!hasExplicitY(face[i].component))
 						face[i].y = inner_area.y + (inner_area.h-face[i].h)/2;
@@ -388,8 +377,6 @@ updateButtonState();
 			}
 		}
 	}
-
-
 
 
 	private void updateButtonState () {

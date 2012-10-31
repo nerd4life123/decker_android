@@ -4,29 +4,29 @@ import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
 
-public class UIInnerArea extends DisplayedComponent
+class UIInnerArea extends DisplayedComponent
 {
-	public UIInnerArea (final DisplayedComponent _parent) {
+	UIInnerArea (final DisplayedComponent _parent) {
 		super(null, _parent);
 	}
 
 
 
 
-	protected void draw () {
+	protected void draw (final AndroidGraphics g) {
 		System.out.println("draw called on UIInnerArea");
 		// draw the child components
 		final DisplayedComponent[] c = child;
 		final int cc = child_count;
 		for (int i = 0; i < cc; i++)
-			c[i].draw();
+			c[i].draw(g);
 	}
 
 
 
 
 	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
-		((UIBorder)parent).applyInnerBounds(this);
+		parent.applyInnerBounds(this);
 		updateChildren(current_clip_source);
 	}
 

@@ -15,14 +15,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ImageView;
 
 public class DeckerActivity extends Activity {
+	private static ImageView imageView;
 	private static Context context;
 	String[] args = new String[0];
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DeckerActivity.context = this.getApplicationContext();
+        DeckerActivity.imageView = new ImageView(this);
         setContentView(R.layout.splashscreen);
         Global.debug_level = 5;
      // parse the command line switches
@@ -39,14 +42,14 @@ public class DeckerActivity extends Activity {
 
      		// display the splash screen, load the rulesets
      		
-     		    SplashScreen ss = new SplashScreen();
-     		    Global.setDisplayedComponent(ss);
-     		//int splashscreen = R.layout.splashscreen;
+     		    //SplashScreen ss = new SplashScreen();
+     		    //Global.setDisplayedComponent(ss);
+     		int splashscreen = R.layout.splashscreen;
      		
-     		//this.setContentView(splashscreen);
+     		this.setContentView(splashscreen);
 
     		Log.w("DeckerActivity", "initializeDataModel");
-     		Global.initializeDataModel(this);
+     		Global.initializeDataModel();
      		Log.w("DeckerActivity", "loadRulesets");
      		Global.loadRulesets();
      		Log.w("DeckerActivity", "initializeRulesets");
@@ -78,6 +81,7 @@ public class DeckerActivity extends Activity {
      		FunctionCall.executeFunctionCall(displayScreenFunction.function(), new Value[]{ initial_screen }, null);
 
      		Log.w("DeckerActivity", "I assume we're changing screens now?");
+    		this.setContentView(imageView);
     		Global.getViewWrapper().repaint();
     }
 
@@ -89,5 +93,9 @@ public class DeckerActivity extends Activity {
 	
 	public static Context getAppContext() {
 		return context;
+	}
+	
+	public static ImageView getImageView() {
+		return imageView;
 	}
 }

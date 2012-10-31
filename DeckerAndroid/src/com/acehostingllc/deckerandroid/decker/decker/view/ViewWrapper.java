@@ -2,6 +2,8 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,25 +18,15 @@ import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 
 
-public final class ViewWrapper extends ViewGroup
+public final class ViewWrapper
 {
 	
 	public ViewWrapper() {
-		super(DeckerActivity.getAppContext());
 		this.setView(new AbstractView());
-
-		RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
-				LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT);
-		relativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		
-		this.setLayoutParams(relativeParams);
-		//this.setMinimumWidth(10);
-		//this.setMinimumHeight(10);
 	}
 
 	// methods other parts of this program will call ************************************************************************
-	private ImageView buffer;
+	private Buffer buffer;
 	private boolean painting;
 	private AbstractView view;
 	//private AWTEvent lastEvent;
@@ -57,12 +49,10 @@ public final class ViewWrapper extends ViewGroup
 
 	public void setView (final AbstractView view) {
 		if (view == null)
-			throw new RuntimeException("view must not be null");
+			throw new RuntimeException("component must not be null");
 		if (view == this.view)
 			return;
-		this.removeAllViews();
 		this.view = view;
-		this.addView(view);
 		repaint();
 	}
 
@@ -118,7 +108,6 @@ public final class ViewWrapper extends ViewGroup
 
 
 	public void repaint() {
-		// TODO Auto-generated method stub
 		paint();
 	}
 
@@ -214,8 +203,8 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 						}
 					}
 
-					//final Graphics bg = buffer.getGraphics();
-					//bg.setFont(getFont());
+					final AndroidGraphics bg = buffer.getGraphics();
+					bg.setFont(getFont());
 
 					// fetch the background color
 /*						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");
@@ -229,7 +218,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 					}
 					bg.setColor(getForeground());
 */
-					DisplayedComponent.drawScreen();
+					DisplayedComponent.drawScreen(bg);
 //						view.drawContent(bg); // call drawContent() instead of paint(), because the coordinate system already sits where it should
 					if (w != old_width || h != old_height) {
 						old_width = w;
@@ -256,15 +245,21 @@ System.exit(1);
 		painting = false;
 	}
 
-	private void drawImage(ImageView buffer2, int i, int j,
-			ViewWrapper viewWrapper) {
-		// TODO Auto-generated method stub
+
+	private Paint getFont() {
+		return new Paint();
 	}
 
 
-	private ImageView createImage(int w, int h) {
-		// TODO Auto-generated method stub
-		return new ImageView(DeckerActivity.getAppContext());
+	private void drawImage(Buffer buffer, int i, int j,
+			ViewWrapper viewWrapper) {
+		System.out.println("drawimage called");
+		DeckerActivity.getImageView().setImageBitmap(buffer.getGraphics().getBitmapPallet());
+	}
+
+
+	private Buffer createImage(int w, int h) {
+		return new Buffer();
 	}
 
 
@@ -281,15 +276,5 @@ System.exit(1);
 			return;
 		}*/
 		synchronizedUpdate();
-	}
-
-
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		System.out.println("Onlayout was called-ViewWrapper");
-		for (int i = 0; i < this.getChildCount(); i++)
-		{
-			this.getChildAt(i).layout(l, t, r, b);
-		}
 	}
 }
