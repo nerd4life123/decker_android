@@ -1,7 +1,12 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.graphics.Rect;
+
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
-public class UIScrollpane extends DisplayedComponent
+
+
+
+class UIScrollpane extends DisplayedComponent
 {
 	private UIClip content_clip;
 	private DisplayedComponent content_parent;
@@ -18,8 +23,8 @@ public class UIScrollpane extends DisplayedComponent
 		super(_component, _parent);
 		content_clip = new UIClip(null, this, current_clip_source);
 		content_parent = new DisplayedComponent(null, content_clip, current_clip_source);
-		content_parent.x = Integer.MIN_VALUE;
-		content_parent.y = Integer.MIN_VALUE;
+//		content_parent.x = Integer.MIN_VALUE;
+//		content_parent.y = Integer.MIN_VALUE;
 		if (_component != null && _component.type() == Value.STRUCTURE)
 			_component.structure().addValueListener(this);
 		update(0, current_clip_source);
@@ -50,17 +55,17 @@ public class UIScrollpane extends DisplayedComponent
 			horizontal_scrollbar.destroy();
 			horizontal_scrollbar = null;
 		}
-		//if (component != null && component.type() == Value.STRUCTURE)
-		//	component.structure().removeValueListener(this);
+		if (component != null && component.type() == Value.STRUCTURE)
+			component.structure().removeValueListener(this);
 	}
 
 
 
 
-	protected void draw () {
-		/*
+	protected void draw (final AndroidGraphics g) {
+		System.out.println("draw called on UIScrollpane");
 		if (content != null) {
-			final Shape old_clip = g.getClip();
+			final Rect old_clip = g.getClip();
 			g.setClip(content_clip.cx, content_clip.cy, content_clip.cw, content_clip.ch);
 			content.draw(g);
 			g.setClip(old_clip);
@@ -69,7 +74,6 @@ public class UIScrollpane extends DisplayedComponent
 			vertical_scrollbar.draw(g);
 		if (horizontal_scrollbar != null)
 			horizontal_scrollbar.draw(g);
-			*/
 	}
 
 

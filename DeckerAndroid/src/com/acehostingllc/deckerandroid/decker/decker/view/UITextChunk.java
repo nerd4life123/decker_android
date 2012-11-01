@@ -1,7 +1,7 @@
-package decker.view;
-import decker.model.*;
-import java.awt.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.graphics.Paint;
 
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
 
@@ -9,14 +9,14 @@ import java.awt.*;
 final class UITextChunk extends DisplayedComponent
 {
 	private String text;
-	private Color color;
-	private Font font;
+	private int color;
+	private Paint font;
 	private int y_offset;
 
 
 
 
-	UITextChunk (final String _text, final Font _font, final Color _color, final int _x, final int _w, final int _h, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
+	UITextChunk (final String _text, final Paint _font, final int _color, final int _x, final int _w, final int _h, final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
 		if (component.type() == Value.STRUCTURE)
 			component.structure().addValueListener(this);
@@ -27,15 +27,15 @@ final class UITextChunk extends DisplayedComponent
 		x = _x;
 		w =_w;
 		h = _h;
-		y_offset = AbstractView.getFontMetrics(_font).getAscent();
+		y_offset = (int) _font.ascent();
 	}
 
 
 
 
-	void draw (final Graphics g) {
+	protected void draw (final AndroidGraphics g) {
 		g.setColor(color);
-		g.setFont(font);
+		g.setFont(font.getTypeface());
 		g.drawString(text, x, y+y_offset);
 	}
 
@@ -56,6 +56,6 @@ final class UITextChunk extends DisplayedComponent
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 	}
 }

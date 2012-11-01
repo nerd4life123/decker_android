@@ -768,7 +768,7 @@ public class DisplayedComponent implements ValueListener
 			if (type.equals("TEXT")) {
 				// set the font
 				if ((v2=d.get("font")) != null && v2.type() == Value.STRING)
-					g.setFont(AbstractView.getFont(d.get("font").string(), true));
+					g.setFont(AbstractView.getFont(d.get("font").string(), true).getTypeface());
 				// set the text color
 				if ((v2=d.get("color")) != null && v2.type() == Value.STRING) {
 					final int c = AbstractView.getColor(v2.string());
@@ -777,9 +777,9 @@ public class DisplayedComponent implements ValueListener
 				}
 				// determine the x coordinate of the string
 				String s = d.get("text").toString();
-				final FontMetricsInt fm = g.getFont().getFontMetricsInt();
+				//final FontMetricsInt fm = g.getFont().getFontMetricsInt();
 				// draw the string
-				g.drawString(s, x, y+fm.ascent);
+				g.drawString(s, x, (int) (y+AndroidGraphics.calculateHeight(g.getFontMetrics())));
 			}
 			else if (type.equals("DRAWING_BOUNDARY")) {
 				clip = g.getClip();

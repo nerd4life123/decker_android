@@ -1,22 +1,21 @@
-package decker.view;
-import java.awt.Component;
-import decker.model.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
 /** tells the component to repaint whenver the fps setting requires a new frame */
 public class FPSThread extends Thread
 {
-	private Component component;
+	//private Component component;
 	private boolean running = true;
 
-
+/*
 	public FPSThread (final Component c) {
 		component = c;
 		setDaemon(true);
 		setPriority(getPriority()-1);
 		start();
 	}
-
+*/
 
 	public void kill () {
 		running = false;
@@ -28,7 +27,7 @@ public class FPSThread extends Thread
 		long time;
 		while (running) {
 			time = System.nanoTime();
-			component.repaint();
+			//component.repaint();
 //System.out.println(((System.nanoTime()-time)/1000000L)+"                        FPSThread");
 			Value vfps = null;
 			try {

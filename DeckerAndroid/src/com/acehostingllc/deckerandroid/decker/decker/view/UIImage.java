@@ -1,17 +1,11 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 import android.graphics.Bitmap;
 
-import com.acehostingllc.deckerandroid.decker.decker.model.Structure;
-import com.acehostingllc.deckerandroid.decker.decker.model.Value;
-import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
-import com.acehostingllc.deckerandroid.decker.decker.view.DisplayedComponent;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 class UIImage extends DisplayedComponent
 {
 	private Bitmap image;
-
-
-
 
 	UIImage (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
@@ -45,7 +39,7 @@ class UIImage extends DisplayedComponent
 
 
 
-	public void draw (AndroidGraphics g) {
+	public void draw (final AndroidGraphics g) {
 		if (image != null)
 			g.drawImage(image, x, y, null);
 	}
@@ -85,9 +79,9 @@ class UIImage extends DisplayedComponent
 			image_name = component.get("image").toString();
 			angle = ((v=component.get("angle")) != null &&( v.type() == Value.INTEGER || v.type() == Value.REAL )) ? (int) v.real() : 0;
 		}
+		System.out.println("Looking for image " + image_name);
 		image = (angle!=0) ? AbstractView.getTurnedImage(AbstractView.getImage(image_name), angle) : AbstractView.getImage(image_name);
 		// print an error if the image is missing
-		System.out.println("image angle is " + angle);
 		if (image == null && !image_name.equals("UNDEFINED")) {
 			System.out.println("UIImage : undefined image "+image_name+" ("+((component.type() != Value.STRUCTURE || component.get("image") == null)?component:component.get("image")).typeName()+")");
 		}

@@ -204,7 +204,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 					}
 
 					final AndroidGraphics bg = buffer.getGraphics();
-					bg.setFont(getFont());
+					bg.setFont(getFont().getTypeface());
 
 					// fetch the background color
 /*						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");

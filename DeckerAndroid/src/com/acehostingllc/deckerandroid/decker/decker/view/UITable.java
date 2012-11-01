@@ -1,7 +1,8 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
+import java.awt.*;
 
-public class UITable extends DisplayedComponent
+class UITable extends DisplayedComponent
 {
 //	private int[] column_width, column_x;
 	private int row_height, total_width, columns;
@@ -41,15 +42,16 @@ public class UITable extends DisplayedComponent
 		h = (cell != null) ? (row_height * cell.length) : 0;
 	}
 
-	public void draw () {
+	public void draw (final AndroidGraphics g) {
+		System.out.println("draw called on UITable");
 		if (cell != null) {
 			// mark the selected row
 			if (can_select_rows && current_row > -1) {
 				if (selected_row_background.type() == Value.STRING) {
 					final int c = AbstractView.getColor(selected_row_background.string());
-					if (c != 0) {
-						//g.setColor(c);
-						//g.fillRect(x, y+current_row*row_height, w, row_height);
+					if (c != -1) {
+						g.setColor(c);
+						g.fillRect(x, y+current_row*row_height, w, row_height);
 					}
 				}
 			}
@@ -59,7 +61,7 @@ public class UITable extends DisplayedComponent
 					final TableCellWrapper[] row = cell[i];
 					for (int j = row.length; --j >= 0; ) {
 						if (row[j].cell_content != null) {
-							//row[j].cell_content.draw(g);
+							row[j].cell_content.draw(g);
 						}
 					}
 				}
@@ -87,7 +89,7 @@ public class UITable extends DisplayedComponent
 
 
 
-	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final Object e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		final int my = mouse_y-y;
 		if (row_height <= 0 || my < 0 || my >= h || mouse_x < x || mouse_x >= x+w || component == null || component.type() != Value.STRUCTURE || !component.get("structure_type").equals("TABLE")) {
 			dragging_row = false;
@@ -381,7 +383,7 @@ if (true) {
 
 
 		protected void destroy () { if (cell_content != null) { cell_content.destroy(); cell_content = null; } }
-		protected void draw () {}
+		protected void draw (final AndroidGraphics g) {}
 		public void eventValueChanged (final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {}
 		public void eventValueChanged (final String variable_name, final Structure container, final Value old_value, final Value new_value) {}
 		protected void update (final int customSettings, final DisplayedComponent current_clip_source) {}

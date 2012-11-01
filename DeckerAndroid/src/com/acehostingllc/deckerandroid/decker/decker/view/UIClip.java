@@ -1,10 +1,11 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
-
+import android.graphics.Rect;
 import android.graphics.drawable.shapes.Shape;
 
-import com.acehostingllc.deckerandroid.decker.decker.model.ArrayWrapper;
-import com.acehostingllc.deckerandroid.decker.decker.model.Structure;
-import com.acehostingllc.deckerandroid.decker.decker.model.Value;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
+
+
+
 
 public class UIClip extends DisplayedComponent
 {
@@ -19,11 +20,12 @@ public class UIClip extends DisplayedComponent
 
 
 
-	protected void draw () {
-		//final Shape old_clip = g.getClip();
-		//g.setClip(x, y, w, h);
-		//super.draw(g);
-		//g.setClip(old_clip);
+	protected void draw (final AndroidGraphics g) {
+		System.out.println("draw called on UIClip");
+		final Rect old_clip = g.getClip();
+		g.setClip(x, y, w, h);
+		super.draw(g);
+		g.setClip(old_clip);
 	}
 
 

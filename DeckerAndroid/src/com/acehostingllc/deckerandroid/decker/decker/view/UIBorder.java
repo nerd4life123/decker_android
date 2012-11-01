@@ -1,6 +1,4 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
-import android.graphics.Color;
-
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 

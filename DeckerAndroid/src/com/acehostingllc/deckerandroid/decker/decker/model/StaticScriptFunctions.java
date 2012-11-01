@@ -1,8 +1,10 @@
 package com.acehostingllc.deckerandroid.decker.decker.model;
+import android.content.res.AssetManager;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.widget.TextView;
 
+import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.view.*;
 
 import java.io.*;
@@ -225,20 +227,23 @@ final class StaticScriptFunctions extends ScriptNode
 
 	/** executes the hard coded script function filelist(x) */
 	private final static Value execute_filelist (final Value[] args)  {
+		AssetManager mgr = DeckerActivity.getAppContext().getAssets();
 		if (args.length > 0 && args[0] != null) {
 			final String s = args[0].toString();
 			if (s.indexOf("..") == -1 && s.indexOf(":") == -1 && s.indexOf("~") == -1) {
 				try {
-					final File d = new File(("rulesets/"+Global.getCurrentRuleset().getName()+"/"+s).replace('/', File.separatorChar));
-					if (d.exists() && d.isDirectory()) {
+					final String[] files = mgr.list(("rulesets/"+Global.getCurrentRuleset().getName()+"/"+s.substring(0, s.length()-1)).replace('/', File.separatorChar));
+					System.out.println("Executing filelist on " + ("rulesets/"+Global.getCurrentRuleset().getName()+"/"+s).replace('/', File.separatorChar));
+					//if (files.exists() && files.isDirectory()) {
 						// create an alphabetical list of file names for the files in this folder
-						final File[] f = d.listFiles();
+						//final File[] f = files.listFiles();
 						int count = 0;
-						final String[] name = new String[f.length];
-						for (int i = 0; i < f.length; i++) {
-							if (f[i].isFile()) {
+						final String[] name = new String[files.length];
+						for (int i = 0; i < files.length; i++) {
+							System.out.println("filelist file: " + files[i]);
+							if (mgr.list(files[i]).length==0) {
 								// insert it into the alphabetical list of file names
-								final String n = f[i].getName();
+								final String n = files[i].replaceFirst(".bmp",  "");
 								for (int j = 0; j <= count; j++)
 									if (j == count)
 										name[j] = n;
@@ -255,7 +260,7 @@ final class StaticScriptFunctions extends ScriptNode
 						for (int i = count; --i >= 0; )
 							array[i] = new Value().set(name[i]);
 						return new Value().set(new ArrayWrapper(array));
-					}
+					//}
 				} catch (Throwable t) { t.printStackTrace(); }
 			}
 		}

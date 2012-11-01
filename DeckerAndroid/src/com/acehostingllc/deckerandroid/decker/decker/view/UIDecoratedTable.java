@@ -1,9 +1,7 @@
-package decker.view;
-import decker.model.*;
+package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
-import java.awt.*;
-
-class UIDecoratedTable extends DisplayedComponent
+public class UIDecoratedTable extends DisplayedComponent
 {
 //	private DisplayedComponent[] header;
 //	private DisplayedComponent table;
@@ -28,7 +26,7 @@ class UIDecoratedTable extends DisplayedComponent
 
 
 
-	void update (final int customSettings, final DisplayedComponent current_clip_source) {
+	protected void update (final int customSettings, final DisplayedComponent current_clip_source) {
 		final Structure d = component.structure();
 	}
 }

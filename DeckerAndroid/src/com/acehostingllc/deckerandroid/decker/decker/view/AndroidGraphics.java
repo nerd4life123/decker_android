@@ -4,58 +4,73 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.graphics.Region;
+import android.graphics.Typeface;
 import android.graphics.drawable.shapes.Shape;
 
 public class AndroidGraphics {
 	
 	private Bitmap pallet;
 	private Canvas canvas;
-	private int color = Color.BLUE;
-	private Paint font;
+	private Paint style;
+	//private Paint color;
+	//private Paint font;
 
 	public AndroidGraphics() {
-		this.pallet = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+		this.pallet = Bitmap.createBitmap(320, 400, Bitmap.Config.ARGB_8888);
 		this.canvas = new Canvas(pallet);
+		//this.color = new Paint();
+		//this.font = new Paint();
+		this.style = new Paint();
 	}
 	
 	public void drawImage(Bitmap image, int x, int y, Object object)
 	{
-		//System.out.println("Drawing bitmap");
-		canvas.drawBitmap(image, x, y, new Paint());
+		// THIS IS WORKING! JUST NEED TO USE ALPHA COLOR TO GET RID OF THAT NASTY PINK
+		Paint alpha = new Paint();
+		alpha.setAlpha(Color.rgb(255,  0,  255));
+		canvas.drawBitmap(image, x, y, alpha);
 	}
 
-	public void setFont(Paint font) {
-		// TODO Auto-generated method stub
-		this.font = font;
-		//System.out.println("Setting font");
+	public void setFont(Typeface font) {
+		//System.out.println("Setting font. Has color " + font.getColor());
+		this.style.setTypeface(font);
 	}
 
 	public void setColor(int background) {
-		// TODO Auto-generated method stub
-		this.color = background;
-		//System.out.println("Setting color");
+		// does this really set background color?
+		this.style.setColor(background);
 	}
 
-	public void fillRect(int i, int j, int k, int l) {
+	public void fillRect(int x, int y, int w, int h) {
 		// TODO Auto-generated method stub
-		canvas.drawRect(i,  j,  k,  l,  this.font);
 		//System.out.println("Filling rect");
+		Paint rectPaint = new Paint();
+		rectPaint.setColor(Color.GREEN);
+		//canvas.drawRect(x-(w/2), y+(h/2),  x+(w/2),  y-(h/2),  rectPaint);
+		canvas.drawRect(x, y-h, x+w, y, this.style);
 	}
 
 	public void drawLine(int i, int j, int k, int l) {
-		// TODO Auto-generated method stub
-		canvas.drawLine(i,  j,  k,  l,  this.font);
-		//System.out.println("Drawing line");
+		// THIS IS WORKING FINE, EXCEPT FOR COLOR
+		Paint linePaint = new Paint();
+		linePaint.setColor(Color.RED);
+		canvas.drawLine(i,  j,  k,  l,  linePaint);
 	}
 
-	public Paint getFont() {
-		// TODO Auto-generated method stub
-		return this.font;
+	public Typeface getFont() {
+		return this.style.getTypeface();
+	}
+	
+	public FontMetrics getFontMetrics() {
+		return this.style.getFontMetrics();
 	}
 
 	public void drawString(String text, int x, int y) {
-		canvas.drawText(text, x, y, this.font);
+		canvas.drawText(text, x, y-calculateHeight(this.style.getFontMetrics()), this.style);
 	}
 
 	public Bitmap getBitmapPallet()
@@ -74,9 +89,20 @@ public class AndroidGraphics {
 		//System.out.println("Clipping rect");
 		return canvas.clipRect(x-(w/2), x+(w/2), y+(h/2), y-(h/2));
 	}
-
+	
 	public void setClip(Rect clip) {
 		// TODO Auto-generated method stub
-		System.out.println("Setting clip");
+		//System.out.println("Setting clip");
+		canvas.clipRect(clip, Region.Op.REPLACE);
+	}
+
+	public void setClip(int x, int y, int w, int h) {
+		// TODO Auto-generated method stub
+		//canvas.clipr
+		canvas.clipRect(x-(w/2), x+(w/2), y+(h/2), y-(h/2), Region.Op.REPLACE);
+	}
+	
+	public static float calculateHeight(FontMetrics fm) {
+		return fm.bottom - fm.top;
 	}
 }

@@ -6,16 +6,14 @@ import android.renderscript.Font;
 
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
-final class UITextField extends DisplayedComponent
+public final class UITextField extends DisplayedComponent
 {
 	private String text;
 	private int color;
 	private Paint font;
-	private FontMetricsInt font_metrics;
+	private FontMetrics font_metrics;
 	private int char_limit;
 	private Object cursor;
-
-
 
 	UITextField (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
@@ -49,7 +47,7 @@ final class UITextField extends DisplayedComponent
 		}
 		// if the font is explicitly defined, use it, otherwise try to use the default front from TEXTFIELD_STYLE
 		if (font != null) {
-			g.setFont(font);
+			g.setFont(font.getTypeface());
 		}
 		else {
 			// fetch TEXTFIELD_STYLE if we haven't done so before
@@ -59,12 +57,12 @@ final class UITextField extends DisplayedComponent
 			if (v != null && v.type() == Value.STRUCTURE && (w=v.get("font")) != null) {
 				Paint f = AbstractView.getFont(w.toString(), null, false);
 				if (f != null) {
-					g.setFont(f);
+					g.setFont(f.getTypeface());
 				}
 			}
 		}
-		font_metrics = g.getFont().getFontMetricsInt();
-		final int font_ascent = font_metrics.ascent;
+		font_metrics = g.getFontMetrics();
+		final int font_ascent = (int) font_metrics.ascent;
 		g.drawString(text, x, y+font_ascent);
 		if (cursor instanceof DisplayedComponent) {
 			((DisplayedComponent)cursor).x = (int) (x+font.measureText(text));
@@ -145,7 +143,7 @@ final class UITextField extends DisplayedComponent
 		text = t.get("text").toString();
 		v = t.get("font");
 		font = (v.type() == Value.STRING) ? AbstractView.getFont(v.string(), null, false) : null;
-		font_metrics = ( (font!=null) ? font : AbstractView.getFont("", null, false) ).getFontMetricsInt();
+		font_metrics = ( (font!=null) ? font : AbstractView.getFont("", null, false) ).getFontMetrics();
 		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : null;
 		char_limit = ((v=t.get("char_limit")).type() == Value.INTEGER) ? v.integer() : Integer.MAX_VALUE;
 	}

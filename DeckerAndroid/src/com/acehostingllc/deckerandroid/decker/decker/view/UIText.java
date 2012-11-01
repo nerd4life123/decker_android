@@ -1,19 +1,21 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.Paint.FontMetricsInt;
 
-import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 
-
 /** displays a TEXT structure */
-public final class UIText extends DisplayedComponent
+final class UIText extends DisplayedComponent
 {
 	private String text;
 	private int color;
 	private Paint font;
 	private int y_offset;
+
+
+
 
 	UIText (final Value _component, final DisplayedComponent _parent, final DisplayedComponent current_clip_source) {
 		super(_component, _parent);
@@ -23,19 +25,29 @@ public final class UIText extends DisplayedComponent
 		child_count = 0; // cannot have children
 	}
 
+
+
+
 	void determineSize (final boolean width_already_determined, final boolean height_already_determined, final DisplayedComponent current_clip_source) {
+		final FontMetricsInt fm = font.getFontMetricsInt();
 		if (!width_already_determined)
 			w = (int) font.measureText(text);
 		if (!height_already_determined)
-			h = 10;
+			h = (int) font.ascent();
 	}
 
-	protected void draw () {
-		//if (color != -1)
-			//g.setColor(color);
-		//g.setFont(font);
-		//g.drawString(text, x, y+y_offset);
+
+
+
+	protected void draw (final AndroidGraphics g) {
+		if (color != -1)
+			g.setColor(color);
+		g.setFont(font.getTypeface());
+		g.drawString(text, x, y+y_offset);
 	}
+
+
+
 
 	public void eventValueChanged (final int index, final ArrayWrapper wrapper, final Value old_value, final Value new_value) {
 		updateText();
@@ -69,6 +81,6 @@ public final class UIText extends DisplayedComponent
 		v = t.get("font");
 		font = AbstractView.getFont((v.type() == Value.STRING)?v.string():"", null, false);
 		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : null;
-		y_offset = font.getFontMetricsInt().ascent;
+		y_offset = (int) font.ascent();
 	}
 }
