@@ -3,9 +3,11 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.Typeface;
@@ -15,62 +17,64 @@ public class AndroidGraphics {
 	
 	private Bitmap pallet;
 	private Canvas canvas;
-	private Paint style;
-	//private Paint color;
-	//private Paint font;
+	//private Paint style;
+	private int color;
+	private Paint font;
 
 	public AndroidGraphics() {
 		this.pallet = Bitmap.createBitmap(320, 400, Bitmap.Config.ARGB_8888);
 		this.canvas = new Canvas(pallet);
-		//this.color = new Paint();
-		//this.font = new Paint();
-		this.style = new Paint();
+		this.color = Color.WHITE;
+		this.font = null;
 	}
 	
 	public void drawImage(Bitmap image, int x, int y, Object object)
 	{
 		// THIS IS WORKING! JUST NEED TO USE ALPHA COLOR TO GET RID OF THAT NASTY PINK
 		Paint alpha = new Paint();
+		//alpha.setARGB(255,  255,  0,  255);
+		//int removeColor = alpha.getColor();
+		//alpha.setAlpha(0);
 		alpha.setAlpha(Color.rgb(255,  0,  255));
+		//ColorFilter filter = new ColorFilter();
+		
+		//alpha.setColorFilter(Color.rgb(255,  0,  255));
 		canvas.drawBitmap(image, x, y, alpha);
 	}
 
-	public void setFont(Typeface font) {
-		//System.out.println("Setting font. Has color " + font.getColor());
-		this.style.setTypeface(font);
+	public void setFont(Paint font) {
+		this.font = font;
 	}
 
 	public void setColor(int background) {
-		// does this really set background color?
-		this.style.setColor(background);
+		this.color = background;
 	}
 
 	public void fillRect(int x, int y, int w, int h) {
-		// TODO Auto-generated method stub
-		//System.out.println("Filling rect");
 		Paint rectPaint = new Paint();
-		rectPaint.setColor(Color.GREEN);
-		//canvas.drawRect(x-(w/2), y+(h/2),  x+(w/2),  y-(h/2),  rectPaint);
-		canvas.drawRect(x, y-h, x+w, y, this.style);
+		rectPaint.setColor(this.color);
+		rectPaint.setStyle(Paint.Style.FILL);
+		canvas.drawRect(x, y, x+w, y+h, rectPaint);
 	}
 
 	public void drawLine(int i, int j, int k, int l) {
-		// THIS IS WORKING FINE, EXCEPT FOR COLOR
 		Paint linePaint = new Paint();
-		linePaint.setColor(Color.RED);
+		linePaint.setColor(this.color);
 		canvas.drawLine(i,  j,  k,  l,  linePaint);
 	}
 
-	public Typeface getFont() {
-		return this.style.getTypeface();
+	public Paint getFont() {
+		return this.font;
 	}
 	
 	public FontMetrics getFontMetrics() {
-		return this.style.getFontMetrics();
+		return this.font.getFontMetrics();
 	}
 
 	public void drawString(String text, int x, int y) {
-		canvas.drawText(text, x, y-calculateHeight(this.style.getFontMetrics()), this.style);
+		Paint stringPaint = new Paint(this.font);
+		stringPaint.setColor(this.color);
+		canvas.drawText(text, x, y, stringPaint);
 	}
 
 	public Bitmap getBitmapPallet()
@@ -79,30 +83,19 @@ public class AndroidGraphics {
 	}
 
 	public Rect getClip() {
-		// TODO Auto-generated method stub
-		//System.out.println("Getting clip");
 		return canvas.getClipBounds();
 	}
 
 	public boolean clipRect(int x, int y, int w, int h) {
-		// TODO Auto-generated method stub
-		//System.out.println("Clipping rect");
-		return canvas.clipRect(x-(w/2), x+(w/2), y+(h/2), y-(h/2));
+		return canvas.clipRect(x, y, x+w, y+h);
 	}
 	
 	public void setClip(Rect clip) {
-		// TODO Auto-generated method stub
-		//System.out.println("Setting clip");
 		canvas.clipRect(clip, Region.Op.REPLACE);
 	}
 
 	public void setClip(int x, int y, int w, int h) {
-		// TODO Auto-generated method stub
-		//canvas.clipr
-		canvas.clipRect(x-(w/2), x+(w/2), y+(h/2), y-(h/2), Region.Op.REPLACE);
-	}
-	
-	public static float calculateHeight(FontMetrics fm) {
-		return fm.bottom - fm.top;
+		//canvas.clipRect(x-(w/2), x+(w/2), y+(h/2), y-(h/2), Region.Op.REPLACE);
+		canvas.clipRect(x, y, x+w, y+h, Region.Op.REPLACE);
 	}
 }

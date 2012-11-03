@@ -52,12 +52,12 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 	private static int last_color = Color.WHITE;
 
 	public final static Bitmap getImage (final String name) {
-		return getImage(name, false, 0xffff00ff);
+		return getImage(name, false, Color.rgb(255,  0,  255));
 	}
 
 
 	public final static Bitmap getImage (final String name, final boolean buffered_image) {
-		return getImage(name, buffered_image, 0xffff00ff);
+		return getImage(name, buffered_image, Color.rgb(255,  0,  255));
 	}
 
 
@@ -182,7 +182,7 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 					if (SUPPORTED_IMAGE_TYPES.indexOf(" "+file_type+" ") > -1) {
 						String key = (currentDir.length()==0) ? file_name : path_prefix + file_name;
 						System.out.println("Putting image in " + key);
-						IMAGES.put(key, BMPReader.readBMP(mgr.open(folderPrefix + File.separator + subFilePath), c, 0xffff00ff));
+						IMAGES.put(key, BMPReader.readBMP(mgr.open(folderPrefix + File.separator + subFilePath), c, Color.rgb(255,  0,  255)));
 					}
 				}
 			}
@@ -370,33 +370,36 @@ public final static int ABSOLUTE_MIN_VALUE = Integer.MIN_VALUE+6; // coordinate 
 	
 
 	public final static int getColor (String color) {
-		return Color.BLUE;
-		/*
 		// remove the alpha if it is 100%
+		int ret = Color.WHITE;
 		if (color.length() == 9 && color.substring(1,3).equalsIgnoreCase("ff"))
 			color = color.substring(0,1) + color.substring(3);
-		int ret = Integer.parseInt(COLORS.get(color).toString());
-		if (ret == -1) {
+		if (COLORS.get(color) == null) {
 			try {
 				if (color.charAt(0) == '#') {
 					if (color.length() == 7) {
 						final int r = Integer.parseInt(color.substring(1,3),16);
 						final int g = Integer.parseInt(color.substring(3,5),16);
 						final int b = Integer.parseInt(color.substring(5,7),16);
-						COLORS.put(color, Color.rgb(r,  g,  b));
+						ret = Color.rgb(r,g,b);
+						COLORS.put(color, ret);
 					}
 					else if (color.length() == 9) {
 						final int a = Integer.parseInt(color.substring(1,3),16);
 						final int r = Integer.parseInt(color.substring(3,5),16);
 						final int g = Integer.parseInt(color.substring(5,7),16);
 						final int b = Integer.parseInt(color.substring(7,9),16);
-						COLORS.put(color, Color.argb(a,  r,  g,  b));
+						ret = Color.argb(a,r,g,b);
+						COLORS.put(color, ret);
 					}
 				}
 			} catch (Throwable t) {}
 		}
+		else
+		{
+			ret = (Integer) COLORS.get(color);
+		}
 		return ret;
-		*/
 	}
 
 

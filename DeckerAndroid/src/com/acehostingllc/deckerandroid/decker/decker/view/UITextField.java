@@ -47,7 +47,7 @@ public final class UITextField extends DisplayedComponent
 		}
 		// if the font is explicitly defined, use it, otherwise try to use the default front from TEXTFIELD_STYLE
 		if (font != null) {
-			g.setFont(font.getTypeface());
+			g.setFont(font);
 		}
 		else {
 			// fetch TEXTFIELD_STYLE if we haven't done so before
@@ -57,19 +57,21 @@ public final class UITextField extends DisplayedComponent
 			if (v != null && v.type() == Value.STRUCTURE && (w=v.get("font")) != null) {
 				Paint f = AbstractView.getFont(w.toString(), null, false);
 				if (f != null) {
-					g.setFont(f.getTypeface());
+					g.setFont(f);
 				}
 			}
 		}
 		font_metrics = g.getFontMetrics();
 		final int font_ascent = (int) font_metrics.ascent;
-		g.drawString(text, x, y+font_ascent);
+		g.drawString(text, x, y-font_ascent);
+		System.out.println("Drawing string from UITextField:"+text);
 		if (cursor instanceof DisplayedComponent) {
 			((DisplayedComponent)cursor).x = (int) (x+font.measureText(text));
 			((DisplayedComponent)cursor).draw(g);
 		}
 		else {
-			g.drawString((String)cursor, (int) (x+font.measureText(text)), y+font_ascent);
+			g.drawString((String)cursor, (int) (x+font.measureText(text)), y-font_ascent);
+			System.out.println("Drawing string from UITextField2:"+text);
 		}
 	}
 

@@ -1,4 +1,5 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.FontMetricsInt;
@@ -10,7 +11,7 @@ import com.acehostingllc.deckerandroid.decker.decker.model.*;
 final class UIText extends DisplayedComponent
 {
 	private String text;
-	private int color;
+	private int color = Color.WHITE;
 	private Paint font;
 	private int y_offset;
 
@@ -40,10 +41,11 @@ final class UIText extends DisplayedComponent
 
 
 	protected void draw (final AndroidGraphics g) {
-		if (color != -1)
+		//if (color != -1)
 			g.setColor(color);
-		g.setFont(font.getTypeface());
-		g.drawString(text, x, y+y_offset);
+		g.setFont(font);
+		g.drawString(text, x, y-y_offset);
+		System.out.println("Drawing string from UIText:"+text+" | y offset was "+y_offset+" and y was " + y);
 	}
 
 
@@ -80,7 +82,7 @@ final class UIText extends DisplayedComponent
 		text = t.get("text").toString();
 		v = t.get("font");
 		font = AbstractView.getFont((v.type() == Value.STRING)?v.string():"", null, false);
-		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : null;
+		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : Color.WHITE;
 		y_offset = (int) font.ascent();
 	}
 }

@@ -1,21 +1,11 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint.FontMetrics;
-import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
-import android.graphics.drawable.shapes.Shape;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.acehostingllc.deckerandroid.DeckerActivity;
+import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.InputEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.KeyEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.MouseEvent;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
@@ -261,8 +251,6 @@ public class DisplayedComponent implements ValueListener
 
 	public final static void drawScreen (AndroidGraphics g) {
 		System.out.println("drawScreen called");
-		//Global.getViewWrapper().getView().removeAllViews();
-		//Global.getViewWrapper().getView().addChild(currentScreen.view);
 		if (currentScreen != null)
 			currentScreen.child[0].draw(g);
 		else
@@ -303,8 +291,8 @@ public class DisplayedComponent implements ValueListener
 
 
 	
-	private final static void handleKeyDown () {
-		/*
+	private final static void handleKeyDown (KeyEvent e) {
+		
 		// if there is no key listener, don't waste time generating the event info
 		if (eventListenerCount[ON_KEY_DOWN] == 0)
 			return;
@@ -357,14 +345,13 @@ public class DisplayedComponent implements ValueListener
 				}
 			}
 		}
-		*/
 	}
 
 
 
 
-	final static boolean handleUserInput (final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
-		/*
+	final static boolean handleUserInput (DeckerEvent e, int mouse_x, int mouse_y, final int mouse_dx, final int mouse_dy) {
+		System.out.println("DisplayedComponent: Handling user input");
 		int eventID = -1;
 		switch (e.getID()) {
 			case MouseEvent.MOUSE_DRAGGED :
@@ -374,8 +361,8 @@ public class DisplayedComponent implements ValueListener
 			case MouseEvent.MOUSE_MOVED :
 			case MouseEvent.MOUSE_EXITED :
 				eventID = ON_MOUSE_MOVED;
-//				mouse_x = -100000;
-//				mouse_y = -100000;
+				mouse_x = -100000;
+				mouse_y = -100000;
 				break;
 			case MouseEvent.MOUSE_PRESSED :
 				eventID = ON_MOUSE_DOWN;
@@ -405,7 +392,7 @@ public class DisplayedComponent implements ValueListener
 		// tell the components about it, if the mouse has left their area, and remove them from the mouseIsInside list
 		for (int i = mouseIsInsideCount; --i >= 0; ) {
 			final DisplayedComponent c = mouseIsInside[i];
-			if (! (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getRGB(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) ) {
+			if (! (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) ) {
 				c.mouse_is_inside = false;
 				if (( !c.hasHardcodedEventFunction[ON_MOUSE_EXITED] || c.eventUserInput(ON_MOUSE_EXITED, e, mouse_x, mouse_y, mouse_dx, mouse_dy) )&& c.scriptedEventFunction[ON_MOUSE_EXITED] != null) {
 					stack[1] = c.component.structure();
@@ -422,7 +409,7 @@ public class DisplayedComponent implements ValueListener
 		// find the components where the mouse is inside now, and tell them about it
 		for (int i = eventListenerCount[ON_MOUSE_ENTERED]; --i >= 0; ) {
 			final DisplayedComponent c = eventListener[ON_MOUSE_ENTERED][i];
-			if (!c.mouse_is_inside && mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getRGB(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
+			if (!c.mouse_is_inside && mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
 				// the mouse is inside this component, add it to the mouseIsInside list
 				if (mouseIsInsideCount == mouseIsInside.length) {
 					final DisplayedComponent[] newMII = new DisplayedComponent[mouseIsInsideCount*2];
@@ -446,7 +433,7 @@ public class DisplayedComponent implements ValueListener
 		for (int i = eventListenerCount[ON_MOUSE_EXITED]; --i >= 0; ) {
 			final DisplayedComponent c = eventListener[ON_MOUSE_EXITED][i];
 			// if the component hasn't been added to the list yet, mouse_is_inside will be false
-			if (!c.mouse_is_inside && mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getRGB(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
+			if (!c.mouse_is_inside && mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
 				// the mouse is inside this component, add it to the mouseIsInside list
 				if (mouseIsInsideCount == mouseIsInside.length) {
 					final DisplayedComponent[] newMII = new DisplayedComponent[mouseIsInsideCount*2];
@@ -464,7 +451,7 @@ public class DisplayedComponent implements ValueListener
 			System.arraycopy(eventListener[eventID], 0, el, 0, listenerCount);
 			for (int i = listenerCount; --i >= 0; ) {
 				final DisplayedComponent c = el[i];
-				if (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getRGB(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
+				if (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
 					// if there is no hardcoded function or the hardcoded function doesn't block the scripted one, call the scripted function
 					if (( !c.hasHardcodedEventFunction[eventID] || c.eventUserInput(eventID, e, mouse_x, mouse_y, mouse_dx, mouse_dy) )&& c.scriptedEventFunction[eventID] != null) {
 						stack[1] = (c.component.type()==Value.STRUCTURE)?c.component.structure():null;
@@ -491,7 +478,7 @@ public class DisplayedComponent implements ValueListener
 					System.arraycopy(eventListener[ON_DOUBLE_CLICK], 0, el, 0, listenerCountDD);
 					for (int i = listenerCountDD; --i >= 0; ) {
 						final DisplayedComponent c = el[i];
-						if (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getRGB(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
+						if (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
 							// if there is no hardcoded function or the hardcoded function doesn't block the scripted one, call the scripted function
 							if (( !c.hasHardcodedEventFunction[ON_DOUBLE_CLICK] || c.eventUserInput(ON_DOUBLE_CLICK, e, mouse_x, mouse_y, mouse_dx, mouse_dy) )&& c.scriptedEventFunction[ON_DOUBLE_CLICK] != null) {
 								stack[1] = (c.component.type()==Value.STRUCTURE)?c.component.structure():null;
@@ -534,7 +521,7 @@ public class DisplayedComponent implements ValueListener
 				}
 			}
 		}
-		*/
+		
 		return false;
 	}
 
@@ -768,7 +755,7 @@ public class DisplayedComponent implements ValueListener
 			if (type.equals("TEXT")) {
 				// set the font
 				if ((v2=d.get("font")) != null && v2.type() == Value.STRING)
-					g.setFont(AbstractView.getFont(d.get("font").string(), true).getTypeface());
+					g.setFont(AbstractView.getFont(d.get("font").string(), true));
 				// set the text color
 				if ((v2=d.get("color")) != null && v2.type() == Value.STRING) {
 					final int c = AbstractView.getColor(v2.string());
@@ -779,7 +766,8 @@ public class DisplayedComponent implements ValueListener
 				String s = d.get("text").toString();
 				//final FontMetricsInt fm = g.getFont().getFontMetricsInt();
 				// draw the string
-				g.drawString(s, x, (int) (y+AndroidGraphics.calculateHeight(g.getFontMetrics())));
+				g.drawString(s, x, (int) (y-g.getFontMetrics().ascent));
+				System.out.println("Drawing string from DisplayedComponent:"+s);
 			}
 			else if (type.equals("DRAWING_BOUNDARY")) {
 				clip = g.getClip();
@@ -881,8 +869,9 @@ public class DisplayedComponent implements ValueListener
 
 
 
-	/** returns true if the event handler should also call the scripted function for the event (if there is one), false otherwise */
-	boolean eventUserInput (final int event_id, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	/** returns true if the event handler should also call the scripted function for the event (if there is one), false otherwise 
+	 * @param e */
+	boolean eventUserInput (final int event_id, DeckerEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		return true;
 	}
 

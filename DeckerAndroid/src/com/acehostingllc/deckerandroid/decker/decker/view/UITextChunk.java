@@ -35,8 +35,9 @@ final class UITextChunk extends DisplayedComponent
 
 	protected void draw (final AndroidGraphics g) {
 		g.setColor(color);
-		g.setFont(font.getTypeface());
-		g.drawString(text, x, y+y_offset);
+		g.setFont(font);
+		g.drawString(text, x, y-y_offset);
+		System.out.println("Drawing string from UITextChunk:"+text);
 	}
 
 

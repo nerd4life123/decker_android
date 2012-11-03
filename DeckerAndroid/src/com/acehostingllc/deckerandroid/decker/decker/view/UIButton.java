@@ -1,4 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.MouseEvent;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 /** UIButtons suppress all mouse events (except for mouse wheel events) and don't call any scripted functions while DISABLED */
@@ -134,9 +136,10 @@ updateButtonState();
 
 
 
-	boolean eventUserInput (final int event_id, final Object e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final DeckerEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
 		if (state == DISABLED_STATE_ID) // this should not be possible, but better to be safe than sorry
 			return true;
+		System.out.println("Cool, the button is handling it.");
 		String s;
 		if (component.type() != Value.STRUCTURE ||( !(s=component.get("structure_type").string()).equals("BUTTON") && !s.equals("BORDER_BUTTON") ))
 			return true;
@@ -146,14 +149,13 @@ updateButtonState();
 					v.setConstant("PRESSED");
 				break;
 			case ON_MOUSE_ENTERED :
-				/*
 					// if one of the mouse buttons is pressed, press the button
 					final int m = ((MouseEvent)e).getModifiersEx();
 					if (( (m&MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK )||( (m&MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK )||( (m&MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK ))
 						v.setConstant("PRESSED");
 					else
 						v.setConstant("HOVER");
-						*/
+						
 				break;
 			case ON_MOUSE_EXITED :
 					v.setConstant("IDLE");

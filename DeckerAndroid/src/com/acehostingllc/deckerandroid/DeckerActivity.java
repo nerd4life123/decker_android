@@ -1,5 +1,7 @@
 package com.acehostingllc.deckerandroid;
 
+import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.MouseEvent;
 import com.acehostingllc.deckerandroid.decker.decker.model.Global;
 import com.acehostingllc.deckerandroid.decker.decker.model.Ruleset;
 
@@ -7,25 +9,25 @@ import com.acehostingllc.deckerandroid.decker.decker.model.FunctionCall;
 import com.acehostingllc.deckerandroid.decker.decker.model.ScriptNode;
 import com.acehostingllc.deckerandroid.decker.decker.model.Value;
 import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
-import com.acehostingllc.deckerandroid.decker.decker.view.SplashScreen;
-
 import com.acehostingllc.deckerandroid.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 public class DeckerActivity extends Activity {
-	private static ImageView imageView;
+	//private static ImageView imageView;
 	private static Context context;
+	private boolean inputChanged;
 	String[] args = new String[0];
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DeckerActivity.context = this.getApplicationContext();
-        DeckerActivity.imageView = new ImageView(this);
         setContentView(R.layout.splashscreen);
         Global.debug_level = 5;
      // parse the command line switches
@@ -49,7 +51,7 @@ public class DeckerActivity extends Activity {
      		this.setContentView(splashscreen);
 
     		Log.w("DeckerActivity", "initializeDataModel");
-     		Global.initializeDataModel();
+     		Global.initializeDataModel(this);
      		Log.w("DeckerActivity", "loadRulesets");
      		Global.loadRulesets();
      		Log.w("DeckerActivity", "initializeRulesets");
@@ -81,8 +83,23 @@ public class DeckerActivity extends Activity {
      		FunctionCall.executeFunctionCall(displayScreenFunction.function(), new Value[]{ initial_screen }, null);
 
      		Log.w("DeckerActivity", "I assume we're changing screens now?");
-    		this.setContentView(imageView);
-    		Global.getViewWrapper().repaint();
+    		this.setContentView(Global.getViewWrapper());
+    			Global.getViewWrapper().update();
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+    	int x = (int) e.getX();
+    	int y = (int) e.getY();
+    	//create the event
+    	System.out.println("Screen touched. passing to viewwrapper");    	
+
+    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_ENTERED, x, y, MouseEvent.BUTTON1));
+    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, x, y, MouseEvent.BUTTON1));
+    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
+    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_RELEASED, x, y, MouseEvent.BUTTON1));
+    	Global.getViewWrapper().update();
+		return true;
     }
 
     @Override
@@ -93,9 +110,5 @@ public class DeckerActivity extends Activity {
 	
 	public static Context getAppContext() {
 		return context;
-	}
-	
-	public static ImageView getImageView() {
-		return imageView;
 	}
 }

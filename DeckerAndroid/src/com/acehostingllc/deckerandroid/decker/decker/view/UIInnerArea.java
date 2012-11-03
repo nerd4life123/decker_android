@@ -1,8 +1,4 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
-import com.acehostingllc.deckerandroid.decker.decker.model.*;
-
-
-
 
 class UIInnerArea extends DisplayedComponent
 {

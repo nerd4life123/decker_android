@@ -1,27 +1,21 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.RelativeLayout.LayoutParams;
-
 import com.acehostingllc.deckerandroid.DeckerActivity;
+import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.MouseEvent;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
-
-
-public final class ViewWrapper
+public final class ViewWrapper extends ImageView
 {
 	
-	public ViewWrapper() {
+	public ViewWrapper(Context context) {
+		super(context);
 		this.setView(new AbstractView());
 	}
 
@@ -29,7 +23,7 @@ public final class ViewWrapper
 	private Buffer buffer;
 	private boolean painting;
 	private AbstractView view;
-	//private AWTEvent lastEvent;
+	private DeckerEvent lastEvent;
 	private final Queue events = new Queue();
 	private int mouse_x, mouse_y;
 	private int frame_x, frame_y;
@@ -53,7 +47,7 @@ public final class ViewWrapper
 		if (view == this.view)
 			return;
 		this.view = view;
-		repaint();
+		update();
 	}
 
 
@@ -79,18 +73,20 @@ public final class ViewWrapper
 
 
 	private void handleUserInput () {
-		/*
+		System.out.println("ViewWrapper: Handling user input");
 		for (int i = events.size(); --i >= 0; ) {
-			final AWTEvent e = (AWTEvent) events.remove();
-			final AWTEvent e2 = lastEvent;
+			final DeckerEvent e = (DeckerEvent) events.remove();
+			final DeckerEvent e2 = lastEvent;
 			lastEvent = e;
 			final AbstractView v = view;
 			boolean discardEvent = true;
 			final int mx = mouse_x, my = mouse_y;
 			if (v != null) {
+				System.out.println("ViewWrapper: Abstract view was not null");
 				discardEvent = false;
 				try {
 					if (e instanceof MouseEvent) {
+						System.out.println("ViewWrapper: Read instance of MouseEvent");
 						mouse_x = ((MouseEvent)e).getX();
 						mouse_y = ((MouseEvent)e).getY();
 					}
@@ -103,23 +99,11 @@ public final class ViewWrapper
 				lastEvent = e2;
 			}
 		}
-		*/
-	}
-
-
-	public void repaint() {
-		paint();
-	}
-
-
-
-	
-	public void paint () {
-		update();
+		
 	}
 	
 	
-	public void processEvent (final Object e) {
+	public void processEvent (final DeckerEvent e) {
 		events.add(e);
 	}
 	
@@ -204,7 +188,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 					}
 
 					final AndroidGraphics bg = buffer.getGraphics();
-					bg.setFont(getFont().getTypeface());
+					bg.setFont(getFont());
 
 					// fetch the background color
 /*						final Value bgcolor_string = ScriptNode.getValue("BACKGROUND_COLOR");
@@ -254,7 +238,7 @@ System.exit(1);
 	private void drawImage(Buffer buffer, int i, int j,
 			ViewWrapper viewWrapper) {
 		System.out.println("drawimage called");
-		DeckerActivity.getImageView().setImageBitmap(buffer.getGraphics().getBitmapPallet());
+		this.setImageBitmap(buffer.getGraphics().getBitmapPallet());
 	}
 
 
@@ -266,7 +250,6 @@ System.exit(1);
 	public void update () {
 		if (painting)
 		{
-			System.out.println("ispainting!");
 			return;
 		}
 		/*
