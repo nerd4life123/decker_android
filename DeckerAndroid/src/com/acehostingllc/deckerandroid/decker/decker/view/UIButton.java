@@ -117,7 +117,6 @@ updateButtonState();
 
 
 	protected void draw (final AndroidGraphics g) {
-		System.out.println("draw called on UIButton");
 		// draw the border
 		if (border != null)
 			border.draw(g);
@@ -137,9 +136,9 @@ updateButtonState();
 
 
 	boolean eventUserInput (final int event_id, final DeckerEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+		System.out.println("Cool, the button is handling it.");
 		if (state == DISABLED_STATE_ID) // this should not be possible, but better to be safe than sorry
 			return true;
-		System.out.println("Cool, the button is handling it.");
 		String s;
 		if (component.type() != Value.STRUCTURE ||( !(s=component.get("structure_type").string()).equals("BUTTON") && !s.equals("BORDER_BUTTON") ))
 			return true;
@@ -417,6 +416,7 @@ updateButtonState();
 
 
 	void updateEventListeners () {
+		System.out.println("Updating event listeners for UIButton");
 		// (un)register the hardcoded event listener function
 		final boolean[] hHEF = new boolean[hasHardcodedEventFunction.length];
 		hHEF[ON_MOUSE_DOWN] = true;

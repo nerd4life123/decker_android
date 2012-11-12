@@ -3,42 +3,33 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
-import android.graphics.Paint.Style;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Region;
-import android.graphics.Typeface;
-import android.graphics.drawable.shapes.Shape;
 
 public class AndroidGraphics {
 	
 	private Bitmap pallet;
 	private Canvas canvas;
-	//private Paint style;
 	private int color;
 	private Paint font;
 
-	public AndroidGraphics() {
-		this.pallet = Bitmap.createBitmap(320, 400, Bitmap.Config.ARGB_8888);
+	public AndroidGraphics(int width, int height) {
+		this.pallet = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		this.canvas = new Canvas(pallet);
 		this.color = Color.WHITE;
 		this.font = null;
+		
+		Paint testPaint = new Paint();
+		testPaint.setColor(Color.GREEN);
+		this.canvas.drawRect(0, 0, width, height, testPaint);
 	}
 	
 	public void drawImage(Bitmap image, int x, int y, Object object)
 	{
-		// THIS IS WORKING! JUST NEED TO USE ALPHA COLOR TO GET RID OF THAT NASTY PINK
 		Paint alpha = new Paint();
-		//alpha.setARGB(255,  255,  0,  255);
-		//int removeColor = alpha.getColor();
-		//alpha.setAlpha(0);
 		alpha.setAlpha(Color.rgb(255,  0,  255));
-		//ColorFilter filter = new ColorFilter();
-		
-		//alpha.setColorFilter(Color.rgb(255,  0,  255));
 		canvas.drawBitmap(image, x, y, alpha);
 	}
 
@@ -54,6 +45,7 @@ public class AndroidGraphics {
 		Paint rectPaint = new Paint();
 		rectPaint.setColor(this.color);
 		rectPaint.setStyle(Paint.Style.FILL);
+		System.out.println("Drawing rect with left at " + x + " and top at " + y);
 		canvas.drawRect(x, y, x+w, y+h, rectPaint);
 	}
 
@@ -77,9 +69,12 @@ public class AndroidGraphics {
 		canvas.drawText(text, x, y, stringPaint);
 	}
 
-	public Bitmap getBitmapPallet()
+	public Bitmap getBitmapPallet(Rect srcRect, Rect scrollRect)
 	{
-		return this.pallet;
+		Bitmap newBitmap = Bitmap.createBitmap(srcRect.width(), srcRect.height(), Bitmap.Config.ARGB_8888);
+		Canvas newCanvas = new Canvas(newBitmap);
+		newCanvas.drawBitmap(this.pallet, srcRect, scrollRect, new Paint());
+		return newBitmap;
 	}
 
 	public Rect getClip() {

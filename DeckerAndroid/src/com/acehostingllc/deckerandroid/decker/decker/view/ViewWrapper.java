@@ -2,7 +2,11 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
@@ -13,11 +17,6 @@ import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
 public final class ViewWrapper extends ImageView
 {
-	
-	public ViewWrapper(Context context) {
-		super(context);
-		this.setView(new AbstractView());
-	}
 
 	// methods other parts of this program will call ************************************************************************
 	private Buffer buffer;
@@ -26,10 +25,59 @@ public final class ViewWrapper extends ImageView
 	private DeckerEvent lastEvent;
 	private final Queue events = new Queue();
 	private int mouse_x, mouse_y;
-	private int frame_x, frame_y;
+	//private int frame_x, frame_y;
 	private int old_width = -1, old_height = -1;
 	private String oldScreenTitle = "";
 	private Value oldDisplayedScreen = new Value();
+	private int width;
+	private int height;
+	
+	public ViewWrapper(DeckerActivity activity) {
+		super(activity);
+		this.setView(new AbstractView());
+		//this.setv'
+		Display display = ((WindowManager)activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		this.width = display.getWidth();//((DeckerActivity)context).getWindowManager().getDefaultDisplay().getWidth();
+		this.height = display.getHeight();;//((DeckerActivity)context).getWindowManager().getDefaultDisplay().getHeight();
+	}
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+    	DisplayMetrics dm = new DisplayMetrics();
+    	((DeckerActivity)this.getContext()).getWindowManager().getDefaultDisplay().getMetrics(dm);
+    	int x = (int) e.getX();//- 60;
+    	int y = (int) e.getY();// - 215;
+    	System.out.println("x:"+x+",y:"+y);
+    	
+    	if (e.getAction()==MotionEvent.ACTION_DOWN)
+    	{
+        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
+    	}
+    	
+    	if (e.getAction()==MotionEvent.ACTION_UP)
+    	{
+        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_RELEASED, x, y, MouseEvent.BUTTON1));
+     	}
+    	
+    	if (e.getAction()==MotionEvent.ACTION_HOVER_ENTER)
+    	{
+        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_ENTERED, x, y, MouseEvent.BUTTON1));
+    	}
+    	if (e.getAction()==MotionEvent.ACTION_HOVER_EXIT)
+    	{
+        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_EXITED, x, y, MouseEvent.BUTTON1));
+    	}
+
+    	if (e.getAction()==MotionEvent.ACTION_MOVE)
+    	{
+        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, x, y, MouseEvent.BUTTON1));
+    	}
+    	//create the event
+    	System.out.println("Screen touched. passing to viewwrapper");
+    	
+    	Global.getViewWrapper().update();
+		return true;
+    }
 	
 	//public ViewWrapper () {
 		//if (Global.getDisplayedComponent() instanceof Frame)
@@ -37,7 +85,7 @@ public final class ViewWrapper extends ImageView
 	//}
 	
 
-	//protected AWTEvent getLastEvent () { return lastEvent; }
+	protected DeckerEvent getLastEvent () { return lastEvent; }
 	public AbstractView getView () { return view; }
 
 
@@ -173,11 +221,13 @@ System.out.println("ViewWrapper: ** switching screens **:"+scr.toStringForPrinti
 				}
 
 //			if (view != null) {
-final int w = Math.max(11, DisplayedComponent.getScreenWidth()), h = Math.max(11, DisplayedComponent.getScreenHeight());
-
+//final int w = Math.max(11, DisplayedComponent.getScreenWidth()), h = Math.max(11, DisplayedComponent.getScreenHeight());
+		final int w = this.width;
+		final int h = this.height;
 					// draw the next frame
 					if (buffer == null || buffer.getWidth() != w || buffer.getHeight() != h) {
 						try {
+							System.out.println("Creating new screen buffer");
 							buffer = createImage(w, h);
 						} catch (Throwable t) {
 							// this ought to be extremely rare
@@ -237,13 +287,14 @@ System.exit(1);
 
 	private void drawImage(Buffer buffer, int i, int j,
 			ViewWrapper viewWrapper) {
-		System.out.println("drawimage called");
-		this.setImageBitmap(buffer.getGraphics().getBitmapPallet());
+		Rect srcRect = new Rect(0, 0, width, height);
+		Rect frame = new Rect(0, 0, width, height);
+		this.setImageBitmap(buffer.getGraphics().getBitmapPallet(srcRect, frame));
 	}
 
 
 	private Buffer createImage(int w, int h) {
-		return new Buffer();
+		return new Buffer(w, h);
 	}
 
 

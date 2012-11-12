@@ -4,6 +4,8 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.FontMetricsInt;
 import android.renderscript.Font;
 
+import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
+import com.acehostingllc.deckerandroid.decker.decker.input.KeyEvent;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
 
 public final class UITextField extends DisplayedComponent
@@ -30,7 +32,6 @@ public final class UITextField extends DisplayedComponent
 
 
 	protected void draw (final AndroidGraphics g) {
-		System.out.println("draw called on UITextField");
 		Value v = null, w;
 		// if the color is explicitly defined, use it, otherwise try to use the default color from TEXTFIELD_STYLE
 		if (color != 0) {
@@ -78,8 +79,8 @@ public final class UITextField extends DisplayedComponent
 
 
 
-	boolean eventUserInput (final int event_id, final Object e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
-		/*
+	boolean eventUserInput (final int event_id, final DeckerEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+		
 		if (event_id == ON_KEY_DOWN) {
 			final KeyEvent k = (KeyEvent) e;
 			if (k.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
@@ -91,14 +92,14 @@ public final class UITextField extends DisplayedComponent
 			else if (k.getKeyChar() != KeyEvent.CHAR_UNDEFINED && text.length() < char_limit) {
 				// also make sure that the text fits into the field
 				Value v = component.get("width");
-				if ( v.type() == Value.INTEGER && v.integer() < font_metrics.stringWidth(text+k.getKeyChar()) + ((cursor instanceof String)?font_metrics.stringWidth((String)cursor):((DisplayedComponent)cursor).w) ) {
+				if ( v.type() == Value.INTEGER && v.integer() < font.measureText(text+k.getKeyChar()) + ((cursor instanceof String)?font.measureText((String)cursor):((DisplayedComponent)cursor).w) ) {
 					return true;
 				}
 				text = text + k.getKeyChar();
 				component.get("text").set(text);
 			}
 		}
-		*/
+		
 		return true;
 	}
 

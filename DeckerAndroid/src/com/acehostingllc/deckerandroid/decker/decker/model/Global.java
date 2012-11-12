@@ -54,7 +54,7 @@ public final class Global extends Application
 	public static Structure getEngineData ()  { return ScriptNode.stack[ScriptNode.ENGINE_STACK_SLOT]; }
 
 	/** sets things up for the game to launch and load the rulesets */
-	public final static void initializeDataModel (Context context)  {
+	public final static void initializeDataModel (DeckerActivity context)  {
 		view_wrapper = new ViewWrapper(context);
 		
 		// set up the data stack

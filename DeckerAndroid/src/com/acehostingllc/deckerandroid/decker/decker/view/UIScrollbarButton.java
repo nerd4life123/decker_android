@@ -40,6 +40,7 @@ class UIScrollbarButton extends UIButton
 
 
 	boolean eventUserInput (final int event_id, DeckerEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+		System.out.println("eventUserInput called on scrollbarbutton");
 		String s;
 		if (component.type() != Value.STRUCTURE ||( !(s=component.get("structure_type").string()).equals("BUTTON") && !s.equals("BORDER_BUTTON") ))
 			return true;

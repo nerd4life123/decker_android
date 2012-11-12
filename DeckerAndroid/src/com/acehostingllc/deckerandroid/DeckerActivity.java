@@ -13,11 +13,17 @@ import com.acehostingllc.deckerandroid.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.AbsoluteLayout.LayoutParams;
+import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 public class DeckerActivity extends Activity {
 	//private static ImageView imageView;
@@ -28,7 +34,8 @@ public class DeckerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DeckerActivity.context = this.getApplicationContext();
-        setContentView(R.layout.splashscreen);
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //setContentView(R.layout.splashscreen);
         Global.debug_level = 5;
      // parse the command line switches
      		String initial_ruleset = "decker";
@@ -46,9 +53,9 @@ public class DeckerActivity extends Activity {
      		
      		    //SplashScreen ss = new SplashScreen();
      		    //Global.setDisplayedComponent(ss);
-     		int splashscreen = R.layout.splashscreen;
+     		//int splashscreen = R.layout.splashscreen;
      		
-     		this.setContentView(splashscreen);
+     		//this.setContentView(splashscreen);
 
     		Log.w("DeckerActivity", "initializeDataModel");
      		Global.initializeDataModel(this);
@@ -83,23 +90,11 @@ public class DeckerActivity extends Activity {
      		FunctionCall.executeFunctionCall(displayScreenFunction.function(), new Value[]{ initial_screen }, null);
 
      		Log.w("DeckerActivity", "I assume we're changing screens now?");
-    		this.setContentView(Global.getViewWrapper());
+     		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+     				RelativeLayout.LayoutParams.WRAP_CONTENT,
+     				RelativeLayout.LayoutParams.WRAP_CONTENT);
+    		this.setContentView(Global.getViewWrapper(), layoutParams);
     			Global.getViewWrapper().update();
-    }
-    
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-    	int x = (int) e.getX();
-    	int y = (int) e.getY();
-    	//create the event
-    	System.out.println("Screen touched. passing to viewwrapper");    	
-
-    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_ENTERED, x, y, MouseEvent.BUTTON1));
-    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, x, y, MouseEvent.BUTTON1));
-    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
-    	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_RELEASED, x, y, MouseEvent.BUTTON1));
-    	Global.getViewWrapper().update();
-		return true;
     }
 
     @Override

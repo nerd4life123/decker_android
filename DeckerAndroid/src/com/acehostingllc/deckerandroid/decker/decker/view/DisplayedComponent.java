@@ -361,8 +361,8 @@ public class DisplayedComponent implements ValueListener
 			case MouseEvent.MOUSE_MOVED :
 			case MouseEvent.MOUSE_EXITED :
 				eventID = ON_MOUSE_MOVED;
-				mouse_x = -100000;
-				mouse_y = -100000;
+//				mouse_x = -100000;
+//				mouse_y = -100000;
 				break;
 			case MouseEvent.MOUSE_PRESSED :
 				eventID = ON_MOUSE_DOWN;
@@ -390,11 +390,16 @@ public class DisplayedComponent implements ValueListener
 		final Structure displayed_screen = Global.getDisplayedScreen().structure();
 		final Structure[] stack = new Structure[] { displayed_screen, null };
 		// tell the components about it, if the mouse has left their area, and remove them from the mouseIsInside list
+
+		System.out.println("mouseIsInsideCount is " + mouseIsInsideCount);
 		for (int i = mouseIsInsideCount; --i >= 0; ) {
+			System.out.println("Mouse was inside something.");
 			final DisplayedComponent c = mouseIsInside[i];
 			if (! (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) ) {
 				c.mouse_is_inside = false;
+				System.out.println("Mouse was inside something.");
 				if (( !c.hasHardcodedEventFunction[ON_MOUSE_EXITED] || c.eventUserInput(ON_MOUSE_EXITED, e, mouse_x, mouse_y, mouse_dx, mouse_dy) )&& c.scriptedEventFunction[ON_MOUSE_EXITED] != null) {
+					System.out.println("We seem to be getting somewhere.");
 					stack[1] = c.component.structure();
 					FunctionCall.executeFunctionCall(c.scriptedEventFunction[ON_MOUSE_EXITED], new Value[]{ new Value().set(mouse_x-c.x), new Value().set(mouse_y-c.y), new Value().set(false) }, stack);
 				}
@@ -405,13 +410,20 @@ public class DisplayedComponent implements ValueListener
 					return false;
 				}
 			}
+			else
+			{
+				System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+				System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+			}
 		}
 		// find the components where the mouse is inside now, and tell them about it
+		System.out.println("eventListenerCount[ON_MOUSE_ENTERED] is " + eventListenerCount[ON_MOUSE_ENTERED]);
 		for (int i = eventListenerCount[ON_MOUSE_ENTERED]; --i >= 0; ) {
 			final DisplayedComponent c = eventListener[ON_MOUSE_ENTERED][i];
 			if (!c.mouse_is_inside && mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
 				// the mouse is inside this component, add it to the mouseIsInside list
 				if (mouseIsInsideCount == mouseIsInside.length) {
+					System.out.println("Ok entered");
 					final DisplayedComponent[] newMII = new DisplayedComponent[mouseIsInsideCount*2];
 					System.arraycopy(mouseIsInside, 0, newMII, 0, mouseIsInsideCount);
 					mouseIsInside = newMII;
@@ -421,6 +433,7 @@ public class DisplayedComponent implements ValueListener
 				c.mouse_is_inside = true;
 				if (( !c.hasHardcodedEventFunction[ON_MOUSE_ENTERED] || c.eventUserInput(ON_MOUSE_ENTERED, e, mouse_x, mouse_y, mouse_dx, mouse_dy) )&& c.scriptedEventFunction[ON_MOUSE_ENTERED] != null) {
 					stack[1] = c.component.structure();
+					System.out.println("doing something here");
 					FunctionCall.executeFunctionCall(c.scriptedEventFunction[ON_MOUSE_ENTERED], new Value[]{ new Value().set(mouse_x-c.x), new Value().set(mouse_y-c.y), new Value().set(true) }, stack);
 				}
 				// discard the event if the displayed screen has changed
@@ -428,7 +441,13 @@ public class DisplayedComponent implements ValueListener
 					return false;
 				}
 			}
+			else
+			{
+				System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+				System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+			}
 		}
+		System.out.println("eventListenerCount[ON_MOUSE_EXITED] is " + eventListenerCount[ON_MOUSE_EXITED]);
 		// we also need to check whether the mouse has entered them for those components which are listening for it to exit but not for it to enter
 		for (int i = eventListenerCount[ON_MOUSE_EXITED]; --i >= 0; ) {
 			final DisplayedComponent c = eventListener[ON_MOUSE_EXITED][i];
@@ -436,6 +455,7 @@ public class DisplayedComponent implements ValueListener
 			if (!c.mouse_is_inside && mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
 				// the mouse is inside this component, add it to the mouseIsInside list
 				if (mouseIsInsideCount == mouseIsInside.length) {
+					System.out.println("mouseIsInside becoming newMII");
 					final DisplayedComponent[] newMII = new DisplayedComponent[mouseIsInsideCount*2];
 					System.arraycopy(mouseIsInside, 0, newMII, 0, mouseIsInsideCount);
 					mouseIsInside = newMII;
@@ -443,8 +463,14 @@ public class DisplayedComponent implements ValueListener
 				mouseIsInside[mouseIsInsideCount++] = c;
 				c.mouse_is_inside = true;
 			}
+			else
+			{
+				System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+				System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+			}
 		}
 		// tell the components about the event itself
+		System.out.println("listenerCount is " + eventListenerCount[eventID]);
 		final int listenerCount = eventListenerCount[eventID];
 		if (listenerCount > 0) {
 			final DisplayedComponent[] el = new DisplayedComponent[listenerCount];
@@ -452,6 +478,7 @@ public class DisplayedComponent implements ValueListener
 			for (int i = listenerCount; --i >= 0; ) {
 				final DisplayedComponent c = el[i];
 				if (mouse_x >= c.cx && mouse_x < c.cx+c.cw && mouse_y >= c.cy && mouse_y < c.cy+c.ch &&( c.shape == null || (c.shape.getPixel(mouse_x-c.x, mouse_y-c.y)&0xff000000) != 0 )) {
+					System.out.println("Mouse was in bounds here for moving/dragging");
 					// if there is no hardcoded function or the hardcoded function doesn't block the scripted one, call the scripted function
 					if (( !c.hasHardcodedEventFunction[eventID] || c.eventUserInput(eventID, e, mouse_x, mouse_y, mouse_dx, mouse_dy) )&& c.scriptedEventFunction[eventID] != null) {
 						stack[1] = (c.component.type()==Value.STRUCTURE)?c.component.structure():null;
@@ -464,6 +491,11 @@ public class DisplayedComponent implements ValueListener
 					if (Global.getDisplayedScreen().structure() != displayed_screen) {
 						return false;
 					}
+				}
+				else
+				{
+					System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+					System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 				}
 			}
 		}
@@ -484,6 +516,11 @@ public class DisplayedComponent implements ValueListener
 								stack[1] = (c.component.type()==Value.STRUCTURE)?c.component.structure():null;
 								FunctionCall.executeFunctionCall(c.scriptedEventFunction[ON_DOUBLE_CLICK], new Value[]{ new Value().set(mouse_x-c.x), new Value().set(mouse_y-c.y), new Value().set(true) }, stack);
 							}
+						}
+						else
+						{
+							System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+							System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 						}
 						// discard the event if the displayed screen has changed
 						if (Global.getDisplayedScreen().structure() != displayed_screen) {

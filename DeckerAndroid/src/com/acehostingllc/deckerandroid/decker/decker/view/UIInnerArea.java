@@ -10,7 +10,6 @@ class UIInnerArea extends DisplayedComponent
 
 
 	protected void draw (final AndroidGraphics g) {
-		System.out.println("draw called on UIInnerArea");
 		// draw the child components
 		final DisplayedComponent[] c = child;
 		final int cc = child_count;

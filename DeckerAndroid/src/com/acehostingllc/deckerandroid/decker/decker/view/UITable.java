@@ -1,6 +1,6 @@
 package com.acehostingllc.deckerandroid.decker.decker.view;
+import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
 import com.acehostingllc.deckerandroid.decker.decker.model.*;
-import java.awt.*;
 
 class UITable extends DisplayedComponent
 {
@@ -49,10 +49,10 @@ class UITable extends DisplayedComponent
 			if (can_select_rows && current_row > -1) {
 				if (selected_row_background.type() == Value.STRING) {
 					final int c = AbstractView.getColor(selected_row_background.string());
-					if (c != -1) {
+					//if (c != null) {
 						g.setColor(c);
 						g.fillRect(x, y+current_row*row_height, w, row_height);
-					}
+					//}
 				}
 			}
 			// draw the cell contents
@@ -89,7 +89,8 @@ class UITable extends DisplayedComponent
 
 
 
-	boolean eventUserInput (final int event_id, final Object e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+	boolean eventUserInput (final int event_id, final DeckerEvent e, final int mouse_x, final int mouse_y, final int mouse_dx, final int mouse_dy) {
+		System.out.println("eventUserInput called on UITable");
 		final int my = mouse_y-y;
 		if (row_height <= 0 || my < 0 || my >= h || mouse_x < x || mouse_x >= x+w || component == null || component.type() != Value.STRUCTURE || !component.get("structure_type").equals("TABLE")) {
 			dragging_row = false;
