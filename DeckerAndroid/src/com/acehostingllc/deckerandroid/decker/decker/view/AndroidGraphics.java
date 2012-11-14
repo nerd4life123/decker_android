@@ -16,7 +16,7 @@ public class AndroidGraphics {
 	private Paint font;
 
 	public AndroidGraphics(int width, int height) {
-		this.pallet = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		this.pallet = Bitmap.createBitmap(800, 600, Bitmap.Config.ARGB_8888);
 		this.canvas = new Canvas(pallet);
 		this.color = Color.WHITE;
 		this.font = null;
@@ -69,11 +69,11 @@ public class AndroidGraphics {
 		canvas.drawText(text, x, y, stringPaint);
 	}
 
-	public Bitmap getBitmapPallet(Rect srcRect, Rect scrollRect)
+	public Bitmap getBitmapPallet(Rect srcRect, Rect frame)
 	{
 		Bitmap newBitmap = Bitmap.createBitmap(srcRect.width(), srcRect.height(), Bitmap.Config.ARGB_8888);
 		Canvas newCanvas = new Canvas(newBitmap);
-		newCanvas.drawBitmap(this.pallet, srcRect, scrollRect, new Paint());
+		newCanvas.drawBitmap(this.pallet, srcRect, frame, new Paint());
 		return newBitmap;
 	}
 

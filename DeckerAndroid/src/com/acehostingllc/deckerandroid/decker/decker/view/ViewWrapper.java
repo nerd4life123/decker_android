@@ -31,6 +31,10 @@ public final class ViewWrapper extends ImageView
 	private Value oldDisplayedScreen = new Value();
 	private int width;
 	private int height;
+	private float scrollX = 0;
+	private float scrollY = 0;
+	private float lastTouchX = 0;
+	private float lastTouchY = 0;
 	
 	public ViewWrapper(DeckerActivity activity) {
 		super(activity);
@@ -45,12 +49,13 @@ public final class ViewWrapper extends ImageView
     public boolean onTouchEvent(MotionEvent e) {
     	DisplayMetrics dm = new DisplayMetrics();
     	((DeckerActivity)this.getContext()).getWindowManager().getDefaultDisplay().getMetrics(dm);
-    	int x = (int) e.getX();//- 60;
-    	int y = (int) e.getY();// - 215;
-    	System.out.println("x:"+x+",y:"+y);
+    	int x = (int) (e.getRawX() - scrollX);//- 60;
+    	int y = (int) (e.getRawY() - scrollY);// - 215;
     	
     	if (e.getAction()==MotionEvent.ACTION_DOWN)
     	{
+			this.lastTouchX = e.getRawX();
+			this.lastTouchY = e.getRawY();
         	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
     	}
     	
@@ -70,7 +75,11 @@ public final class ViewWrapper extends ImageView
 
     	if (e.getAction()==MotionEvent.ACTION_MOVE)
     	{
-        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, x, y, MouseEvent.BUTTON1));
+    		this.scrollX += e.getRawX() - this.lastTouchX;
+    		this.scrollY += e.getRawY() - this.lastTouchY;
+    		this.lastTouchX = e.getRawX();
+    		this.lastTouchY = e.getRawY();
+        	//Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, x, y, MouseEvent.BUTTON1));
     	}
     	//create the event
     	System.out.println("Screen touched. passing to viewwrapper");
@@ -78,11 +87,6 @@ public final class ViewWrapper extends ImageView
     	Global.getViewWrapper().update();
 		return true;
     }
-	
-	//public ViewWrapper () {
-		//if (Global.getDisplayedComponent() instanceof Frame)
-		//	Global.getDisplayedComponent().addComponentListener(this);
-	//}
 	
 
 	protected DeckerEvent getLastEvent () { return lastEvent; }
@@ -287,9 +291,9 @@ System.exit(1);
 
 	private void drawImage(Buffer buffer, int i, int j,
 			ViewWrapper viewWrapper) {
-		Rect srcRect = new Rect(0, 0, width, height);
+		Rect srcRect = new Rect((int)this.scrollX, (int)this.scrollY, (int)this.scrollX+width, (int)this.scrollY+height);
 		Rect frame = new Rect(0, 0, width, height);
-		this.setImageBitmap(buffer.getGraphics().getBitmapPallet(srcRect, frame));
+		this.setImageBitmap(buffer.getGraphics().getBitmapPallet(frame, srcRect));
 	}
 
 

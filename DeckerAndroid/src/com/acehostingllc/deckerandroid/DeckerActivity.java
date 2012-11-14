@@ -38,7 +38,7 @@ public class DeckerActivity extends Activity {
         //setContentView(R.layout.splashscreen);
         Global.debug_level = 5;
      // parse the command line switches
-     		String initial_ruleset = "decker";
+     		String initial_ruleset = "battleships";
      		for (int i = 0; i < args.length; i++) {
      			int equal_sign_position = args[i].indexOf('=');
      			if (equal_sign_position > 0) {
