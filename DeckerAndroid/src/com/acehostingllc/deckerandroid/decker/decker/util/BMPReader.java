@@ -62,7 +62,7 @@ public class BMPReader
 	{
 		//implement alpha
 		Options options = new Options();
-		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+		options.inPreferredConfig = Bitmap.Config.ARGB_4444;
 		Bitmap bitmap = convertToMutable(BitmapFactory.decodeStream(stream, null, options));
 		for (int x = 0; x < bitmap.getWidth(); x++)
 		{

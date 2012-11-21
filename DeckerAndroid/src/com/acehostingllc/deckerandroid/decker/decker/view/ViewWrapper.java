@@ -56,21 +56,27 @@ public final class ViewWrapper extends ImageView
     	{
 			this.lastTouchX = e.getRawX();
 			this.lastTouchY = e.getRawY();
-        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
+        	this.processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
+
+        	
+        	this.update();
     	}
     	
     	if (e.getAction()==MotionEvent.ACTION_UP)
     	{
-        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_RELEASED, x, y, MouseEvent.BUTTON1));
-     	}
+    		this.processEvent(new MouseEvent(MouseEvent.MOUSE_RELEASED, x, y, MouseEvent.BUTTON1));
+
+        	
+    		this.update();
+    	}
     	
     	if (e.getAction()==MotionEvent.ACTION_HOVER_ENTER)
     	{
-        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_ENTERED, x, y, MouseEvent.BUTTON1));
+    		this.processEvent(new MouseEvent(MouseEvent.MOUSE_ENTERED, x, y, MouseEvent.BUTTON1));
     	}
     	if (e.getAction()==MotionEvent.ACTION_HOVER_EXIT)
     	{
-        	Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_EXITED, x, y, MouseEvent.BUTTON1));
+    		this.processEvent(new MouseEvent(MouseEvent.MOUSE_EXITED, x, y, MouseEvent.BUTTON1));
     	}
 
     	if (e.getAction()==MotionEvent.ACTION_MOVE)
@@ -79,12 +85,8 @@ public final class ViewWrapper extends ImageView
     		this.scrollY += e.getRawY() - this.lastTouchY;
     		this.lastTouchX = e.getRawX();
     		this.lastTouchY = e.getRawY();
-        	//Global.getViewWrapper().processEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, x, y, MouseEvent.BUTTON1));
+    		this.draw();
     	}
-    	//create the event
-    	System.out.println("Screen touched. passing to viewwrapper");
-    	
-    	Global.getViewWrapper().update();
 		return true;
     }
 	
@@ -211,6 +213,8 @@ public final class ViewWrapper extends ImageView
 		if (!this.isFocused()) {
 			return;
 		}*/
+		
+		Boolean newScreen = false;
 		painting = true;
 		try {
 			handleUserInput();
@@ -222,6 +226,10 @@ if (Global.debug_level > 0)
 System.out.println("ViewWrapper: ** switching screens **:"+scr.toStringForPrinting());
 					oldDisplayedScreen.set(scr);
 					DisplayedComponent.setDisplayedScreen(scr);
+
+					newScreen = true;
+					this.scrollX = 0;
+					this.scrollY = 0;
 				}
 
 //			if (view != null) {
@@ -229,7 +237,7 @@ System.out.println("ViewWrapper: ** switching screens **:"+scr.toStringForPrinti
 		final int w = this.width;
 		final int h = this.height;
 					// draw the next frame
-					if (buffer == null || buffer.getWidth() != w || buffer.getHeight() != h) {
+					if (buffer == null || buffer.getWidth() != w || buffer.getHeight() != h || newScreen) {
 						try {
 							System.out.println("Creating new screen buffer");
 							buffer = createImage(w, h);
@@ -272,7 +280,7 @@ System.out.println("FAILED TO CREATE screen buffer o_O");
 							oldScreenTitle = s;
 						}
 					}
-					drawImage(buffer, 0, 0, this);
+					draw();
 				}
 //			}
 		} catch (Throwable t) {
@@ -289,11 +297,8 @@ System.exit(1);
 	}
 
 
-	private void drawImage(Buffer buffer, int i, int j,
-			ViewWrapper viewWrapper) {
-		Rect srcRect = new Rect((int)this.scrollX, (int)this.scrollY, (int)this.scrollX+width, (int)this.scrollY+height);
-		Rect frame = new Rect(0, 0, width, height);
-		this.setImageBitmap(buffer.getGraphics().getBitmapPallet(frame, srcRect));
+	private void draw() {
+		this.setImageBitmap(buffer.getGraphics().getBitmapPallet((int)scrollX, (int)scrollY, width, height));
 	}
 
 
@@ -303,6 +308,7 @@ System.exit(1);
 
 
 	public void update () {
+		
 		if (painting)
 		{
 			return;

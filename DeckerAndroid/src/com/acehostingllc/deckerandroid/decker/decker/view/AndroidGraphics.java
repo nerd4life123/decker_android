@@ -16,14 +16,10 @@ public class AndroidGraphics {
 	private Paint font;
 
 	public AndroidGraphics(int width, int height) {
-		this.pallet = Bitmap.createBitmap(800, 600, Bitmap.Config.ARGB_8888);
+		this.pallet = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_4444);
 		this.canvas = new Canvas(pallet);
 		this.color = Color.WHITE;
 		this.font = null;
-		
-		Paint testPaint = new Paint();
-		testPaint.setColor(Color.GREEN);
-		this.canvas.drawRect(0, 0, width, height, testPaint);
 	}
 	
 	public void drawImage(Bitmap image, int x, int y, Object object)
@@ -68,12 +64,19 @@ public class AndroidGraphics {
 		stringPaint.setColor(this.color);
 		canvas.drawText(text, x, y, stringPaint);
 	}
+	
+	public void clear() {
+		Paint testPaint = new Paint();
+		testPaint.setColor(Color.BLACK);
+		this.canvas.drawRect(0, 0, 1000, 1000, testPaint);
+	}
 
-	public Bitmap getBitmapPallet(Rect srcRect, Rect frame)
+	public Bitmap getBitmapPallet(int left, int top, int width, int height)
 	{
-		Bitmap newBitmap = Bitmap.createBitmap(srcRect.width(), srcRect.height(), Bitmap.Config.ARGB_8888);
+		Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 		Canvas newCanvas = new Canvas(newBitmap);
-		newCanvas.drawBitmap(this.pallet, srcRect, frame, new Paint());
+		newCanvas.drawBitmap(this.pallet, left, top, new Paint());
+		
 		return newBitmap;
 	}
 
