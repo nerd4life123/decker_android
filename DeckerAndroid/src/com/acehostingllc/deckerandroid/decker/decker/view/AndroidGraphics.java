@@ -71,11 +71,18 @@ public class AndroidGraphics {
 		this.canvas.drawRect(0, 0, 1000, 1000, testPaint);
 	}
 
-	public Bitmap getBitmapPallet(int left, int top, int width, int height)
+	public Bitmap getBitmapPallet(int left, int top, int width, int height, float scale)
 	{
 		Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 		Canvas newCanvas = new Canvas(newBitmap);
-		newCanvas.drawBitmap(this.pallet, left, top, new Paint());
+		//newCanvas.drawBitmap(this.pallet, left, top, new Paint());
+		Rect src = new Rect(
+				(int)(scale * left), 
+				(int)(scale * top), 
+				(int)(scale * (left+width)), 
+				(int)(scale * (top+height)));
+		Rect dst = new Rect(0, 0, width, height);//new Rect(left, top, left+width, top+height);
+		newCanvas.drawBitmap(this.pallet, src, dst, new Paint());
 		
 		return newBitmap;
 	}

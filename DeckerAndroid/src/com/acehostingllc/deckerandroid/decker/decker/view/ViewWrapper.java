@@ -2,12 +2,12 @@ package com.acehostingllc.deckerandroid.decker.decker.view;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.util.DisplayMetrics;
 import android.view.Display;
-import android.view.MotionEvent;
+import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
 import com.acehostingllc.deckerandroid.DeckerActivity;
 import com.acehostingllc.deckerandroid.decker.decker.input.DeckerEvent;
 import com.acehostingllc.deckerandroid.decker.decker.input.MouseEvent;
@@ -15,13 +15,13 @@ import com.acehostingllc.deckerandroid.decker.decker.model.*;
 import com.acehostingllc.deckerandroid.decker.decker.util.*;
 import com.acehostingllc.deckerandroid.decker.decker.view.AbstractView;
 
-public final class ViewWrapper extends ImageView
+public final class ViewWrapper extends RelativeLayout
 {
 
 	// methods other parts of this program will call ************************************************************************
-	private Buffer buffer;
+	Buffer buffer;
 	private boolean painting;
-	private AbstractView view;
+	private AbstractView abstractView;
 	private DeckerEvent lastEvent;
 	private final Queue events = new Queue();
 	private int mouse_x, mouse_y;
@@ -29,78 +29,62 @@ public final class ViewWrapper extends ImageView
 	private int old_width = -1, old_height = -1;
 	private String oldScreenTitle = "";
 	private Value oldDisplayedScreen = new Value();
-	private int width;
-	private int height;
-	private float scrollX = 0;
-	private float scrollY = 0;
-	private float lastTouchX = 0;
-	private float lastTouchY = 0;
+	final ImageScreen screen;
+	private final ScaleButton scale_up;
+	private final ScaleButton scale_down;
 	
 	public ViewWrapper(DeckerActivity activity) {
 		super(activity);
 		this.setView(new AbstractView());
-		//this.setv'
+		this.screen = new ImageScreen(this);
+		this.scale_up = new ScaleButton(this, -0.1f);
+		this.scale_down = new ScaleButton(this, 0.1f);
+		this.screen.setId(1);
+		this.scale_up.setId(2);
+		this.scale_up.setText("+");
+		this.scale_down.setId(3);
+		this.scale_down.setText("-");
+		
+		LayoutParams scaleUpParams = 
+				new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, 
+						LayoutParams.WRAP_CONTENT
+						);
+		scaleUpParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		
+		LayoutParams scaleDownParams = 
+				new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, 
+						LayoutParams.WRAP_CONTENT
+						);
+		scaleDownParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		scaleDownParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
+		this.scale_up.setLayoutParams(scaleUpParams);
+		this.scale_down.setLayoutParams(scaleDownParams);
+		this.scale_up.setGravity(Gravity.RIGHT);
+		this.scale_down.setGravity(Gravity.TOP);
+		this.addView(this.screen, LayoutParams.FILL_PARENT);
+		this.addView(this.scale_up);
+		this.addView(this.scale_down);
+		
+		this.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		
 		Display display = ((WindowManager)activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		this.width = display.getWidth();//((DeckerActivity)context).getWindowManager().getDefaultDisplay().getWidth();
-		this.height = display.getHeight();;//((DeckerActivity)context).getWindowManager().getDefaultDisplay().getHeight();
-	}
-    
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-    	DisplayMetrics dm = new DisplayMetrics();
-    	((DeckerActivity)this.getContext()).getWindowManager().getDefaultDisplay().getMetrics(dm);
-    	int x = (int) (e.getRawX() - scrollX);//- 60;
-    	int y = (int) (e.getRawY() - scrollY);// - 215;
-    	
-    	if (e.getAction()==MotionEvent.ACTION_DOWN)
-    	{
-			this.lastTouchX = e.getRawX();
-			this.lastTouchY = e.getRawY();
-        	this.processEvent(new MouseEvent(MouseEvent.MOUSE_PRESSED, x, y, MouseEvent.BUTTON1));
-
-        	
-        	this.update();
-    	}
-    	
-    	if (e.getAction()==MotionEvent.ACTION_UP)
-    	{
-    		this.processEvent(new MouseEvent(MouseEvent.MOUSE_RELEASED, x, y, MouseEvent.BUTTON1));
-
-        	
-    		this.update();
-    	}
-    	
-    	if (e.getAction()==MotionEvent.ACTION_HOVER_ENTER)
-    	{
-    		this.processEvent(new MouseEvent(MouseEvent.MOUSE_ENTERED, x, y, MouseEvent.BUTTON1));
-    	}
-    	if (e.getAction()==MotionEvent.ACTION_HOVER_EXIT)
-    	{
-    		this.processEvent(new MouseEvent(MouseEvent.MOUSE_EXITED, x, y, MouseEvent.BUTTON1));
-    	}
-
-    	if (e.getAction()==MotionEvent.ACTION_MOVE)
-    	{
-    		this.scrollX += e.getRawX() - this.lastTouchX;
-    		this.scrollY += e.getRawY() - this.lastTouchY;
-    		this.lastTouchX = e.getRawX();
-    		this.lastTouchY = e.getRawY();
-    		this.draw();
-    	}
-		return true;
-    }
-	
+		this.screen.width = display.getWidth();
+		this.screen.height = display.getHeight();
+	}	
 
 	protected DeckerEvent getLastEvent () { return lastEvent; }
-	public AbstractView getView () { return view; }
+	public AbstractView getView () { return abstractView; }
 
 
 	public void setView (final AbstractView view) {
 		if (view == null)
 			throw new RuntimeException("component must not be null");
-		if (view == this.view)
+		if (view == this.abstractView)
 			return;
-		this.view = view;
+		this.abstractView = view;
 		update();
 	}
 
@@ -132,7 +116,7 @@ public final class ViewWrapper extends ImageView
 			final DeckerEvent e = (DeckerEvent) events.remove();
 			final DeckerEvent e2 = lastEvent;
 			lastEvent = e;
-			final AbstractView v = view;
+			final AbstractView v = abstractView;
 			boolean discardEvent = true;
 			final int mx = mouse_x, my = mouse_y;
 			if (v != null) {
@@ -228,14 +212,14 @@ System.out.println("ViewWrapper: ** switching screens **:"+scr.toStringForPrinti
 					DisplayedComponent.setDisplayedScreen(scr);
 
 					newScreen = true;
-					this.scrollX = 0;
-					this.scrollY = 0;
+					
+					this.screen.offsetX = 0;
 				}
 
 //			if (view != null) {
 //final int w = Math.max(11, DisplayedComponent.getScreenWidth()), h = Math.max(11, DisplayedComponent.getScreenHeight());
-		final int w = this.width;
-		final int h = this.height;
+		final int w = this.screen.width;
+		final int h = this.screen.height;
 					// draw the next frame
 					if (buffer == null || buffer.getWidth() != w || buffer.getHeight() != h || newScreen) {
 						try {
@@ -297,8 +281,8 @@ System.exit(1);
 	}
 
 
-	private void draw() {
-		this.setImageBitmap(buffer.getGraphics().getBitmapPallet((int)scrollX, (int)scrollY, width, height));
+	public void draw() {
+		this.screen.draw();
 	}
 
 

@@ -17,21 +17,6 @@
     android:layout_height="wrap_content"
     android:text="@string/version" />
     
-    <Button android:id="@+id/newButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/new_game" />
-    
-    <Button android:id="@+id/loadButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/load_game" />
-    
-    <Button android:id="@+id/exitButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/exit_game" />
-    
     <TextView android:id="@+id/info"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
