@@ -66,6 +66,16 @@ RULESET.option_screen = COMPONENT
 			padding = 3
 			idle = createText("New game")
 			on_mouse_up = FUNCTION
+				displayScreen(new_character_screen, false)
+		BORDER_BUTTON
+			x = COMPONENT.width - 17
+			h_align = LEFT
+			y = COMPONENT.height - 28
+			v_align = CENTER
+			idle = IMAGE
+				image = "home/home"
+			on_mouse_up = FUNCTION
+				displayScreen(home_screen, false)
 		tooltip_button
 		sound_button
 
