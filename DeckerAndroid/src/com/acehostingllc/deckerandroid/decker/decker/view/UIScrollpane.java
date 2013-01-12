@@ -63,7 +63,6 @@ class UIScrollpane extends DisplayedComponent
 
 
 	protected void draw (final AndroidGraphics g) {
-		System.out.println("draw called on UIScrollpane");
 		if (content != null) {
 			final Rect old_clip = g.getClip();
 			g.setClip(content_clip.cx, content_clip.cy, content_clip.cw, content_clip.ch);

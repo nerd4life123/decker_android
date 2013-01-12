@@ -1,30 +1,39 @@
 RULESET.special_order_screen = COMPONENT
 	title = "Decker - Thrifty Electronics"
-	width = 300
-	height = 200
+	width = 400
+	height = 300
+	
+	time_caption = createText("Time: ", 20, height-127, , , , CENTER)
+	time = createText("", 20+pixelwidth(time_caption)+20, time_caption.y, , , , CENTER)
+	
+	cost_caption = createText("Cost: ", 20, height-98, , , , CENTER)
+	cost = createText("", 20+pixelwidth(cost_caption)+20, cost_caption.y, , , , CENTER)
+	
+	money_caption = createText("Money: ", 20, height-69, , , , CENTER)
+	money = createText("", 20+pixelwidth(cost_caption)+20, money_caption.y, , , , CENTER)
 	
 	// type list
 	type_scrollpane = SCROLLPANE
 		x = 20
 		y = 61
-		width = 80     //  = 600
-		height = 34 + 17
+		width = 100     //  = 600
+		height = 100
 		vertical_scrollbar = createSimpleScrollbar(true, "blue")
 	
 	// class list
 	class_scrollpane = SCROLLPANE
-		x = 120
+		x = 140
 		y = 61
-		width = 100     //  = 600
-		height = 34 + 17
+		width = 160     //  = 600
+		height = 100
 		vertical_scrollbar = createSimpleScrollbar(true, "blue")
 	
 	// level list
 	level_scrollpane = SCROLLPANE
-		x = 240
+		x = 320
 		y = 61
-		width = 40     //  = 600
-		height = 34 + 17
+		width = 60     //  = 600
+		height = 100
 		vertical_scrollbar = createSimpleScrollbar(true, "blue")
 			
 	LOCAL.type_table_button_x = ARRAY
@@ -39,7 +48,7 @@ RULESET.special_order_screen = COMPONENT
 		level_scrollpane.x
 		level_scrollpane.y
 			
-	LOCAL.createTableButton = FUNCTION (_column, _text, _width, _x, _sorting_order_function)
+	LOCAL.createTableButton = FUNCTION (_column, _text, _width, _x, _sorting_order_function, element)
 		return_value = BORDER_BUTTON
 			x = _x[0]
 			y = _x[1] - 20
@@ -51,7 +60,72 @@ RULESET.special_order_screen = COMPONENT
 			sorting_order_function = _sorting_order_function
 			column = _column
 			on_mouse_up = FUNCTION
-				sortTableInShop(special_order_screen.type_scrollpane.displayed_element, sorting_order_function, column, player.shop_inventory)
+				sortTableInShop(element, sorting_order_function, column, player.shop_inventory)
+				
+	createTypeTable = FUNCTION
+		LOCAL.type_table = createTable (1, 18, 100)
+		type_table.cell_x = createArray (CENTER, CENTER)
+		type_table.cell_y = CENTER
+		type_table.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
+		type_table.selected_row = type_scrollpane.displayed_element.selected_row
+		type_table.on_selection_change = FUNCTION (table, old_selected_row, new_selected_row)
+			with special_order_screen
+				level_scrollpane.displayed_element = UNDEFINED
+				createClassTable(table, new_selected_row)
+		addTableRow(type_table, createText("Program",,,TABLE_TEXT_COLOR))
+		addTableRow(type_table, createText("Chip",,,TABLE_TEXT_COLOR))
+		addTableRow(type_table, createText("Hardware",,,TABLE_TEXT_COLOR))
+		centerRightAlignedTableColumn(type_table, 0)
+		centerRightAlignedTableColumn(type_table, 1)
+		special_order_screen.type_scrollpane.displayed_element = type_table
+	
+	createClassTable = FUNCTION (_table, type_selected_row)
+		LOCAL.class_table = createTable (1, 18, 160)
+		class_table.cell_x = createArray (CENTER, CENTER)
+		class_table.cell_y = CENTER
+		class_table.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
+		class_table.selected_row = class_scrollpane.displayed_element.selected_row
+		class_table.on_selection_change = FUNCTION (table, old_selected_row, new_selected_row)
+			with special_order_screen
+				createLevelTable(_table, table, type_selected_row, new_selected_row)
+		
+		LOCAL.classTypes
+		if _table.cell[type_selected_row][0].text == "Hardware"
+			classTypes = HARDWARE_TYPES
+		if _table.cell[type_selected_row][0].text == "Chip"
+			classTypes = CHIP_TYPES
+		if _table.cell[type_selected_row][0].text == "Program"
+			classTypes = PROGRAM_TYPES
+			
+		for i = 0 to classTypes.size-1
+			addTableRow(class_table, createText(classTypes[i].name,,,TABLE_TEXT_COLOR))
+		
+		centerRightAlignedTableColumn(class_table, 0)
+		centerRightAlignedTableColumn(class_table, 1)
+		special_order_screen.class_scrollpane.displayed_element = class_table
+		
+	createLevelTable = FUNCTION (type_table, class_table, type_selected_row, class_selected_row)
+		LOCAL.level_table = createTable (1, 18, 60)
+		level_table.cell_x = createArray (CENTER, CENTER)
+		level_table.cell_y = CENTER
+		level_table.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
+		level_table.selected_row = level_scrollpane.displayed_element.selected_row
+		level_table.on_selection_change = FUNCTION
+		
+		LOCAL.classTypes
+		if special_order_screen.type_scrollpane.displayed_element.cell[special_order_screen.type_scrollpane.displayed_element.selected_row][0].text == "Hardware"
+			classTypes = HARDWARE_TYPES
+		if special_order_screen.type_scrollpane.displayed_element.cell[special_order_screen.type_scrollpane.displayed_element.selected_row][0].text == "Chip"
+			classTypes = CHIP_TYPES
+		if special_order_screen.type_scrollpane.displayed_element.cell[special_order_screen.type_scrollpane.displayed_element.selected_row][0].text == "Program"
+			classTypes = PROGRAM_TYPES
+		
+		for i = 1 to classTypes[class_selected_row].max_rating
+			addTableRow(level_table, createText(i,,,TABLE_TEXT_COLOR))
+		
+		centerRightAlignedTableColumn(level_table, 0)
+		centerRightAlignedTableColumn(level_table, 1)
+		special_order_screen.level_scrollpane.displayed_element = level_table
 	
 	purchase_button = BORDER_BUTTON
 		x = COMPONENT.width*37/100
@@ -63,6 +137,7 @@ RULESET.special_order_screen = COMPONENT
 		width = pixelwidth(idle)*13/10
 		text_padding = 3
 		on_mouse_up = FUNCTION
+			setup()
 		
 	cancel_button = BORDER_BUTTON
 		x = COMPONENT.width*64/100
@@ -81,144 +156,28 @@ RULESET.special_order_screen = COMPONENT
 		createText("Special Orders", CENTER, 16)
 		purchase_button
 		cancel_button
-		type_scrollpane
-		class_scrollpane
-		level_scrollpane
+		money_caption
+		money
+		cost_caption
+		cost
+		time_caption
+		time
 		
 		// the tables
 		createBorder(type_scrollpane.x-2, type_scrollpane.y-22, type_scrollpane.width+4, type_scrollpane.height+24, TABLE_BACKGROUND_COLOR, true)
 		createBorder(class_scrollpane.x-2, class_scrollpane.y-22, class_scrollpane.width+4, class_scrollpane.height+24, TABLE_BACKGROUND_COLOR, true)
 		createBorder(level_scrollpane.x-2, level_scrollpane.y-22, level_scrollpane.width+4, level_scrollpane.height+24, TABLE_BACKGROUND_COLOR, true)
 		
-		createTableButton(0, "Type", 80, type_table_button_x, compareText)
-		createTableButton(0, "Class", 100, class_table_button_x, compareText)
-		createTableButton(0, "Level", 40, level_table_button_x, compareText)
+		type_scrollpane
+		class_scrollpane
+		level_scrollpane
 		
-	displayContractDescription = FUNCTION
-		with special_order_screen
-			LOCAL.r = type_scrollpane.displayed_element.selected_row
-			if !( r >= 0 )
-				description_type_scrollpane.displayed_element = UNDEFINED
-				left_button_wrapper.component = UNDEFINED
-				center_button_wrapper.component = UNDEFINED
-			else
-				LOCAL.m = player.mission_list[r]
-				description_type_scrollpane.displayed_element = TEXTBLOCK
-					width = description_type_scrollpane.width
-					if value_type(m.description) == "ARRAY"
-						component = m.description
-					else
-						component = ARRAY
-							m.title
-							NEWLINE
-							m.description
-					if m.add_details_to_description
-						component[] = " " + generateMissionDetailsDescription(m)
-				if m.accepted
-					if left_button_wrapper.component.idle.text != "Start"
-						left_button_wrapper.component = BORDER_BUTTON
-							y = CENTER
-							idle = createText("Start")
-							padding = 3
-							padding_left = 6
-							padding_right = 6
-							on_mouse_up = FUNCTION
-								LOCAL.m = contract_screen.list_type_scrollpane.displayed_element.selected_row
-								if m >= 0 && m < player.mission_list.size
-									m = player.mission_list[m]
-								startMission(m)
-					center_button_wrapper.component = UNDEFINED
-				else
-					if left_button_wrapper.component.idle.text != "Accept and start"
-						left_button_wrapper.component = BORDER_BUTTON
-							y = CENTER
-							idle = createText("Accept and start")
-							padding = 3
-							padding_left = 6
-							padding_right = 6
-							on_mouse_up = FUNCTION
-								LOCAL.m = contract_screen.list_type_scrollpane.displayed_element.selected_row
-								if m >= 0 && m < player.mission_list.size
-									m = player.mission_list[m]
-									m.accepted = true
-									if value_type(m.on_accepted) == "FUNCTION"
-										m.accepted(m)
-									// just checking in case the on_accepted trigger has moved us to some other screen
-									if displayed_screen == contract_screen
-										startMission(m)
-					if left_button_wrapper.component.idle.text != "Accept"
-						center_button_wrapper.component = BORDER_BUTTON
-							x = CENTER
-							y = CENTER
-							idle = createText("Accept")
-							padding = 3
-							padding_left = 6
-							padding_right = 6
-							on_mouse_up = FUNCTION
-								LOCAL.m = contract_screen.list_type_scrollpane.displayed_element.selected_row
-								if m >= 0 && m < player.mission_list.size
-									m = player.mission_list[m]
-									m.accepted = true
-									if value_type(m.on_accepted) == "FUNCTION"
-										m.accepted(m)
-									if displayed_screen == contract_screen
-										contract_screen.setup()
+		createTableButton(0, "Type", 100, type_table_button_x, compareText, special_order_screen.type_scrollpane.displayed_element)
+		createTableButton(0, "Class", 160, class_table_button_x, compareText, special_order_screen.class_scrollpane.displayed_element)
+		createTableButton(0, "Level", 60, level_table_button_x, compareText, special_order_screen.level_scrollpane.displayed_element)
 		
 	setup = FUNCTION
-		with special_order_screen
-			// create the table with the missions
-			LOCAL.t = createTable( , 19, 120, 80, 160, 80, 80, 80)
-			t.cell_x = createArray (3, CENTER, CENTER, CENTER, CENTER, CENTER)
-			t.cell_y = CENTER
-			t.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
-			t.can_drag_rows = true
-			t.selected_row = type_scrollpane.displayed_element.selected_row
-			t.on_row_dragged = FUNCTION (table, old_row_index, new_row_index)
-				// rearrange the player's mission list accordingly
-				LOCAL.p = player.mission_list
-				LOCAL.backup = p[old_row_index]
-				if old_row_index > new_row_index
-					for i = old_row_index downto new_row_index+1
-						p[i] = p[i-1]
-				else
-					for i = old_row_index to new_row_index-1
-						p[i] = p[i+1]
-				p[new_row_index] = backup
-			t.on_selection_change = contract_screen.displayContractDescription
-
-			LOCAL.m = player.mission_list
-			if m.size > 0
-				for i = 0 to m.size-1
-					// generate the details text
-					LOCAL.target_count = 0
-					LOCAL.no_red_alarm = false
-					LOCAL.time_restriction = false
-					// there's either one goal or an array of goals
-					LOCAL.goal = m[i].goal
-					if value_type(goal) != "ARRAY"
-						if goal.structure_type == "NO_RED_ALARM"
-							no_red_alarm = true
-						else if goal.structure_type == "TIME_RESTRICTION"
-							time_restriction = true
-					else
-						target_count = goal.size
-						for j = goal.size-1 downto 0
-							if goal[j].structure_type == "NO_RED_ALARM" || goal[j].structure_type == "CREATE_BACKDOOR" || goal[j].structure_type == "CRASH_SYSTEM" || goal[j].structure_type == "TIME_RESTRICTION"
-								if goal[j].structure_type == "NO_RED_ALARM"
-									no_red_alarm = true
-								else if goal[j].structure_type == "TIME_RESTRICTION"
-									time_restriction = true
-								target_count = target_count - 1
-					LOCAL.details = (no_red_alarm?"N":"") + (time_restriction?"T":"") + (target_count>1?"("+target_count+")":"")
-					details = m[i].target_system.rating + (indexof(m[i].target_system,player.backdoors)>=0?"B":"") + (details==""?"":" " + details)
-					// create the table row for the mission
-					addTableRow(t, createTableText(m[i].title), createTableText(m[i].rating), createTableText(details), createTableText(m[i].deadline), createTableText(m[i].payment), m[i].accepted?createTableText("yes"):UNDEFINED)
-				// always have a mission marked, if the list is not empty
-				if list_type_scrollpane.displayed_element.selected_row != UNDEFINED
-					t.selected_row = list_type_scrollpane.displayed_element.selected_row
-				if value_type(t.selected_row) != "INTEGER" || t.selected_row < 0
-					t.selected_row = 0
-				if t.selected_row >= m.size
-					t.selected_row = m.size-1
-			list_type_scrollpane.displayed_element = t
-			displayContractDescription()
+		special_order_screen.money.text = player.money
+		special_order_screen.cost.text = "1000"
+		special_order_screen.time.text = "2 Days"
+		createTypeTable()

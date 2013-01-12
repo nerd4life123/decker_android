@@ -21,7 +21,6 @@ public class UIClip extends DisplayedComponent
 
 
 	protected void draw (final AndroidGraphics g) {
-		System.out.println("draw called on UIClip");
 		final Rect old_clip = g.getClip();
 		g.setClip(x, y, w, h);
 		super.draw(g);

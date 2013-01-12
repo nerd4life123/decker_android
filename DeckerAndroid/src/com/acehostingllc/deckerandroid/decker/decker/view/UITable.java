@@ -43,7 +43,6 @@ class UITable extends DisplayedComponent
 	}
 
 	public void draw (final AndroidGraphics g) {
-		System.out.println("draw called on UITable");
 		if (cell != null) {
 			// mark the selected row
 			if (can_select_rows && current_row > -1) {

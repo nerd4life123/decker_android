@@ -412,8 +412,8 @@ public class DisplayedComponent implements ValueListener
 			}
 			else
 			{
-				System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
-				System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+				//System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+				//System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 			}
 		}
 		// find the components where the mouse is inside now, and tell them about it
@@ -443,8 +443,8 @@ public class DisplayedComponent implements ValueListener
 			}
 			else
 			{
-				System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
-				System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+				//System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+				//System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 			}
 		}
 		System.out.println("eventListenerCount[ON_MOUSE_EXITED] is " + eventListenerCount[ON_MOUSE_EXITED]);
@@ -465,8 +465,8 @@ public class DisplayedComponent implements ValueListener
 			}
 			else
 			{
-				System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
-				System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+				//System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+				//System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 			}
 		}
 		// tell the components about the event itself
@@ -494,8 +494,8 @@ public class DisplayedComponent implements ValueListener
 				}
 				else
 				{
-					System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
-					System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+					//System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+					//System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 				}
 			}
 		}
@@ -519,8 +519,8 @@ public class DisplayedComponent implements ValueListener
 						}
 						else
 						{
-							System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
-							System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
+							//System.out.println("mouse_x: " + mouse_x + " not between c.cx:" + c.cx + ",c.cx2:"+(c.cx+c.cw));
+							//System.out.println("mouse_y: " + mouse_y + " not between c.cy:" + c.cy + ",c.cy2:"+(c.cy+c.ch));
 						}
 						// discard the event if the displayed screen has changed
 						if (Global.getDisplayedScreen().structure() != displayed_screen) {
@@ -831,8 +831,8 @@ public class DisplayedComponent implements ValueListener
 			// restore the clipping area if the currently displayed element has changed it, e.g. a DRAWING_BOUNDARY structure
 			if (clip != null)
 				g.setClip(clip);
-			else
-				System.out.println("clip is null");
+			//else
+			//	System.out.println("clip is null");
 		}
 	}
 
