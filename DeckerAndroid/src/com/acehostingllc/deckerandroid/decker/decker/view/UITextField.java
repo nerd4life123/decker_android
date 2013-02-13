@@ -68,6 +68,7 @@ public final class UITextField extends DisplayedComponent
 		System.out.println("Drawing string from UITextField:"+text);
 		if (cursor instanceof DisplayedComponent) {
 			((DisplayedComponent)cursor).x = (int) (x+font.measureText(text));
+			System.out.println("Drawing from UITextField");
 			((DisplayedComponent)cursor).draw(g);
 		}
 		else {

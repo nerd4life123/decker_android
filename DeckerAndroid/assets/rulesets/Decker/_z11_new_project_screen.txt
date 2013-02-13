@@ -1,17 +1,17 @@
-RULESET.special_order_screen = COMPONENT
-	title = "Decker - Thrifty Electronics"
+RULESET.new_project_screen = COMPONENT
+	title = "Decker - New Project"
 	width = 400
 	height = 300
 	
-	time_caption = createText("Time: ", 20, height-127, , , , CENTER)
-	time = createText("", 20+pixelwidth(time_caption)+20, time_caption.y, , , , CENTER)
+	source_caption = createText("Source Available: ", 20, height-69, , , , CENTER)
+	source = createText("", 20+pixelwidth(source_caption)+20, source_caption.y, , , , CENTER)
 	
-	cost_caption = createText("Cost: ", 20, height-98, , , , CENTER)
-	cost = createText("", 20+pixelwidth(cost_caption)+20, cost_caption.y, , , , CENTER)
+	time_caption = createText("Estimated Time: ", 20, height-127, , , , CENTER)
+	time = createText("", 20+pixelwidth(source_caption)+20, time_caption.y, , , , CENTER)
 	
-	money_caption = createText("Money: ", 20, height-69, , , , CENTER)
-	money = createText("", 20+pixelwidth(cost_caption)+20, money_caption.y, , , , CENTER)
-	
+	skill_caption = createText("Skill: ", 20, height-98, , , , CENTER)
+	skill = createText("", 20+pixelwidth(source_caption)+20, skill_caption.y, , , , CENTER)
+		
 	// type list
 	type_scrollpane = SCROLLPANE
 		x = 20
@@ -78,16 +78,16 @@ RULESET.special_order_screen = COMPONENT
 	getSelectedRating = FUNCTION
 		return_value = level_scrollpane.displayed_element.cell[level_scrollpane.displayed_element.selected_row][0].text
 	
-	getDaysRequired = FUNCTION (_cost)
-		if _cost <= 500
+	getDaysRequired = FUNCTION (_skill)
+		if _skill <= 500
 			return_value = 1
-		else if _cost <= 1000
+		else if _skill <= 1000
 			return_value = 2
-		else if _cost <= 5000
+		else if _skill <= 5000
 			return_value = 3
-		else if _cost <= 10000
+		else if _skill <= 10000
 			return_value = 4
-		else if _cost <= 50000
+		else if _skill <= 50000
 			return_value = 5
 		else
 			return_value = 6
@@ -96,17 +96,17 @@ RULESET.special_order_screen = COMPONENT
 		order = UNDEFINED
 		if getSelectedType() == HARDWARE_TYPES
 			order = createHardware(HARDWARE_TYPES[getSelectedClass()], getSelectedRating())
-			special_order_screen.cost.text = "hardwarez"
+			new_project_screen.skill.text = "hardwarez"
 		else if getSelectedType() == PROGRAM_TYPES
 			order = createProgram(PROGRAM_TYPES[getSelectedClass()], getSelectedRating())
-			special_order_screen.cost.text = "progz"
+			new_project_screen.skill.text = "progz"
 		else if getSelectedType() == CHIP_TYPES
 			order = createProgram(CHIP_TYPES[getSelectedClass()], getSelectedRating())
-			special_order_screen.cost.text = "chipz"
+			new_project_screen.skill.text = "chipz"
 			
 		if order != UNDEFINED
-			special_order_screen.cost.text = getThingValue(order) * 2
-			special_order_screen.time.text = getDaysRequired(special_order_screen.cost.text) + " Days"
+			new_project_screen.skill.text = getThingValue(order) * 2
+			new_project_screen.time.text = getDaysRequired(new_project_screen.skill.text) + " Days"
 	
 	createTypeTable = FUNCTION
 		LOCAL.type_table = createTable (1, 18, 100)
@@ -115,9 +115,9 @@ RULESET.special_order_screen = COMPONENT
 		type_table.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
 		type_table.selected_row = type_scrollpane.displayed_element.selected_row
 		type_table.on_selection_change = FUNCTION (table, old_selected_row, new_selected_row)
-			with special_order_screen
-				special_order_screen.cost.text = ""
-				special_order_screen.time.text = ""
+			with new_project_screen
+				new_project_screen.skill.text = ""
+				new_project_screen.time.text = ""
 				class_scrollpane.displayed_element = UNDEFINED
 				level_scrollpane.displayed_element = UNDEFINED
 				createClassTable(table, new_selected_row)
@@ -126,7 +126,7 @@ RULESET.special_order_screen = COMPONENT
 		addTableRow(type_table, createText("Hardware",,,TABLE_TEXT_COLOR))
 		centerRightAlignedTableColumn(type_table, 0)
 		centerRightAlignedTableColumn(type_table, 1)
-		special_order_screen.type_scrollpane.displayed_element = type_table
+		new_project_screen.type_scrollpane.displayed_element = type_table
 	
 	createClassTable = FUNCTION (_table, type_selected_row)
 		LOCAL.class_table = createTable (1, 18, 160)
@@ -135,9 +135,9 @@ RULESET.special_order_screen = COMPONENT
 		class_table.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
 		class_table.selected_row = class_scrollpane.displayed_element.selected_row
 		class_table.on_selection_change = FUNCTION (table, old_selected_row, new_selected_row)
-			with special_order_screen
-				special_order_screen.cost.text = ""
-				special_order_screen.time.text = ""
+			with new_project_screen
+				new_project_screen.skill.text = ""
+				new_project_screen.time.text = ""
 				level_scrollpane.displayed_element = UNDEFINED
 				createLevelTable(_table, table, type_selected_row, new_selected_row)
 		
@@ -148,7 +148,7 @@ RULESET.special_order_screen = COMPONENT
 		
 		centerRightAlignedTableColumn(class_table, 0)
 		centerRightAlignedTableColumn(class_table, 1)
-		special_order_screen.class_scrollpane.displayed_element = class_table
+		new_project_screen.class_scrollpane.displayed_element = class_table
 		
 	createLevelTable = FUNCTION (type_table, class_table, type_selected_row, class_selected_row)
 		LOCAL.level_table = createTable (1, 18, 60)
@@ -157,7 +157,7 @@ RULESET.special_order_screen = COMPONENT
 		level_table.selected_row_background = TABLE_SELECTED_ROW_BACKGROUND
 		level_table.selected_row = level_scrollpane.displayed_element.selected_row
 		level_table.on_selection_change = FUNCTION
-			with special_order_screen
+			with new_project_screen
 				fillOutMisc()
 		
 		LOCAL.classTypes = getSelectedType()
@@ -167,7 +167,7 @@ RULESET.special_order_screen = COMPONENT
 		
 		centerRightAlignedTableColumn(level_table, 0)
 		centerRightAlignedTableColumn(level_table, 1)
-		special_order_screen.level_scrollpane.displayed_element = level_table
+		new_project_screen.level_scrollpane.displayed_element = level_table
 	
 	purchase_button = BORDER_BUTTON
 		x = COMPONENT.width*37/100
@@ -191,17 +191,17 @@ RULESET.special_order_screen = COMPONENT
 		width = pixelwidth(idle)*13/10
 		text_padding = 3
 		on_mouse_up = FUNCTION
-			displayScreen(shop_screen, false)
+			displayScreen(project_screen, false)
 
 	component = ARRAY
 		SCREEN_BACKGROUND
-		createText("Special Orders", CENTER, 16)
+		createText("New Project", CENTER, 16)
 		purchase_button
 		cancel_button
-		money_caption
-		money
-		cost_caption
-		cost
+		source_caption
+		source
+		skill_caption
+		skill
 		time_caption
 		time
 		
@@ -214,10 +214,10 @@ RULESET.special_order_screen = COMPONENT
 		class_scrollpane
 		level_scrollpane
 		
-		createTableButton(0, "Type", 100, type_table_button_x, compareText, special_order_screen.type_scrollpane.displayed_element)
-		createTableButton(0, "Class", 160, class_table_button_x, compareText, special_order_screen.class_scrollpane.displayed_element)
-		createTableButton(0, "Level", 60, level_table_button_x, compareText, special_order_screen.level_scrollpane.displayed_element)
+		createTableButton(0, "Type", 100, type_table_button_x, compareText, new_project_screen.type_scrollpane.displayed_element)
+		createTableButton(0, "Class", 160, class_table_button_x, compareText, new_project_screen.class_scrollpane.displayed_element)
+		createTableButton(0, "Level", 60, level_table_button_x, compareText, new_project_screen.level_scrollpane.displayed_element)
 		
 	setup = FUNCTION
-		special_order_screen.money.text = player.money
+		new_project_screen.source.text = player.money
 		createTypeTable()

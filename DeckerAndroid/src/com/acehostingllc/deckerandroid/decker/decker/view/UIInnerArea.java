@@ -14,7 +14,10 @@ class UIInnerArea extends DisplayedComponent
 		final DisplayedComponent[] c = child;
 		final int cc = child_count;
 		for (int i = 0; i < cc; i++)
+		{
+			System.out.println("Drawing from UIInnerArea");
 			c[i].draw(g);
+		}
 	}
 
 

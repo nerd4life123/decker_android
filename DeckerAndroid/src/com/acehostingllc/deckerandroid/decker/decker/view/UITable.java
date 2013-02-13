@@ -60,6 +60,7 @@ class UITable extends DisplayedComponent
 					final TableCellWrapper[] row = cell[i];
 					for (int j = row.length; --j >= 0; ) {
 						if (row[j].cell_content != null) {
+							System.out.println("Drawing from UITable");
 							row[j].cell_content.draw(g);
 						}
 					}

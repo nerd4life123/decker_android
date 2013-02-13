@@ -34,7 +34,7 @@ final class UIText extends DisplayedComponent
 		if (!width_already_determined)
 			w = (int) font.measureText(text);
 		if (!height_already_determined)
-			h = (int) font.ascent();
+			h = (int) ((int) -1 * (font.ascent() - font.descent()));
 	}
 
 
@@ -83,6 +83,7 @@ final class UIText extends DisplayedComponent
 		v = t.get("font");
 		font = AbstractView.getFont((v.type() == Value.STRING)?v.string():"", null, false);
 		color = ((v=t.get("color")).type() == Value.STRING) ? AbstractView.getColor(v.string()) : Color.WHITE;
-		y_offset = (int) font.ascent();
+		y_offset = (int) (font.ascent() - font.descent());
+		System.out.println("Ascent was " + font.ascent() + ", descent was " + font.descent());
 	}
 }

@@ -5,6 +5,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Attack"
 		complexity = 2
+		max_rating = 8
 		image = "shop_item/attack"
 		default_category = DEFAULT_ATTACK          // this type of program can be used as the default attack program
 		category = ARRAY
@@ -36,6 +37,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Area Attack"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/area_attack"
 		default_category = DEFAULT_ATTACK
 		effect = actionDefaultAreaAttackProgram
@@ -68,6 +70,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Piercing Attack"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/piercing_attack"
 		default_category = DEFAULT_ATTACK
 		effect = actionDefaultAttackProgram
@@ -100,6 +103,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Slow"
 		complexity = 2
+		max_rating = 8
 		image = "shop_item/slow"
 		category = ARRAY
 			PROGRAM
@@ -129,6 +133,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Virus"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/virus"
 		category = ARRAY
 			PROGRAM
@@ -158,6 +163,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Confuse"
 		complexity = 4
+		max_rating = 8
 		image = "shop_item/confuse"
 		category = ARRAY
 			PROGRAM
@@ -187,6 +193,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Weaken"
 		complexity = 2
+		max_rating = 8
 		image = "shop_item/weaken"
 		category = ARRAY
 			PROGRAM
@@ -216,6 +223,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Silence"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/silence"
 		category = ARRAY
 			PROGRAM
@@ -246,6 +254,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Smoke"
 		complexity = 1
+		max_rating = 8
 		image = "shop_item/smoke"
 		category = ARRAY
 			PROGRAM
@@ -275,6 +284,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Decoy"
 		complexity = 4
+		max_rating = 8
 		image = "shop_item/decoy"
 		category = ARRAY
 			PROGRAM
@@ -304,6 +314,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Armor"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/armor"
 		default_category = DEFAULT_ARMOR
 		category = ARRAY
@@ -334,6 +345,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Shield"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/shield"
 		category = ARRAY
 			PROGRAM
@@ -364,6 +376,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Medic"
 		complexity = 4
+		max_rating = 8
 		image = "shop_item/medic"
 		category = ARRAY
 			PROGRAM
@@ -395,6 +408,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Hide"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/hide"
 		default_category = DEFAULT_HIDE
 		passive_effect = actionDefaultHideProgram
@@ -427,6 +441,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Deceive"
 		complexity = 2
+		max_rating = 8
 		image = "shop_item/deceive"
 		category = ARRAY
 			PROGRAM
@@ -457,6 +472,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Relocate"
 		complexity = 2
+		max_rating = 8
 		image = "shop_item/relocate"
 		category = ARRAY
 			PROGRAM
@@ -487,6 +503,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Analyze"
 		complexity = 1
+		max_rating = 8
 		image = "shop_item/analyze"
 		category = ARRAY
 			PROGRAM
@@ -518,6 +535,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Scan"
 		complexity = 1
+		max_rating = 8
 		image = "shop_item/scan"
 		category = ARRAY
 			PROGRAM
@@ -549,6 +567,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Evaluate"
 		complexity = 1
+		max_rating = 8
 		image = "shop_item/evaluate"
 		category = ARRAY
 			PROGRAM
@@ -580,6 +599,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Decrypt"
 		complexity = 2
+		max_rating = 8
 		image = "shop_item/decrypt"
 		category = ARRAY
 			PROGRAM
@@ -609,6 +629,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Reflect"
 		complexity = 4
+		max_rating = 8
 		image = "shop_item/reflect"
 		category = ARRAY
 			PROGRAM
@@ -638,6 +659,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Attack Boost"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/attack_boost"
 		category = ARRAY
 			PROGRAM
@@ -668,6 +690,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Defense Boost"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/defense_boost"
 		category = ARRAY
 			PROGRAM
@@ -698,6 +721,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Stealth Boost"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/stealth_boost"
 		category = ARRAY
 			PROGRAM
@@ -728,6 +752,7 @@ RULESET.PROGRAM_TYPES = ARRAY
 	THING_TYPE
 		name = "Analysis Boost"
 		complexity = 3
+		max_rating = 8
 		image = "shop_item/analysis_boost"
 		category = ARRAY
 			PROGRAM

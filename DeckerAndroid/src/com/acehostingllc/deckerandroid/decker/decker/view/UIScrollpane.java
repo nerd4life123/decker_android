@@ -66,6 +66,7 @@ class UIScrollpane extends DisplayedComponent
 		if (content != null) {
 			final Rect old_clip = g.getClip();
 			g.setClip(content_clip.cx, content_clip.cy, content_clip.cw, content_clip.ch);
+			System.out.println("Drawing from UISCrollPane");
 			content.draw(g);
 			g.setClip(old_clip);
 		}

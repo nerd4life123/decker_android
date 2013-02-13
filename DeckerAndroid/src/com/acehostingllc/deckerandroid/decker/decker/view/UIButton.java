@@ -122,13 +122,19 @@ updateButtonState();
 			border.draw(g);
 		// draw the button face
 		if (face[state] != null)
+		{
+			System.out.println("Drawing from UIButton");
 			face[state].draw(g);
+		}
 		// draw the child components of this view component
 		final int cc = child_count;
 		if (cc > 0) {
 			final DisplayedComponent[] c = child;
 			for (int i = 0; i < cc; i++)
+			{
+				System.out.println("Drawing from UIButton children");
 				c[i].draw(g);
+			}
 		}
 	}
 

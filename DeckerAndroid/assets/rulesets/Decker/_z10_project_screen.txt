@@ -1,0 +1,150 @@
+RULESET.project_screen = COMPONENT
+	title = "Decker - Projects"
+
+	width = 430
+	height = 452
+	
+	date              = createText("", 15, 15, , , RIGHT)
+	
+	proj_type              = createText("None", RIGHT, 42)
+	proj_type_label        = createText("Type: ", LEFT, 42)
+	proj_daysleft          = createText("", RIGHT, 70)
+	proj_daysleft_label    = createText("Days Left: ", LEFT, 70)
+	
+	chip_type              = createText("None", RIGHT, 42)
+	chip_type_label        = createText("Type: ", LEFT, 42)
+	chip_daysleft          = createText("", RIGHT, 70)
+	chip_daysleft_label    = createText("Days Left: ", LEFT, 70)
+	
+	work_day_button = BORDER_BUTTON
+		idle = createText("Work Day")
+		x = LEFT
+		y = 0
+		padding = 2
+		padding_left = 6
+		padding_right = 6
+		on_mouse_up = FUNCTION
+		
+	work_week_button = BORDER_BUTTON
+		idle = createText("Work Week")
+		x = LEFT
+		y = 28
+		padding = 2
+		padding_left = 6
+		padding_right = 6
+		on_mouse_up = FUNCTION
+		
+	finish_button = BORDER_BUTTON
+		idle = createText("Finish")
+		x = RIGHT
+		y = 0
+		padding = 2
+		padding_left = 6
+		padding_right = 6
+		on_mouse_up = FUNCTION
+		
+	new_button = BORDER_BUTTON
+		idle = createText("New")
+		x = RIGHT
+		y = 28
+		padding = 2
+		padding_left = 6
+		padding_right = 6
+		on_mouse_up = FUNCTION
+			displayScreen(new_project_screen, true)
+	
+	build_button = BORDER_BUTTON
+		idle = createText("Build")
+		x = LEFT
+		y = 0
+		padding = 2
+		padding_left = 6
+		padding_right = 6
+		on_mouse_up = FUNCTION
+	
+	trash_button = BORDER_BUTTON
+		idle = createText("Trash")
+		x = RIGHT
+		y = 0
+		padding = 2
+		padding_left = 6
+		padding_right = 6
+		on_mouse_up = FUNCTION
+		
+	projects_buttons_wrapper = COMPONENT  //
+		x = 215
+		y = 82
+		width = 195-6
+		height = 142 / 2
+		component = ARRAY
+			work_day_button
+			work_week_button
+			finish_button
+			new_button
+		
+	source_buttons_wrapper = COMPONENT  //
+		x = 215
+		y = 278
+		width = 195-6
+		height = 142 / 2
+		component = ARRAY
+			build_button
+			trash_button
+		
+	projects_panel = COMPONENT
+		x = 28
+		y = 46
+		width = 156
+		height = 100
+		component = ARRAY
+			createText("Current Project",              0,   0)
+			proj_type
+			proj_type_label
+			proj_daysleft
+			proj_daysleft_label
+			
+	chip_panel = COMPONENT
+		x = 28
+		y = 162
+		width = 156
+		height = 142
+		component = ARRAY
+			createText("Current Chip",              0,   0)
+			chip_type
+			chip_type_label
+			chip_daysleft
+			chip_daysleft_label
+			
+	source_panel = COMPONENT
+		x = 28
+		y = 278
+		width = 156
+		height = 280
+		component = ARRAY
+			createText("Source",              0,   0)
+	
+	source_scrollpane = SCROLLPANE
+		x = 32
+		y = 328
+		width = 366     //  = 600
+		height = 92
+		vertical_scrollbar = createSimpleScrollbar(true, "blue")
+	
+	component = ARRAY
+		SCREEN_BACKGROUND
+		date
+		createBorder(20, 40, 390, 100)
+		projects_panel
+		projects_buttons_wrapper
+		
+		createBorder(20, 156, 390, 100)
+		chip_panel
+		
+		createBorder(20, 272, 390, 160)
+		source_panel
+		source_buttons_wrapper
+		createBorder(source_scrollpane.x-2, source_scrollpane.y-22, source_scrollpane.width+4, source_scrollpane.height+24, TABLE_BACKGROUND_COLOR, true)
+		source_scrollpane
+		
+	setup = FUNCTION
+		project_screen.date.text = date_text(2132,0,player.age)

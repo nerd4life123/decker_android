@@ -6,6 +6,7 @@ RULESET.CHIP_TYPES = ARRAY
 			CHIP
 			CPU
 		complexity = 5
+		max_rating = 8
 	THING_TYPE
 		name = "Coprocessor"
 		image = "shop_item/chip"
@@ -13,6 +14,7 @@ RULESET.CHIP_TYPES = ARRAY
 			CHIP
 			COPROCESSOR
 		complexity = 5
+		max_rating = 8
 	THING_TYPE
 		name = "Attack Firmware"
 		image = "shop_item/chip"
@@ -20,6 +22,7 @@ RULESET.CHIP_TYPES = ARRAY
 			CHIP
 			ATTACK
 		complexity = 4
+		max_rating = 8
 	THING_TYPE
 		name = "Defense Firmware"
 		image = "shop_item/chip"
@@ -27,6 +30,7 @@ RULESET.CHIP_TYPES = ARRAY
 			CHIP
 			DEFENSE
 		complexity = 4
+		max_rating = 8
 	THING_TYPE
 		name = "Stealth Firmware"
 		image = "shop_item/chip"
@@ -34,6 +38,7 @@ RULESET.CHIP_TYPES = ARRAY
 			CHIP
 			STEALTH
 		complexity = 4
+		max_rating = 8
 	THING_TYPE
 		name = "Analysis Firmware"
 		image = "shop_item/chip"
@@ -41,6 +46,7 @@ RULESET.CHIP_TYPES = ARRAY
 			CHIP
 			ANALYSIS
 		complexity = 4
+		max_rating = 8
 
 // add the default sorting order IDs
 LOCAL.offset = PROGRAM_TYPES.size

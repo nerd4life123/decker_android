@@ -158,6 +158,8 @@ RULESET.shop_screen = COMPONENT
 		LOCAL.pp = player.deck.program
 		LOCAL.ph = player.deck.optional_hardware
 		LOCAL.rating
+		
+		addTableRow(t, createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR), createText("test",,,TABLE_TEXT_COLOR))
 		for i = 0 to p.size-1
 			// determine the current max rating the player has of the item we want to add to the list
 			m = getCurrentMaxRating(player.deck, p[i].type)

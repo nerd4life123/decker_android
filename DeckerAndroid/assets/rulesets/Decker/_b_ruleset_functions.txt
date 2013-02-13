@@ -13,6 +13,7 @@ RULESET.advanceDate = FUNCTION (day_count)
 			updateShopInventory()
 		// update the missions
 // *****
+		moveSpecialOrders()
 		makeMissionsAvailable()
 	if value_type(displayed_screen.setup) == "FUNCTION"
 		displayed_screen.setup()
@@ -117,6 +118,10 @@ RULESET.healingTimeAll = FUNCTION (human, use_hospital = false)
 	if use_hospital
 		return_value = ( return_value + 1 ) / 2
 
+RULESET.moveSpecialOrders = FUNCTION
+	LOCAL.newcalendar = ARRAY
+	if player.calendar == UNDEFINED
+		
 
 // tries to make 0 to 2 missions available to the player
 RULESET.makeMissionsAvailable = FUNCTION
